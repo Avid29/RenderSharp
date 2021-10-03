@@ -19,6 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\src\RenderSharp\RenderSharp.csproj" />
+    <ProjectReference Include="..\..\..\src\RenderSharp\RenderSharp.csproj" />
   </ItemGroup>
 </Project>

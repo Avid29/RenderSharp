@@ -13,6 +13,8 @@ namespace RenderSharp.RayTracing.HLSL
     //[AutoConstructor]
     public readonly partial struct RayTraceShader : IPixelShader<Float4>
     {
+        //private readonly Scene scene;
+
         /// <summary>
         /// Bounces a ray around a <see cref="Scene"/>.
         /// </summary>
@@ -81,7 +83,7 @@ namespace RenderSharp.RayTracing.HLSL
 
             // Render
             Float4 color = Float4.Zero;
-            for (int s = 0; s < config.samples; s++)
+            for (int s = 0; s < scene.config.samples; s++)
             {
                 uint randState = (uint)(ThreadIds.X * 1973 + ThreadIds.Y * 9277 + s * 26699) | 1;
                 float u = (ThreadIds.X + RandUtils.RandomFloat(ref randState)) / size.X;
@@ -89,7 +91,7 @@ namespace RenderSharp.RayTracing.HLSL
                 Ray ray = Camera.CreateRay(camera, u, v);
                 color += BounceRay(scene, ray, ref randState);
             }
-            return color / config.samples;
+            return color / scene.config.samples;
         }
     }
 }
