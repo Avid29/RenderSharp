@@ -7,6 +7,6 @@ namespace RenderSharp.Common.Objects.Meshes
     {
         public List<Face> _faces;
 
-        public DiffuseMaterial Material { get; }
+        public IMaterial Material { get; }
     }
 }

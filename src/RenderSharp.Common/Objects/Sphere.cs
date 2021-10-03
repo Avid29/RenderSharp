@@ -5,7 +5,7 @@ namespace RenderSharp.Common.Objects
 {
     public class Sphere : IObject
     {
-        public Sphere(Float3 center, float radius, DiffuseMaterial material)
+        public Sphere(Float3 center, float radius, IMaterial material)
         {
             Center = center;
             Radius = radius;
@@ -16,6 +16,6 @@ namespace RenderSharp.Common.Objects
 
         public float Radius { get; }
 
-        public DiffuseMaterial Material { get; }
+        public IMaterial Material { get; }
     }
 }

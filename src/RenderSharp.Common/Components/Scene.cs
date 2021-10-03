@@ -29,9 +29,10 @@ namespace RenderSharp.Common.Components
         {
             DiffuseMaterial diffuse1 = new DiffuseMaterial(new Float4(1f, 0f, 0f, 1f));
             DiffuseMaterial diffuse2 = new DiffuseMaterial(new Float4(0.4f, 0.5f, 0.5f, 1f));
+            EmissiveMaterial emissive = new EmissiveMaterial(Float4.One);
 
             Scene scene = CreateEmptyScene();
-            scene.World.Spheres.Add(new Sphere(Float3.Zero, 0.5f, diffuse1));
+            scene.World.Spheres.Add(new Sphere(Float3.Zero, 0.5f, emissive));
             scene.World.Spheres.Add(new Sphere(new Float3(0, -100.5f, 0), 100f, diffuse2));
             return scene;
         }

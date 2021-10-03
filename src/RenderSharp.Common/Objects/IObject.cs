@@ -7,6 +7,6 @@ namespace RenderSharp.Common.Objects
     /// </summary>
     public interface IObject
     {
-        public DiffuseMaterial Material { get; }
+        public IMaterial Material { get; }
     }
 }
