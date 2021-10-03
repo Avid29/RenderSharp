@@ -1,6 +1,7 @@
 ﻿using ComputeSharp;
 using RenderSharp.RayTracing.HLSL.Components;
 using RenderSharp.RayTracing.HLSL.Geometry;
+using RenderSharp.RayTracing.HLSL.Materials;
 using RenderSharp.RayTracing.HLSL.Rays;
 using RenderSharp.RayTracing.HLSL.Skys;
 using RenderSharp.RayTracing.HLSL.Utils;
@@ -15,12 +16,14 @@ namespace RenderSharp.RayTracing.HLSL
     {
         private readonly Scene scene;
         private readonly ReadOnlyBuffer<Sphere> geometry;
+        private readonly ReadOnlyBuffer<Material> materials;
 
-        public bool GetHit(Ray ray, out RayCast cast)
+        public bool GetHit(Ray ray, out RayCast cast, out Material material)
         {
             cast.origin = 0;
             cast.normal = 0;
             cast.coefficient = 0;
+            material.albedo = Float4.Zero;
 
             bool hit = false;
             float closest = float.MaxValue;
@@ -29,11 +32,12 @@ namespace RenderSharp.RayTracing.HLSL
             for (int i = 0; i < geometry.Length; i++)
             {
                 Sphere sphere = geometry[i];
-                if (Sphere.IsHit(sphere, closest, ray, out cacheCast))
+                if (Sphere.IsHit(sphere, closest, ray, out cacheCast, out int matId))
                 {
                     hit = true;
                     closest = cacheCast.coefficient;
                     cast = cacheCast;
+                    material = materials[matId];
                 }
             }
 
@@ -55,11 +59,10 @@ namespace RenderSharp.RayTracing.HLSL
             // Bounce the ray around the scene iteratively
             for (int depth = 0; depth < scene.config.maxBounces; depth++)
             {
-                if (GetHit(ray, out RayCast cast))
+                if (GetHit(ray, out RayCast cast, out Material material))
                 {
-                    Float3 target = cast.origin + cast.normal + RandUtils.RandomInUnitSphere(ref randState);
-                    cumAttenuation *= new Float4(Float3.One * 0.5f, 1);
-                    ray = Ray.Create(cast.origin, target - cast.origin);
+                    Material.Scatter(material, ray, cast, ref randState, out Float4 attenuation, out ray);
+                    cumAttenuation *= attenuation;
                 }
                 else
                 {
