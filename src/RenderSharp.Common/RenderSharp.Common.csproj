@@ -4,4 +4,8 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="ComputeSharp" Version="2.0.0-alpha.6" />
+  </ItemGroup>
+
 </Project>
