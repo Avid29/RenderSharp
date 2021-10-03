@@ -19,7 +19,7 @@ namespace RenderSharp.RayTracing.HLSL.Conversion
     public class SceneConverter
     {
         private GraphicsDevice _gpu;
-        private Dictionary<DiffuseMaterial, int> _materialMap = new Dictionary<DiffuseMaterial, int>();
+        private Dictionary<IMaterial, int> _materialMap = new Dictionary<IMaterial, int>();
         private ReadOnlyBuffer<ShaderSphere> _geometryBuffer;
         private ReadOnlyBuffer<ShaderMaterial> _materialBuffer;
         private bool _isGeometryLoaded;
@@ -102,10 +102,26 @@ namespace RenderSharp.RayTracing.HLSL.Conversion
             return output;
         }
 
-        public ShaderMaterial ConvertMaterial(DiffuseMaterial material)
+        public ShaderMaterial ConvertMaterial(IMaterial material)
         {
             ShaderMaterial output;
-            output.albedo = material.Albedo;
+            
+            switch (material)
+            {
+                case DiffuseMaterial diffuse:
+                    output.albedo = diffuse.Albedo;
+                    output.emission = Float4.Zero;
+                    break;
+                case EmissiveMaterial emissive:
+                    output.albedo = emissive.Emission;
+                    output.emission = emissive.Emission;
+                    break;
+                default:
+                    output.albedo = Float4.Zero;
+                    output.emission = Float4.Zero;
+                    break;
+            }
+
             return output;
         }
 

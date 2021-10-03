@@ -7,11 +7,13 @@ namespace RenderSharp.RayTracing.HLSL.Materials
     public struct Material
     {
         public Float4 albedo;
+        public Float4 emission;
 
-        public static Material Create(Float4 albedo)
+        public static Material Create(Float4 albedo, Float4 emission)
         {
             Material material;
             material.albedo = albedo;
+            material.emission = emission;
             return material;
         }
 
@@ -22,6 +24,9 @@ namespace RenderSharp.RayTracing.HLSL.Materials
             scatter = Ray.Create(cast.origin, target - cast.origin);
         }
 
-        // TODO: Material emissions
+        public static void Emit(Material material, out Float4 emission)
+        {
+            emission = material.emission;
+        }
     }
 }
