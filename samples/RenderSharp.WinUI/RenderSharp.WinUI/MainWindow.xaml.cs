@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI.Xaml;
 using RenderSharp.Common.Components;
 using RenderSharp.Renderer;
+using RenderSharp.WinUI.Renderer;
 
 namespace RenderSharp.WinUI
 {
@@ -17,6 +18,6 @@ namespace RenderSharp.WinUI
             Shader.AllocateResources(scene);
         }
 
-        public ShaderRenderer Shader = new ShaderRenderer();
+        public ISceneRenderer Shader = new CPURenderer();
     }
 }
