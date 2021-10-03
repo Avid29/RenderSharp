@@ -5,11 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ComputeSharp" Version="2.0.0-alpha.6" />
+    <ProjectReference Include="..\RenderSharp.RayTracing\RenderSharp.RayTracing.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RenderSharp.RayTracing\RenderSharp.RayTracing.csproj" />
+    <PackageReference Include="ComputeSharp" Version="2.0.0-alpha.6" />
   </ItemGroup>
 
 </Project>

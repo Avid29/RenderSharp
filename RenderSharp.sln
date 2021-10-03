@@ -7,19 +7,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RayTracing", "RayTracing", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderSharp", "src\RenderSharp\RenderSharp.csproj", "{92BE2ECE-5404-4916-A66B-98967166D605}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderSharp.RayTracing", "src\RenderSharp.RayTracing\RenderSharp.RayTracing\RenderSharp.RayTracing.csproj", "{CAACDC56-05AF-4145-9CF2-9DE107F46506}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderSharp.RayTracing", "src\RenderSharp.RayTracing\RenderSharp.RayTracing\RenderSharp.RayTracing.csproj", "{CAACDC56-05AF-4145-9CF2-9DE107F46506}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderSharp.RayTracing.Hlsl", "src\RenderSharp.RayTracing\RenderSharp.RayTracing.Hlsl\RenderSharp.RayTracing.Hlsl.csproj", "{CCA444D0-31E6-4648-8AE4-F30CD849CBED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderSharp.RayTracing.HLSL", "src\RenderSharp.RayTracing\RenderSharp.RayTracing.Hlsl\RenderSharp.RayTracing.HLSL.csproj", "{CCA444D0-31E6-4648-8AE4-F30CD849CBED}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{ECDF52EB-FF15-4BF2-84BE-7194A4C8800F}"
 EndProject
 Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "RenderSharp.WinUI (Package)", "samples\RenderSharp.WinUI\RenderSharp.WinUI\RenderSharp.WinUI (Package)\RenderSharp.WinUI (Package).wapproj", "{1757F671-EA5B-438C-BB30-C189D2E1CA1C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderSharp.WinUI", "samples\RenderSharp.WinUI\RenderSharp.WinUI\RenderSharp.WinUI\RenderSharp.WinUI.csproj", "{036E3334-3EB3-4B4D-ACD3-AC8CD7F5979D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderSharp.WinUI", "samples\RenderSharp.WinUI\RenderSharp.WinUI\RenderSharp.WinUI\RenderSharp.WinUI.csproj", "{036E3334-3EB3-4B4D-ACD3-AC8CD7F5979D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderSharp.RayTracing.CPU", "src\RenderSharp.RayTracing\RenderSharp.RayTracing.CPU\RenderSharp.RayTracing.CPU.csproj", "{BAA3E935-60BC-4A2C-90CE-C02AE382444A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderSharp.RayTracing.CPU", "src\RenderSharp.RayTracing\RenderSharp.RayTracing.CPU\RenderSharp.RayTracing.CPU.csproj", "{BAA3E935-60BC-4A2C-90CE-C02AE382444A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderSharp.Common", "src\RenderSharp.Common\RenderSharp.Common.csproj", "{DA994539-20BE-4BE0-ACD9-9244402C6BDD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderSharp.Common", "src\RenderSharp.Common\RenderSharp.Common.csproj", "{DA994539-20BE-4BE0-ACD9-9244402C6BDD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

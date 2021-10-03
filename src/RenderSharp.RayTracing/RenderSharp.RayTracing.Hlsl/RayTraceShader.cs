@@ -1,6 +1,7 @@
 ﻿using ComputeSharp;
+using RenderSharp.RayTracing.HLSL.Components;
 
-namespace RenderSharp.RayTracing.Hlsl
+namespace RenderSharp.RayTracing.HLSL
 {
     [AutoConstructor]
     public readonly partial struct RayTraceShader : IPixelShader<Float4>

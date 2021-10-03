@@ -1,6 +1,6 @@
 ﻿using ComputeSharp;
 using ComputeSharp.WinUI;
-using RenderSharp.RayTracing.Hlsl;
+using RenderSharp.RayTracing.HLSL;
 using System;
 
 namespace RenderSharp.Renderer
