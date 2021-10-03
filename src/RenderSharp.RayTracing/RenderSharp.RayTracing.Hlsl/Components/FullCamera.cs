@@ -19,11 +19,17 @@ namespace RenderSharp.RayTracing.HLSL.Components
             float height = 2 * h;
             float width = aspectRatio * height;
 
+            Float3 vup = Float3.UnitY;
+            Float3 w = Hlsl.Normalize(specs.origin - specs.look);
+            Float3 u = Hlsl.Normalize(Hlsl.Cross(vup, w));
+            Float3 v = Hlsl.Cross(w, u);
+
             FullCamera camera;
             camera.origin = specs.origin;
-            camera.horizontal = Float3.UnitX * width;
-            camera.vertical = Float3.UnitY * height;
-            Float3 depth = Float3.UnitZ * specs.focalLength;
+            camera.horizontal = width * u;
+            camera.vertical = height * v;
+            Float3 depth = w * specs.focalLength;
+
             camera.lowerLeftCorner = camera.origin - camera.horizontal / 2 - camera.vertical / 2 - depth;
             return camera;
         }
