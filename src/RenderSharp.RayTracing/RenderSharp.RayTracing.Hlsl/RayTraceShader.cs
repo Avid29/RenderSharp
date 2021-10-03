@@ -14,6 +14,31 @@ namespace RenderSharp.RayTracing.HLSL
     public readonly partial struct RayTraceShader : IPixelShader<Float4>
     {
         private readonly Scene scene;
+        private readonly ReadOnlyBuffer<Sphere> geometry;
+
+        public bool GetHit(Ray ray, out RayCast cast)
+        {
+            cast.origin = 0;
+            cast.normal = 0;
+            cast.coefficient = 0;
+
+            bool hit = false;
+            float closest = float.MaxValue;
+
+            RayCast cacheCast;
+            for (int i = 0; i < geometry.Length; i++)
+            {
+                Sphere sphere = geometry[i];
+                if (Sphere.IsHit(sphere, closest, ray, out cacheCast))
+                {
+                    hit = true;
+                    closest = cacheCast.coefficient;
+                    cast = cacheCast;
+                }
+            }
+
+            return hit;
+        }
 
         /// <summary>
         /// Bounces a ray around a <see cref="Scene"/>.
@@ -30,11 +55,7 @@ namespace RenderSharp.RayTracing.HLSL
             // Bounce the ray around the scene iteratively
             for (int depth = 0; depth < scene.config.maxBounces; depth++)
             {
-                Sphere sphere;
-                sphere.center = Float3.Zero;
-                sphere.radius = 0.5f;
-
-                if (Sphere.IsHit(sphere, ray, out RayCast cast))
+                if (GetHit(ray, out RayCast cast))
                 {
                     Float3 target = cast.origin + cast.normal + RandUtils.RandomInUnitSphere(ref randState);
                     cumAttenuation *= new Float4(Float3.One * 0.5f, 1);

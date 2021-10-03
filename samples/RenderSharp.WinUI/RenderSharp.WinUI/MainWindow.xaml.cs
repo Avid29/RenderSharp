@@ -13,7 +13,7 @@ namespace RenderSharp.WinUI
         {
             this.InitializeComponent();
 
-            Scene scene = Scene.CreateEmptyScene();
+            Scene scene = Scene.CreateSpheresScene();
             Shader.AllocateResources(scene);
         }
 
