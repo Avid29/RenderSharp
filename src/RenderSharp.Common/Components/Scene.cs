@@ -1,4 +1,5 @@
 ﻿using ComputeSharp;
+using RenderSharp.Common.Materials;
 using RenderSharp.Common.Objects;
 using RenderSharp.Common.Skys;
 
@@ -26,9 +27,12 @@ namespace RenderSharp.Common.Components
 
         public static Scene CreateSpheresScene()
         {
+            DiffuseMaterial diffuse1 = new DiffuseMaterial(new Float4(1f, 0f, 0f, 1f));
+            DiffuseMaterial diffuse2 = new DiffuseMaterial(new Float4(0.4f, 0.5f, 0.5f, 1f));
+
             Scene scene = CreateEmptyScene();
-            scene.World.Spheres.Add(new Sphere(Float3.Zero, 0.5f));
-            scene.World.Spheres.Add(new Sphere(new Float3(0, -100.5f, 0), 100f));
+            scene.World.Spheres.Add(new Sphere(Float3.Zero, 0.5f, diffuse1));
+            scene.World.Spheres.Add(new Sphere(new Float3(0, -100.5f, 0), 100f, diffuse2));
             return scene;
         }
     }
