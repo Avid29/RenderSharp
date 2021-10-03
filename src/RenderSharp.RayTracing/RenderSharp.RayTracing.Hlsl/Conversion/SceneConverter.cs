@@ -13,6 +13,7 @@ using ShaderSky = RenderSharp.RayTracing.HLSL.Skys.Sky;
 using ShaderSphere = RenderSharp.RayTracing.HLSL.Geometry.Sphere;
 using ShaderWorld = RenderSharp.RayTracing.HLSL.Components.World;
 using ShaderMaterial = RenderSharp.RayTracing.HLSL.Materials.Material;
+using System.Numerics;
 
 namespace RenderSharp.RayTracing.HLSL.Conversion
 {
@@ -46,8 +47,8 @@ namespace RenderSharp.RayTracing.HLSL.Conversion
             output.world = ConvertWorld(scene.World);
 
             // Default config for now
-            output.config.samples = 16;
-            output.config.maxBounces = 16;
+            output.config.samples = 64;
+            output.config.maxBounces = 64;
 
             FinishMaterialLoading();
 
@@ -104,21 +105,27 @@ namespace RenderSharp.RayTracing.HLSL.Conversion
 
         public ShaderMaterial ConvertMaterial(IMaterial material)
         {
+            // Create default material
             ShaderMaterial output;
-            
+            output.albedo = Float4.Zero;
+            output.emission = Float4.Zero;
+            output.metallic = 0;
+            output.roughness = 0;
+
             switch (material)
             {
                 case DiffuseMaterial diffuse:
                     output.albedo = diffuse.Albedo;
-                    output.emission = Float4.Zero;
+                    output.roughness = diffuse.Roughness;
                     break;
                 case EmissiveMaterial emissive:
+                    output.emission = (Vector4)emissive.Emission * emissive.Strength;
                     output.albedo = emissive.Emission;
-                    output.emission = emissive.Emission;
+                    output.roughness = 1;
                     break;
-                default:
-                    output.albedo = Float4.Zero;
-                    output.emission = Float4.Zero;
+                case MetalMaterial metal:
+                    output.albedo = metal.Albedo;
+                    output.roughness = metal.Roughness;
                     break;
             }
 

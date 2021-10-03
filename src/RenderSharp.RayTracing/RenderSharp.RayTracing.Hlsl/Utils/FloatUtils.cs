@@ -1,5 +1,6 @@
 ﻿using ComputeSharp;
 using System;
+using System.Numerics;
 
 namespace RenderSharp.RayTracing.HLSL.Utils
 {

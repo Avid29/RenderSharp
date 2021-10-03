@@ -4,11 +4,14 @@ namespace RenderSharp.Common.Materials
 {
     public class EmissiveMaterial : IMaterial
     {
-        public EmissiveMaterial(Float4 emission)
+        public EmissiveMaterial(Float4 emission, float strength = 1)
         {
             Emission = emission;
+            Strength = strength;
         }
 
         public Float4 Emission { get; }
+
+        public float Strength { get; }
     }
 }

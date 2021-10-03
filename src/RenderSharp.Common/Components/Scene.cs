@@ -27,12 +27,15 @@ namespace RenderSharp.Common.Components
 
         public static Scene CreateSpheresScene()
         {
-            DiffuseMaterial diffuse1 = new DiffuseMaterial(new Float4(1f, 0f, 0f, 1f));
-            DiffuseMaterial diffuse2 = new DiffuseMaterial(new Float4(0.4f, 0.5f, 0.5f, 1f));
-            EmissiveMaterial emissive = new EmissiveMaterial(Float4.One);
+            DiffuseMaterial diffuse1 = new DiffuseMaterial(new Float4(1f, 0f, 0f, 1f), 0.5f);
+            DiffuseMaterial diffuse2 = new DiffuseMaterial(new Float4(0.4f, 0.5f, 0.5f, 0.8f));
+            MetalMaterial rawMetal = new MetalMaterial(new Float4(0.8f, 0.8f, 0.8f, 1f), 0f);
+            EmissiveMaterial emissive = new EmissiveMaterial(Float4.One, 2f);
 
             Scene scene = CreateEmptyScene();
             scene.World.Spheres.Add(new Sphere(Float3.Zero, 0.5f, diffuse1));
+            scene.World.Spheres.Add(new Sphere(new Float3(1f, 0f, 0f), 0.5f, rawMetal));
+            scene.World.Spheres.Add(new Sphere(new Float3(-1f, 0f, 0f), 0.5f, emissive));
             scene.World.Spheres.Add(new Sphere(new Float3(0, -100.5f, 0), 100f, diffuse2));
             return scene;
         }

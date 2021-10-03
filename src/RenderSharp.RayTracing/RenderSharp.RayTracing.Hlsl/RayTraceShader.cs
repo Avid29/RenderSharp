@@ -25,6 +25,8 @@ namespace RenderSharp.RayTracing.HLSL
             cast.coefficient = 0;
             material.albedo = Float4.Zero;
             material.emission = Float4.Zero;
+            material.roughness = 0;
+            material.metallic = 0;
 
             bool hit = false;
             float closest = float.MaxValue;
@@ -63,9 +65,10 @@ namespace RenderSharp.RayTracing.HLSL
                 if (GetHit(ray, out RayCast cast, out Material material))
                 {
                     Material.Emit(material, out Float4 emission);
+                    color += emission * cumAttenuation;
+
                     Material.Scatter(material, ray, cast, ref randState, out Float4 attenuation, out ray);
                     cumAttenuation *= attenuation;
-                    color += emission * cumAttenuation;
                 }
                 else
                 {
