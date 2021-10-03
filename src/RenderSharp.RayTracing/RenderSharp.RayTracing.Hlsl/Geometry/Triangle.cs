@@ -1,5 +1,6 @@
 ﻿using ComputeSharp;
 using RenderSharp.RayTracing.HLSL.Rays;
+using RenderSharp.RayTracing.HLSL.Utils;
 
 namespace RenderSharp.RayTracing.HLSL.Geometry
 {
@@ -20,7 +21,7 @@ namespace RenderSharp.RayTracing.HLSL.Geometry
             cast.normal = Float3.Zero;
 
             Float3 normal = Hlsl.Cross(tri.b - tri.a, tri.c - tri.a);
-            if (normal.LengthSquared() < 0)
+            if (FloatUtils.LengthSquared(normal) < 0)
             {
                 normal *= -1;
             }

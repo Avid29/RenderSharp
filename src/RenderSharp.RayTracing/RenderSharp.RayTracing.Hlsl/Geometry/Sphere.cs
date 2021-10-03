@@ -1,5 +1,6 @@
 ﻿using ComputeSharp;
 using RenderSharp.RayTracing.HLSL.Rays;
+using RenderSharp.RayTracing.HLSL.Utils;
 using System;
 using System.Numerics;
 
@@ -23,9 +24,9 @@ namespace RenderSharp.RayTracing.HLSL.Geometry
             cast.normal = Float3.Zero;
 
             Float3 oc = ray.origin - sphere.center;
-            float a = ray.direction.LengthSquared();
+            float a = FloatUtils.LengthSquared(ray.direction);
             float b = Vector3.Dot(oc, ray.direction);
-            float c = oc.LengthSquared() - sphere.radius * sphere.radius;
+            float c = FloatUtils.LengthSquared(oc) - sphere.radius * sphere.radius;
 
             float disc = b * b - a * c;
 
