@@ -8,14 +8,16 @@ namespace RenderSharp.RayTracing.HLSL.Components
         public Float3 look;
         public float focalLength;
         public float fov;
+        public float aperature;
 
-        public static Camera CreateCamera(Float3 origin, Float3 look, float focalLength, float fov)
+        public static Camera CreateCamera(Float3 origin, Float3 look, float focalLength, float fov, float aperature)
         {
             Camera camera;
             camera.origin = origin;
             camera.look = look;
-            camera.focalLength = focalLength;
             camera.fov = fov;
+            camera.focalLength = focalLength;
+            camera.aperature = aperature;
             return camera;
         }
     }

@@ -11,6 +11,8 @@ namespace RenderSharp.RayTracing.HLSL.Components
         public Float3 horizontal;
         public Float3 vertical;
         public Float3 lowerLeftCorner;
+        public Float3 u, v, w;
+        public float lensRadius;
 
         public static FullCamera Create(Camera specs, float aspectRatio)
         {
@@ -20,25 +22,30 @@ namespace RenderSharp.RayTracing.HLSL.Components
             float width = aspectRatio * height;
 
             Float3 vup = Float3.UnitY;
-            Float3 w = Hlsl.Normalize(specs.origin - specs.look);
-            Float3 u = Hlsl.Normalize(Hlsl.Cross(vup, w));
-            Float3 v = Hlsl.Cross(w, u);
 
             FullCamera camera;
             camera.origin = specs.origin;
-            camera.horizontal = width * u;
-            camera.vertical = height * v;
-            Float3 depth = w * specs.focalLength;
+            camera.w = Hlsl.Normalize(specs.origin - specs.look);
+            camera.u = Hlsl.Normalize(Hlsl.Cross(vup, camera.w));
+            camera.v = Hlsl.Cross(camera.w, camera.u);
+            camera.horizontal = width * camera.u;
+            camera.vertical = height * camera.v;
+            Float3 depth = camera.w * specs.focalLength;
 
             camera.lowerLeftCorner = camera.origin - camera.horizontal / 2 - camera.vertical / 2 - depth;
+
+            camera.lensRadius = specs.aperature / 2;
             return camera;
         }
 
-        public static Ray CreateRay(FullCamera camera, float u, float v)
+        public static Ray CreateRay(FullCamera camera, float u, float v, ref uint randState)
         {
+            Float3 rd = camera.lensRadius * RandUtils.RandomInUnitDisk(ref randState);
+            Float3 offset = camera.u * rd.X + camera.v * rd.Y;
+
             Ray ray;
-            ray.origin = camera.origin;
-            ray.direction = camera.lowerLeftCorner + u * camera.horizontal + v * camera.vertical - camera.origin;
+            ray.origin = camera.origin + offset;
+            ray.direction = camera.lowerLeftCorner + u * camera.horizontal + v * camera.vertical - camera.origin - offset;
             return ray;
         }
     }

@@ -80,7 +80,7 @@ namespace RenderSharp.RayTracing.HLSL.Conversion
 
         public ShaderCamera ConvertCamera(CommonCamera camera)
         {
-            return ShaderCamera.CreateCamera(camera.Origin, camera.Look, camera.FocalLength, camera.FOV);
+            return ShaderCamera.CreateCamera(camera.Origin, camera.Look, camera.FocalLength, camera.FOV, camera.Aperture);
         }
 
         public ShaderSphere ConvertSphere(CommonSphere sphere)

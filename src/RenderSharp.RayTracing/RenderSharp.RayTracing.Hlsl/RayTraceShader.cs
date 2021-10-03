@@ -95,7 +95,7 @@ namespace RenderSharp.RayTracing.HLSL
                 uint randState = (uint)(ThreadIds.X * 1973 + ThreadIds.Y * 9277 + s * 26699) | 1;
                 float u = (ThreadIds.X + RandUtils.RandomFloat(ref randState)) / size.X;
                 float v = 1 - ((ThreadIds.Y + RandUtils.RandomFloat(ref randState)) / size.Y);
-                Ray ray = FullCamera.CreateRay(camera, u, v);
+                Ray ray = FullCamera.CreateRay(camera, u, v, ref randState);
                 color += BounceRay(scene, ray, ref randState);
             }
             return color / scene.config.samples;
