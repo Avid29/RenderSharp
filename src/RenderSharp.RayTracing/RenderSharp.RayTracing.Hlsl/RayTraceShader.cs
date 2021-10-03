@@ -86,8 +86,7 @@ namespace RenderSharp.RayTracing.HLSL
             float aspectRatio = size.X / size.Y;
 
             // Camera
-            Camera sCam = scene.camera;
-            FullCamera camera = FullCamera.Create(sCam.origin, sCam.fov * aspectRatio, sCam.fov, sCam.focalLength);
+            FullCamera camera = FullCamera.Create(scene.camera, aspectRatio);
 
             // Render
             Float4 color = Float4.Zero;

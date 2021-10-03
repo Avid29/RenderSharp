@@ -1,4 +1,5 @@
 ﻿using ComputeSharp;
+using System;
 
 namespace RenderSharp.RayTracing.HLSL.Utils
 {
@@ -12,6 +13,11 @@ namespace RenderSharp.RayTracing.HLSL.Utils
         public static float LengthSquared(Float3 v3)
         {
             return v3.X * v3.X + v3.Y * v3.Y + v3.Z * v3.Z;
-        } 
+        }
+
+        public static float DegreesToRadians(float radians)
+        {
+            return MathF.PI / 180f * radians;
+        }
     }
 }

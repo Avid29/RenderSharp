@@ -19,7 +19,7 @@ namespace RenderSharp.Common.Components
 
         public static Scene CreateEmptyScene()
         {
-            Camera camera = new Camera(Float3.UnitZ, 2f, 1f);
+            Camera camera = new Camera(Float3.UnitZ, 90f, 1f);
             Sky sky = new Sky(new Float4(0.5f, 0.7f, 1f, 1f));
             World world = new World(sky);
             return new Scene(camera, world);
