@@ -59,6 +59,8 @@ namespace RenderSharp.RayTracing.HLSL
             float aspectRatio = size.X / size.Y;
 
             // Camera
+            Camera sCam = scene.camera;
+            FullCamera camera = FullCamera.Create(sCam.origin, sCam.fov * aspectRatio, sCam.fov, sCam.focalLength);
 
             // Render
             Float4 color = Float4.Zero;
@@ -67,7 +69,7 @@ namespace RenderSharp.RayTracing.HLSL
                 uint randState = (uint)(ThreadIds.X * 1973 + ThreadIds.Y * 9277 + s * 26699) | 1;
                 float u = (ThreadIds.X + RandUtils.RandomFloat(ref randState)) / size.X;
                 float v = 1 - ((ThreadIds.Y + RandUtils.RandomFloat(ref randState)) / size.Y);
-                Ray ray = Camera.CreateRay(scene.camera, u, v);
+                Ray ray = FullCamera.CreateRay(camera, u, v);
                 color += BounceRay(scene, ray, ref randState);
             }
             return color / scene.config.samples;

@@ -49,7 +49,7 @@ namespace RenderSharp.RayTracing.HLSL.Conversion
 
         public ShaderCamera ConvertCamera(CommonCamera camera)
         {
-            return ShaderCamera.CreateCamera(camera.Origin, camera.FOV * (16f/9f), camera.FOV, camera.FocalLength);
+            return ShaderCamera.CreateCamera(camera.Origin, camera.FocalLength, camera.FOV);
         }
     }
 }
