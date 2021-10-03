@@ -2,6 +2,7 @@
 using RenderSharp.RayTracing.HLSL.Components;
 using RenderSharp.RayTracing.HLSL.Geometry;
 using RenderSharp.RayTracing.HLSL.Rays;
+using RenderSharp.RayTracing.HLSL.Skys;
 using RenderSharp.RayTracing.HLSL.Utils;
 using System.Numerics;
 
@@ -32,9 +33,7 @@ namespace RenderSharp.RayTracing.HLSL
                 else
                 {
                     // Sky texture
-                    Float3 unitDirection = Vector3.Normalize(ray.direction);
-                    float t = 0.5f * (unitDirection.Y + 1);
-                    color += cumAttenuation * ((1f - t) * Float4.One + t * new Float4(0.5f, 0.7f, 1f, 1f));
+                    color += cumAttenuation * Sky.Color(scene.world.sky, ray);
                     break;
                 }
             }
@@ -57,8 +56,14 @@ namespace RenderSharp.RayTracing.HLSL
             // Camera
             Camera camera = Camera.CreateCamera(Float3.UnitZ, 2f * aspectRatio, 2f, 1f);
 
+            // Sky
+            Sky sky;
+            //sky.color = new Float4(1f, 0.4f, 0.2f, 1f);
+            sky.color = new Float4(0.5f, 0.7f, 1f, 1f);
+
             // World
             World world;
+            world.sky = sky;
 
             // Scene
             Scene scene;
