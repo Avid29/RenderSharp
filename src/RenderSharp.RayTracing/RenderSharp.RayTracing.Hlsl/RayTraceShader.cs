@@ -4,20 +4,28 @@ using RenderSharp.RayTracing.HLSL.Geometry;
 using RenderSharp.RayTracing.HLSL.Rays;
 using RenderSharp.RayTracing.HLSL.Skys;
 using RenderSharp.RayTracing.HLSL.Utils;
-using System.Numerics;
 
 namespace RenderSharp.RayTracing.HLSL
 {
-    [AutoConstructor]
+    /// <summary>
+    /// An <see cref="IPixelShader{Float4}"/> that ray traces a scene to render.
+    /// </summary>
+    //[AutoConstructor]
     public readonly partial struct RayTraceShader : IPixelShader<Float4>
     {
-        private readonly float time;
-
-        private Float4 Bounce(Scene scene, Ray ray, ref uint randState)
+        /// <summary>
+        /// Bounces a ray around a <see cref="Scene"/>.
+        /// </summary>
+        /// <param name="scene">The scene to bounce the ray in.</param>
+        /// <param name="ray">The original ray to bounce.</param>
+        /// <param name="randState">A integer used through out the shader to provide a random number.</param>
+        /// <returns>The color of pixel from the original ray.</returns>
+        private Float4 BounceRay(Scene scene, Ray ray, ref uint randState)
         {
             Float4 color = Float4.Zero;
             Float4 cumAttenuation = Float4.One;
 
+            // Bounce the ray around the scene iteratively
             for (int depth = 0; depth < scene.config.maxBounces; depth++)
             {
                 Sphere sphere;
@@ -32,13 +40,13 @@ namespace RenderSharp.RayTracing.HLSL
                 }
                 else
                 {
-                    // Sky texture
+                    // No object was hit
+                    // Therefore the sky was hit
                     color += cumAttenuation * Sky.Color(scene.world.sky, ray);
                     break;
                 }
             }
 
-            // No more light
             return color;
         }
 
@@ -75,11 +83,11 @@ namespace RenderSharp.RayTracing.HLSL
             Float4 color = Float4.Zero;
             for (int s = 0; s < config.samples; s++)
             {
-                uint randState = (uint)(ThreadIds.X * 1973 + ThreadIds.Y * 9277 + s * 26699 + time * 28233) | 1;
+                uint randState = (uint)(ThreadIds.X * 1973 + ThreadIds.Y * 9277 + s * 26699) | 1;
                 float u = (ThreadIds.X + RandUtils.RandomFloat(ref randState)) / size.X;
                 float v = 1 - ((ThreadIds.Y + RandUtils.RandomFloat(ref randState)) / size.Y);
                 Ray ray = Camera.CreateRay(camera, u, v);
-                color += Bounce(scene, ray, ref randState);
+                color += BounceRay(scene, ray, ref randState);
             }
             return color / config.samples;
         }
