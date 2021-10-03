@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="ComputeSharp.WinUI" Version="2.0.0-alpha.6" />
     <PackageReference Include="Microsoft.ProjectReunion" Version="0.8.4" />
     <PackageReference Include="Microsoft.ProjectReunion.Foundation" Version="0.8.4" />
     <PackageReference Include="Microsoft.ProjectReunion.WinUI" Version="0.8.4" />

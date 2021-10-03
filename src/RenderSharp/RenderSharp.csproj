@@ -4,4 +4,14 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="ComputeSharp" Version="2.0.0-alpha.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RenderSharp.RayTracing\RenderSharp.RayTracing.CPU\RenderSharp.RayTracing.CPU.csproj" />
+    <ProjectReference Include="..\RenderSharp.RayTracing\RenderSharp.RayTracing.Hlsl\RenderSharp.RayTracing.Hlsl.csproj" />
+    <ProjectReference Include="..\RenderSharp.RayTracing\RenderSharp.RayTracing\RenderSharp.RayTracing.csproj" />
+  </ItemGroup>
+
 </Project>
