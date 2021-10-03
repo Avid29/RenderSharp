@@ -13,7 +13,10 @@ using ShaderSky = RenderSharp.RayTracing.HLSL.Skys.Sky;
 using ShaderSphere = RenderSharp.RayTracing.HLSL.Geometry.Sphere;
 using ShaderWorld = RenderSharp.RayTracing.HLSL.Components.World;
 using ShaderMaterial = RenderSharp.RayTracing.HLSL.Materials.Material;
+using ShaderTexture = RenderSharp.RayTracing.HLSL.Textures.Texture;
+
 using System.Numerics;
+using RenderSharp.Common.Textures;
 
 namespace RenderSharp.RayTracing.HLSL.Conversion
 {
@@ -21,8 +24,10 @@ namespace RenderSharp.RayTracing.HLSL.Conversion
     {
         private GraphicsDevice _gpu;
         private Dictionary<IMaterial, int> _materialMap = new Dictionary<IMaterial, int>();
+        //private Dictionary<ITexture, int> _textureMap = new Dictionary<ITexture, int>();
         private ReadOnlyBuffer<ShaderSphere> _geometryBuffer;
         private ReadOnlyBuffer<ShaderMaterial> _materialBuffer;
+        //private ReadOnlyBuffer<ShaderTexture> _textureBuffer;
         private bool _isGeometryLoaded;
         private bool _areMaterialsLoaded;
 
@@ -107,7 +112,7 @@ namespace RenderSharp.RayTracing.HLSL.Conversion
         {
             // Create default material
             ShaderMaterial output;
-            output.albedo = Float4.Zero;
+            output.albedo = new ShaderTexture();
             output.emission = Float4.Zero;
             output.metallic = 0;
             output.roughness = 0;
@@ -115,17 +120,37 @@ namespace RenderSharp.RayTracing.HLSL.Conversion
             switch (material)
             {
                 case DiffuseMaterial diffuse:
-                    output.albedo = diffuse.Albedo;
+                    output.albedo = ConvertTexture(diffuse.Albedo);
                     output.roughness = diffuse.Roughness;
                     break;
                 case EmissiveMaterial emissive:
                     output.emission = (Vector4)emissive.Emission * emissive.Strength;
-                    output.albedo = emissive.Emission;
+                    //output.albedo = emissive.Emission;
+                    output.albedo = new ShaderTexture();
                     output.roughness = 1;
                     break;
                 case MetalMaterial metal:
-                    output.albedo = metal.Albedo;
+                    output.albedo = ConvertTexture(metal.Albedo);
                     output.roughness = metal.Roughness;
+                    break;
+            }
+
+            return output;
+        }
+
+        public ShaderTexture ConvertTexture(ITexture texture)
+        {
+            ShaderTexture output = ShaderTexture.Create();
+
+            switch (texture)
+            {
+                case SolidTexture solid:
+                    output.color1 = solid.Color;
+                    output.color2 = solid.Color;
+                    break;
+                case CheckersTexture checkers:
+                    output.color1 = checkers.Color1;
+                    output.color2 = checkers.Color2;
                     break;
             }
 

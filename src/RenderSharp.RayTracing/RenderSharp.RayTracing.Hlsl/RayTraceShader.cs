@@ -4,6 +4,7 @@ using RenderSharp.RayTracing.HLSL.Geometry;
 using RenderSharp.RayTracing.HLSL.Materials;
 using RenderSharp.RayTracing.HLSL.Rays;
 using RenderSharp.RayTracing.HLSL.Skys;
+using RenderSharp.RayTracing.HLSL.Textures;
 using RenderSharp.RayTracing.HLSL.Utils;
 
 namespace RenderSharp.RayTracing.HLSL
@@ -23,7 +24,8 @@ namespace RenderSharp.RayTracing.HLSL
             cast.origin = 0;
             cast.normal = 0;
             cast.coefficient = 0;
-            material.albedo = Float4.Zero;
+            cast.uv = Float2.Zero;
+            material.albedo = Texture.Create();
             material.emission = Float4.Zero;
             material.roughness = 0;
             material.metallic = 0;

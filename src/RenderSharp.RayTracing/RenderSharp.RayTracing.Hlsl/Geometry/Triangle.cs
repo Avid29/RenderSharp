@@ -19,6 +19,7 @@ namespace RenderSharp.RayTracing.HLSL.Geometry
             cast.coefficient = 0;
             cast.origin = Float3.Zero;
             cast.normal = Float3.Zero;
+            cast.uv = Float2.Zero;
 
             Float3 normal = Hlsl.Cross(tri.b - tri.a, tri.c - tri.a);
             if (FloatUtils.LengthSquared(normal) < 0)

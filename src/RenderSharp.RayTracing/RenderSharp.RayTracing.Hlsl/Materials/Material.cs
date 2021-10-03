@@ -1,17 +1,18 @@
 ﻿using ComputeSharp;
 using RenderSharp.RayTracing.HLSL.Rays;
+using RenderSharp.RayTracing.HLSL.Textures;
 using RenderSharp.RayTracing.HLSL.Utils;
 
 namespace RenderSharp.RayTracing.HLSL.Materials
 {
     public struct Material
     {
-        public Float4 albedo;
+        public Texture albedo;
         public Float4 emission;
         public float roughness;
         public float metallic;
 
-        public static Material Create(Float4 albedo, Float4 emission, float roughness, float metallic)
+        public static Material Create(Texture albedo, Float4 emission, float roughness, float metallic)
         {
             Material material;
             material.albedo = albedo;
@@ -35,7 +36,7 @@ namespace RenderSharp.RayTracing.HLSL.Materials
             // Apply roughness
             target += material.roughness * RandUtils.RandomInUnitSphere(ref randState);
 
-            attenuation = material.albedo;
+            attenuation = Texture.Value(material.albedo, cast.uv);
             scatter = Ray.Create(cast.origin, target - cast.origin);
         }
 

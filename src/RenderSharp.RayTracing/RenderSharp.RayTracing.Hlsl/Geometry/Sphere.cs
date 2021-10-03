@@ -12,6 +12,14 @@ namespace RenderSharp.RayTracing.HLSL.Geometry
         public float radius;
         public int matId;
 
+        public static Float2 GetUV(Float3 point)
+        {
+            float theta = MathF.Acos(-point.Y);
+            float phi = MathF.Atan2(-point.Z, point.X) + MathF.PI;
+
+            return new Float2(phi / 2f * MathF.PI, theta / MathF.PI);
+        }
+
         public static bool IsHit(Sphere sphere, Ray ray, out RayCast cast, out int matId)
         {
             return IsHit(sphere, float.MaxValue, ray, out cast, out matId);
@@ -24,6 +32,7 @@ namespace RenderSharp.RayTracing.HLSL.Geometry
             cast.coefficient = 0;
             cast.origin = Float3.Zero;
             cast.normal = Float3.Zero;
+            cast.uv = Float2.Zero;
 
             Float3 oc = ray.origin - sphere.center;
             float a = FloatUtils.LengthSquared(ray.direction);
@@ -54,6 +63,7 @@ namespace RenderSharp.RayTracing.HLSL.Geometry
             cast.coefficient = dist;
             cast.origin = Ray.PointAt(ray, dist);
             cast.normal = (cast.origin - sphere.center) / sphere.radius;
+            cast.uv = GetUV(cast.normal);
             return true;
         }
     }

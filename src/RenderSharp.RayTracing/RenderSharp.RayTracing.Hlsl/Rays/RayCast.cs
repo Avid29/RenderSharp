@@ -6,6 +6,7 @@ namespace RenderSharp.RayTracing.HLSL.Rays
     {
         public Float3 origin;
         public Float3 normal;
+        public Float2 uv;
         public float coefficient;
     }
 }
