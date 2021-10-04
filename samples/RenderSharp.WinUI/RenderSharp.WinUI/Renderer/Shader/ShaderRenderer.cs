@@ -10,7 +10,7 @@ using ShaderSphere = RenderSharp.RayTracing.HLSL.Geometry.Sphere;
 
 namespace RenderSharp.Renderer
 {
-    public sealed class ShaderRenderer : ISceneRenderer
+    public sealed class ShaderRenderer : ITileRenderer
     {
         private ShaderScene _scene;
         private ReadOnlyBuffer<ShaderSphere> _geometryBuffer;
@@ -42,13 +42,11 @@ namespace RenderSharp.Renderer
             if (converter.AreMaterialsLoaded) _materialBuffer = converter.MaterialBuffer;
         }
 
-        public void Execute(IReadWriteTexture2D<Float4> texture, TimeSpan timespan)
+        public void Render(IReadWriteTexture2D<Float4> texture, Int2 size, Int2 offset)
         {
-            Int2 size = new Int2(texture.Width, texture.Height);
-            var tile = _gpu.AllocateReadWriteTexture2D<Float4>(texture.Width, texture.Height);
-            Int2 offset = new Int2(0, 0);
-
-            _gpu.For(tile.Width, tile.Height, _shaderFactory(_scene, size, offset, tile, _geometryBuffer, _materialBuffer));
+            Int2 fullSize = new Int2(texture.Width, texture.Height);
+            var tile = _gpu.AllocateReadWriteTexture2D<Float4>(size.X, size.Y);
+            _gpu.For(tile.Width, tile.Height, _shaderFactory(_scene, fullSize, offset, tile, _geometryBuffer, _materialBuffer));
             _gpu.ForEach(texture, new OverlayShader(offset, tile, texture));
         }
     }

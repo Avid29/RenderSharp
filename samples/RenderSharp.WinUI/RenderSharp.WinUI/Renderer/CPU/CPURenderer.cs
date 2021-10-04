@@ -1,19 +1,20 @@
 ﻿using ComputeSharp;
 using RenderSharp.RayTracing.CPU;
 using RenderSharp.RayTracing.CPU.Conversion;
-using RenderSharp.Renderer;
-using System;
 using CommonScene = RenderSharp.Common.Components.Scene;
 using ShaderScene = RenderSharp.RayTracing.CPU.Components.Scene;
 
 namespace RenderSharp.WinUI.Renderer
 {
-    public class CPURenderer : ISceneRenderer
+    public class CPURenderer : ITileRenderer
     {
         private ShaderScene _scene;
-        private int currentBar = 0;
-        private bool done = false;
-        private const int BAR_COUNT = 10;
+        private Int2 _fullSize;
+
+        public CPURenderer(Int2 fullSize)
+        {
+            _fullSize = fullSize;
+        }
 
         public void AllocateResources(CommonScene scene)
         {
@@ -21,24 +22,14 @@ namespace RenderSharp.WinUI.Renderer
             _scene = converter.ConvertScene(scene);
         }
 
-        public void Execute(IReadWriteTexture2D<Float4> texture, TimeSpan timespan)
+        public void Render(IReadWriteTexture2D<Float4> texture, Int2 size, Int2 offset)
         {
-            if (currentBar >= BAR_COUNT)
-                done = true;
+            RayTracer rayTracer = new RayTracer(_fullSize, _scene);
 
-            if (done) return;
-
-            Int2 size = new Int2(texture.Width, texture.Height);
-            Int2 barSize = new Int2(size.X, size.Y / BAR_COUNT);
-            RayTracer rayTracer = new RayTracer(size, _scene);
-
-            Int2 offset = new Int2(0, barSize.Y * currentBar);
-            Float4[,] frame = rayTracer.Render(offset, barSize);
+            Float4[,] frame = rayTracer.Render(offset, size);
             ReadWriteTexture2D<Float4> gpuFrame = Gpu.Default.AllocateReadWriteTexture2D(frame);
 
             Gpu.Default.ForEach(texture, new OverlayShader(offset, gpuFrame, texture));
-
-            currentBar++;
         }
     }
 }

@@ -75,9 +75,9 @@ namespace RenderSharp.RayTracing.CPU
         public Float4[,] Render(Int2 offset, Int2 size)
         {
             Float4[,] frame = new Float4[size.Y, size.X];
-            Parallel.For(0, size.Y, y =>
+            Parallel.For(0, size.X, x =>
             {
-                for (int x = 0; x < size.X; x++)
+                for (int y = 0; y < size.Y; y++)
                 {
                     frame[y,x] = Execute(new Int2(offset.X + x, offset.Y + y));
                 }
