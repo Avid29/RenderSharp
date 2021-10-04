@@ -24,7 +24,7 @@ namespace RenderSharp.WinUI.Renderer
             Float4[,] frame = rayTracer.Render(new Int2(texture.Width, texture.Height));
             ReadOnlyTexture2D<Float4> gpuFrame = Gpu.Default.AllocateReadOnlyTexture2D(frame);
 
-            Gpu.Default.ForEach(texture, new CopyShader(gpuFrame));
+            Gpu.Default.ForEach(texture, new OverlayShader(Int2.Zero, gpuFrame, texture));
         }
     }
 }
