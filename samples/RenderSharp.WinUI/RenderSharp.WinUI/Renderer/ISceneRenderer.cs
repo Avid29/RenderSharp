@@ -1,4 +1,5 @@
-﻿using ComputeSharp.WinUI;
+﻿using ComputeSharp;
+using ComputeSharp.WinUI;
 using RenderSharp.Common.Components;
 
 namespace RenderSharp.Renderer

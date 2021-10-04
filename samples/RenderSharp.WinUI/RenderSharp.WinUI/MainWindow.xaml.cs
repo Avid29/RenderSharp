@@ -18,6 +18,6 @@ namespace RenderSharp.WinUI
             Shader.AllocateResources(scene);
         }
 
-        public ISceneRenderer Shader = new CPURenderer();
+        public ISceneRenderer Shader = new ProgressiveRenderer<ShaderRenderer>(new ShaderRenderer());
     }
 }

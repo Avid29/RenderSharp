@@ -1,16 +1,20 @@
 ﻿using ComputeSharp;
 using RenderSharp.RayTracing.CPU;
 using RenderSharp.RayTracing.CPU.Conversion;
-using RenderSharp.Renderer;
-using System;
 using CommonScene = RenderSharp.Common.Components.Scene;
 using ShaderScene = RenderSharp.RayTracing.CPU.Components.Scene;
 
 namespace RenderSharp.WinUI.Renderer
 {
-    public class CPURenderer : ISceneRenderer
+    public class CPURenderer : ITileRenderer
     {
         private ShaderScene _scene;
+        private Int2 _fullSize;
+
+        public CPURenderer(Int2 fullSize)
+        {
+            _fullSize = fullSize;
+        }
 
         public void AllocateResources(CommonScene scene)
         {
@@ -18,13 +22,14 @@ namespace RenderSharp.WinUI.Renderer
             _scene = converter.ConvertScene(scene);
         }
 
-        public void Execute(IReadWriteTexture2D<Float4> texture, TimeSpan timespan)
+        public void Render(IReadWriteTexture2D<Float4> texture, Int2 size, Int2 offset)
         {
-            RayTracer rayTracer = new RayTracer(_scene);
-            Float4[,] frame = rayTracer.Render(new Int2(texture.Width, texture.Height));
-            ReadOnlyTexture2D<Float4> gpuFrame = Gpu.Default.AllocateReadOnlyTexture2D(frame);
+            RayTracer rayTracer = new RayTracer(_fullSize, _scene);
 
-            Gpu.Default.ForEach(texture, new CopyShader(gpuFrame));
+            Float4[,] frame = rayTracer.Render(offset, size);
+            ReadWriteTexture2D<Float4> gpuFrame = Gpu.Default.AllocateReadWriteTexture2D(frame);
+
+            Gpu.Default.ForEach(texture, new OverlayShader(offset, gpuFrame, texture));
         }
     }
 }
