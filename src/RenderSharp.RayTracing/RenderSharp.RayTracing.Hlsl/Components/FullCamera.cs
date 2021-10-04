@@ -34,7 +34,7 @@ namespace RenderSharp.RayTracing.HLSL.Components
 
             camera.lowerLeftCorner = camera.origin - camera.horizontal / 2 - camera.vertical / 2 - depth;
 
-            camera.lensRadius = specs.aperature / 2;
+            camera.lensRadius = specs.aperture / 2;
             return camera;
         }
 

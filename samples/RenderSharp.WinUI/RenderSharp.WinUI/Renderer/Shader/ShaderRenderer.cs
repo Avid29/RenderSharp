@@ -1,17 +1,15 @@
 ﻿using ComputeSharp;
-using ComputeSharp.WinUI;
 using RenderSharp.RayTracing.HLSL;
 using RenderSharp.RayTracing.HLSL.Conversion;
 using System;
-
 using CommonScene = RenderSharp.Common.Components.Scene;
+using ShaderMaterial = RenderSharp.RayTracing.HLSL.Materials.Material;
 using ShaderScene = RenderSharp.RayTracing.HLSL.Components.Scene;
 using ShaderSphere = RenderSharp.RayTracing.HLSL.Geometry.Sphere;
-using ShaderMaterial = RenderSharp.RayTracing.HLSL.Materials.Material;
 
 namespace RenderSharp.Renderer
 {
-    public sealed class ShaderRenderer : IShaderRunner, ISceneRenderer
+    public sealed class ShaderRenderer : ISceneRenderer
     {
         private ShaderScene _scene;
         private ReadOnlyBuffer<ShaderSphere> _geometryBuffer;
