@@ -25,6 +25,7 @@ namespace RenderSharp.RayTracing.CPU.BVH
                 Right = new BVHNode(geometries.Slice(mid, geometries.Length - mid), mid, depth+1);
 
                 BoundingBox = AABB.GetSurroundingBox(Left.BoundingBox, Right.BoundingBox);
+                GeometryIndex = -1;
             }
         }
 
