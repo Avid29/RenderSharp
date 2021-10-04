@@ -9,11 +9,11 @@ namespace RenderSharp.Common.Components
         public World(Sky sky)
         {
             Sky = sky;
-            Spheres = new List<Sphere>();
+            Geometry = new List<IObject>();
         }
 
         public Sky Sky { get; }
 
-        public List<Sphere> Spheres { get; }
+        public List<IObject> Geometry { get; }
     }
 }

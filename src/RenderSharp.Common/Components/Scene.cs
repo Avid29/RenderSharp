@@ -1,6 +1,7 @@
 ﻿using ComputeSharp;
 using RenderSharp.Common.Materials;
 using RenderSharp.Common.Objects;
+using RenderSharp.Common.Objects.Meshes;
 using RenderSharp.Common.Skys;
 
 namespace RenderSharp.Common.Components
@@ -13,7 +14,7 @@ namespace RenderSharp.Common.Components
             World = world;
         }
 
-        public Camera Camera { get; }
+        public Camera Camera { get; set; }
 
         public World World { get; }
 
@@ -33,10 +34,21 @@ namespace RenderSharp.Common.Components
             EmissiveMaterial emissive = new EmissiveMaterial(Float4.One, 2f);
 
             Scene scene = CreateEmptyScene();
-            scene.World.Spheres.Add(new Sphere(Float3.Zero, 0.5f, diffuse1));
-            scene.World.Spheres.Add(new Sphere(new Float3(1f, 0f, 0f), 0.5f, rawMetal));
-            scene.World.Spheres.Add(new Sphere(new Float3(-1f, 0f, 0f), 0.5f, emissive));
-            scene.World.Spheres.Add(new Sphere(new Float3(0, -100.5f, 0), 100f, diffuse2));
+            scene.World.Geometry.Add(new Sphere(Float3.Zero, 0.5f, diffuse1));
+            scene.World.Geometry.Add(new Sphere(new Float3(1f, 0f, 0f), 0.5f, rawMetal));
+            scene.World.Geometry.Add(new Sphere(new Float3(-1f, 0f, 0f), 0.5f, emissive));
+            scene.World.Geometry.Add(new Sphere(new Float3(0, -100.5f, 0), 100f, diffuse2));
+            return scene;
+        }
+
+        public static Scene CreateMeshScene(Mesh mesh)
+        {
+            DiffuseMaterial diffuse = new DiffuseMaterial(new Float4(0.5f, 0.5f, 0.5f, 1f), 0.5f);
+            mesh.Material = diffuse;
+
+            Scene scene = CreateEmptyScene();
+            scene.Camera = new Camera(new Float3(1.75f, 1.5f, 2f), new Float3(0f, 0f, 0f), 90f, 0.01f);
+            scene.World.Geometry.Add(mesh);
             return scene;
         }
     }

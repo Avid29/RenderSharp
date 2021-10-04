@@ -7,6 +7,17 @@ namespace RenderSharp.RayTracing.HLSL.Geometry
     public struct Triangle
     {
         public Float3 a, b, c;
+        public int matId;
+
+        public static Triangle Create(Float3 a, Float3 b, Float3 c, int matId)
+        {
+            Triangle triangle;
+            triangle.a = a;
+            triangle.b = b;
+            triangle.c = c;
+            triangle.matId = matId;
+            return triangle;
+        }
 
         public static bool IsHit(Triangle tri, Ray ray, out RayCast cast)
         {
