@@ -1,7 +1,12 @@
 ﻿using Microsoft.UI.Xaml;
 using RenderSharp.Common.Components;
+using RenderSharp.Common.Objects.Meshes;
+using RenderSharp.Import;
 using RenderSharp.Renderer;
-using RenderSharp.WinUI.Renderer;
+using System;
+using Windows.Storage.Pickers;
+using Windows.UI.Core;
+using WinRT;
 
 namespace RenderSharp.WinUI
 {
@@ -14,10 +19,22 @@ namespace RenderSharp.WinUI
         {
             this.InitializeComponent();
 
-            Scene scene = Scene.CreateSpheresScene();
-            Shader.AllocateResources(scene);
+            InitScene();
         }
 
-        public ISceneRenderer Shader = new ProgressiveRenderer<ShaderRenderer>(new ShaderRenderer());
+        public async void InitScene()
+        {
+            // TODO: File Picker
+            //FileOpenPicker picker = new FileOpenPicker() { CommitButtonText = "Select", SuggestedStartLocation = PickerLocationId.Objects3D, FileTypeFilter = { ".obj" } };
+            //var file = await picker.PickSingleFileAsync();
+            //string path = file.Path;
+            string path = @"C:\Users\avid2\3D Objects\TriCube.obj";
+
+            Mesh mesh = WaveFrontImporter.LoadMesh(path);
+            Scene scene = Scene.CreateMeshScene(mesh);
+            //Shader.AllocateResources(scene);
+        }
+
+        public ISceneRenderer Shader = null;
     }
 }
