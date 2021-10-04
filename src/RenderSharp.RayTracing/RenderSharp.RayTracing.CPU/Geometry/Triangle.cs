@@ -4,9 +4,9 @@ using System.Numerics;
 
 namespace RenderSharp.RayTracing.CPU.Geometry
 {
-    public struct Trinagle : IGeometry
+    public struct Triangle : IGeometry
     {
-        public Trinagle(Vector3 a, Vector3 b, Vector3 c, IMaterial material)
+        public Triangle(Vector3 a, Vector3 b, Vector3 c, IMaterial material)
         {
             A = a;
             B = b;

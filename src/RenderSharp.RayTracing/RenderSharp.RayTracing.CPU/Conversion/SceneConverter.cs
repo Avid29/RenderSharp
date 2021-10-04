@@ -1,6 +1,9 @@
 ﻿using RenderSharp.Common.Materials;
+using RenderSharp.Common.Objects.Meshes;
 using RenderSharp.RayTracing.CPU.Components;
+using RenderSharp.RayTracing.CPU.Geometry;
 using RenderSharp.RayTracing.CPU.Materials;
+using System.Collections.Generic;
 using System.Numerics;
 using CommonCamera = RenderSharp.Common.Components.Camera;
 using CommonDiffuse = RenderSharp.Common.Materials.DiffuseMaterial;
@@ -23,8 +26,12 @@ namespace RenderSharp.RayTracing.CPU.Conversion
 {
     public class SceneConverter
     {
+        private List<ShaderGeometry> _geometries;
+
         public SceneConverter()
-        { }
+        {
+            _geometries = new List<ShaderGeometry>();
+        }
 
         public ShaderScene ConvertScene(CommonScene scene)
         {
@@ -32,7 +39,7 @@ namespace RenderSharp.RayTracing.CPU.Conversion
             ShaderWorld world = ConvertWorld(scene.World);
 
             // Default config for now
-            RayTracingConfig config = new RayTracingConfig(64, 12);
+            RayTracingConfig config = new RayTracingConfig(16, 12);
 
             return new ShaderScene(camera, world, config);
         }
@@ -41,14 +48,12 @@ namespace RenderSharp.RayTracing.CPU.Conversion
         {
             ShaderSky sky = ConvertSky(world.Sky);
 
-            ShaderGeometry[] geometries = new ShaderGeometry[world.Geometry.Count];
-
             for (int i = 0; i < world.Geometry.Count; i++)
             {
-                geometries[i] = ConvertGeometry(world.Geometry[i]);
+                ConvertGeometry(world.Geometry[i]);
             }
 
-            return new ShaderWorld(sky, geometries);
+            return new ShaderWorld(sky, _geometries.ToArray());
         }
 
         public ShaderSky ConvertSky(CommonSky sky)
@@ -61,15 +66,32 @@ namespace RenderSharp.RayTracing.CPU.Conversion
             return new ShaderCamera(camera.Origin, camera.Look, camera.FocalLength, camera.FOV, camera.Aperture);
         }
 
-        public ShaderGeometry ConvertGeometry(CommonObject @object)
+        public void ConvertGeometry(CommonObject @object)
         {
             ShaderMaterial material = ConvertMaterial(@object.Material);
             switch (@object)
             {
                 case CommonSphere sphere:
-                    return new ShaderSphere(sphere.Center, sphere.Radius, material);
-                default:
-                    return new ShaderSphere(Vector3.Zero, 0, material);
+                    _geometries.Add(new ShaderSphere(sphere.Center, sphere.Radius, material));
+                    break;
+                case Mesh mesh:
+                    ConvertMesh(mesh);
+                    break;
+            }
+        }
+
+        public void ConvertMesh(Mesh mesh)
+        {
+            ShaderMaterial material = ConvertMaterial(mesh.Material);
+
+            // TODO: Triangluate faces
+            // Uses only first 3 verticies of a face for now
+            foreach (var face in mesh.Faces)
+            {
+                Vector3 a = face.Verticies[0];
+                Vector3 b = face.Verticies[1];
+                Vector3 c = face.Verticies[2];
+                _geometries.Add(new Triangle(a, b, c, material));
             }
         }
 

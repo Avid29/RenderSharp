@@ -11,11 +11,6 @@ namespace RenderSharp.WinUI.Renderer
         private ShaderScene _scene;
         private Int2 _fullSize;
 
-        public CPURenderer(Int2 fullSize)
-        {
-            _fullSize = fullSize;
-        }
-
         public void AllocateResources(CommonScene scene)
         {
             SceneConverter converter = new SceneConverter();
@@ -24,6 +19,7 @@ namespace RenderSharp.WinUI.Renderer
 
         public void Render(IReadWriteTexture2D<Float4> texture, Int2 size, Int2 offset)
         {
+            _fullSize = new Int2(texture.Width, texture.Height);
             RayTracer rayTracer = new RayTracer(_fullSize, _scene);
 
             Float4[,] frame = rayTracer.Render(offset, size);

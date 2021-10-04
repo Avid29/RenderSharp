@@ -14,7 +14,7 @@ namespace RenderSharp.Common.Components
             World = world;
         }
 
-        public Camera Camera { get; }
+        public Camera Camera { get; set; }
 
         public World World { get; }
 
@@ -47,6 +47,7 @@ namespace RenderSharp.Common.Components
             mesh.Material = diffuse;
 
             Scene scene = CreateEmptyScene();
+            scene.Camera = new Camera(new Float3(1.75f, 1.5f, 2f), new Float3(0f, 0f, 0f), 90f, 0.01f);
             scene.World.Geometry.Add(mesh);
             return scene;
         }
