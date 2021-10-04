@@ -38,13 +38,7 @@ namespace RenderSharp.RayTracing.CPU.BVH
 
         public bool IsHit(Ray ray, float maxClip)
         {
-            if (BoundingBox.IsHit(ray, maxClip, 0.001f))
-            {
-                if (Left.IsHit(ray, maxClip)) return true;
-                if (Right.IsHit(ray, maxClip)) return true;
-            }
-
-            return false;
+            return BoundingBox.IsHit(ray, maxClip, 0.0001f);
         }
     }
 }
