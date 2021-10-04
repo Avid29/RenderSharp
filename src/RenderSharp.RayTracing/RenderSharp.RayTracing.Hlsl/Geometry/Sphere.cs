@@ -12,14 +12,13 @@ namespace RenderSharp.RayTracing.HLSL.Geometry
         public float radius;
         public int matId;
 
-        public static bool IsHit(Sphere sphere, Ray ray, out RayCast cast, out int matId)
+        public static bool IsHit(Sphere sphere, Ray ray, out RayCast cast)
         {
-            return IsHit(sphere, float.MaxValue, ray, out cast, out matId);
+            return IsHit(sphere, float.MaxValue, ray, out cast);
         }
 
-        public static bool IsHit(Sphere sphere, float maxClip, Ray ray, out RayCast cast, out int matId)
+        public static bool IsHit(Sphere sphere, float maxClip, Ray ray, out RayCast cast)
         {
-            matId = sphere.matId;
             // Set cast defaults
             cast.coefficient = 0;
             cast.origin = Float3.Zero;

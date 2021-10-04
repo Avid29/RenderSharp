@@ -1,28 +1,30 @@
 ﻿using ComputeSharp;
 using RenderSharp.Common.Materials;
+using RenderSharp.Common.Objects.Meshes;
 using System.Collections.Generic;
-
+using System.Numerics;
 using CommonCamera = RenderSharp.Common.Components.Camera;
+using CommonObject = RenderSharp.Common.Objects.IObject;
 using CommonScene = RenderSharp.Common.Components.Scene;
 using CommonSky = RenderSharp.Common.Skys.Sky;
 using CommonSphere = RenderSharp.Common.Objects.Sphere;
-using CommonObject = RenderSharp.Common.Objects.IObject;
 using CommonWorld = RenderSharp.Common.Components.World;
 using ShaderCamera = RenderSharp.RayTracing.HLSL.Components.Camera;
+using ShaderMaterial = RenderSharp.RayTracing.HLSL.Materials.Material;
 using ShaderScene = RenderSharp.RayTracing.HLSL.Components.Scene;
 using ShaderSky = RenderSharp.RayTracing.HLSL.Skys.Sky;
 using ShaderSphere = RenderSharp.RayTracing.HLSL.Geometry.Sphere;
+using ShaderTriangle = RenderSharp.RayTracing.HLSL.Geometry.Triangle;
 using ShaderWorld = RenderSharp.RayTracing.HLSL.Components.World;
-using ShaderMaterial = RenderSharp.RayTracing.HLSL.Materials.Material;
-using System.Numerics;
 
 namespace RenderSharp.RayTracing.HLSL.Conversion
 {
     public class SceneConverter
     {
+        private List<ShaderTriangle> _geometries;
         private GraphicsDevice _gpu;
         private Dictionary<IMaterial, int> _materialMap = new Dictionary<IMaterial, int>();
-        private ReadOnlyBuffer<ShaderSphere> _geometryBuffer;
+        private ReadOnlyBuffer<ShaderTriangle> _geometryBuffer;
         private ReadOnlyBuffer<ShaderMaterial> _materialBuffer;
         private bool _isGeometryLoaded;
         private bool _areMaterialsLoaded;
@@ -31,13 +33,14 @@ namespace RenderSharp.RayTracing.HLSL.Conversion
         {
             _gpu = gpu;
             _isGeometryLoaded = false;
+            _geometries = new List<ShaderTriangle>();
         }
 
         public bool IsGeomertyLoaded => _isGeometryLoaded;
 
         public bool AreMaterialsLoaded => _areMaterialsLoaded;
 
-        public ReadOnlyBuffer<ShaderSphere> GeometryBuffer => _geometryBuffer;
+        public ReadOnlyBuffer<ShaderTriangle> GeometryBuffer => _geometryBuffer;
 
         public ReadOnlyBuffer<ShaderMaterial> MaterialBuffer => _materialBuffer;
 
@@ -61,14 +64,12 @@ namespace RenderSharp.RayTracing.HLSL.Conversion
             ShaderWorld output;
             output.sky = ConvertSky(world.Sky);
 
-            ShaderSphere[] spheres = new ShaderSphere[world.Geometry.Count];
-
             for (int i = 0; i < world.Geometry.Count; i++)
             {
-                spheres[i] = ConvertObject(world.Geometry[i]);
+                ConvertObject(world.Geometry[i]);
             }
 
-            LoadGeometry(spheres);
+            LoadGeometry(_geometries.ToArray());
 
             return output;
         }
@@ -85,32 +86,43 @@ namespace RenderSharp.RayTracing.HLSL.Conversion
             return ShaderCamera.CreateCamera(camera.Origin, camera.Look, camera.FocalLength, camera.FOV, camera.Aperture);
         }
 
-        public ShaderSphere ConvertObject(CommonObject @object)
+        public void ConvertObject(CommonObject @object)
         {
-            ShaderSphere output;
-            switch (@object)
-            {
-                case CommonSphere sphere:
-                    output.center = sphere.Center;
-                    output.radius = sphere.Radius;
-                    break;
-                default:
-                    output.center = Float3.Zero;
-                    output.radius = 0;
-                    break;
-            }
-            
+            int matId;
+
             if (_materialMap.ContainsKey(@object.Material))
             {
-                output.matId = _materialMap[@object.Material];
-            } else
+                matId = _materialMap[@object.Material];
+            }
+            else
             {
                 int id = _materialMap.Count;
                 _materialMap.Add(@object.Material, id);
-                output.matId = id;
+                matId = id;
             }
 
-            return output;
+            switch (@object)
+            {
+                case CommonSphere sphere:
+                    // Shader does not display spheres
+                    break;
+                case Mesh mesh:
+                    ConvertMesh(mesh, matId);
+                    break;
+            }
+        }
+
+        public void ConvertMesh(Mesh mesh, int matId)
+        {
+            // TODO: Triangluate faces
+            // Uses only first 3 verticies of a face for now
+            foreach (var face in mesh.Faces)
+            {
+                Vector3 a = face.Verticies[0];
+                Vector3 b = face.Verticies[1];
+                Vector3 c = face.Verticies[2];
+                _geometries.Add(ShaderTriangle.Create(a, b, c, matId));
+            }
         }
 
         public ShaderMaterial ConvertMaterial(IMaterial material)
@@ -142,7 +154,7 @@ namespace RenderSharp.RayTracing.HLSL.Conversion
             return output;
         }
 
-        public void LoadGeometry(ShaderSphere[] geometry)
+        public void LoadGeometry(ShaderTriangle[] geometry)
         {
             if (_isGeometryLoaded)
                 _geometryBuffer.Dispose();

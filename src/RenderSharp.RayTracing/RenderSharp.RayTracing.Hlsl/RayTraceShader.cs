@@ -18,7 +18,7 @@ namespace RenderSharp.RayTracing.HLSL
         private readonly Int2 _fullSize;
         private readonly Int2 _offset;
         private readonly ReadWriteTexture2D<Float4> output;
-        private readonly ReadOnlyBuffer<Sphere> geometry;
+        private readonly ReadOnlyBuffer<Triangle> geometry;
         private readonly ReadOnlyBuffer<Material> materials;
 
         public bool GetHit(Ray ray, out RayCast cast, out Material material)
@@ -35,15 +35,17 @@ namespace RenderSharp.RayTracing.HLSL
             float closest = float.MaxValue;
 
             RayCast cacheCast;
+            
+            // Check each triangle
             for (int i = 0; i < geometry.Length; i++)
             {
-                Sphere sphere = geometry[i];
-                if (Sphere.IsHit(sphere, closest, ray, out cacheCast, out int matId))
+                Triangle tri = geometry[i];
+                if (Triangle.IsHit(tri, closest, ray, out cacheCast))
                 {
                     hit = true;
                     closest = cacheCast.coefficient;
                     cast = cacheCast;
-                    material = materials[matId];
+                    material = materials[tri.matId];
                 }
             }
 

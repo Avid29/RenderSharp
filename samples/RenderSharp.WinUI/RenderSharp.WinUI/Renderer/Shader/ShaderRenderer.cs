@@ -7,13 +7,15 @@ using CommonScene = RenderSharp.Common.Components.Scene;
 using ShaderMaterial = RenderSharp.RayTracing.HLSL.Materials.Material;
 using ShaderScene = RenderSharp.RayTracing.HLSL.Components.Scene;
 using ShaderSphere = RenderSharp.RayTracing.HLSL.Geometry.Sphere;
+using ShaderTriangle = RenderSharp.RayTracing.HLSL.Geometry.Triangle;
 
 namespace RenderSharp.Renderer
 {
     public sealed class ShaderRenderer : ITileRenderer
     {
         private ShaderScene _scene;
-        private ReadOnlyBuffer<ShaderSphere> _geometryBuffer;
+        private ReadOnlyBuffer<ShaderTriangle> _geometryBuffer;
+        //private ReadOnlyBuffer<ShaderSphere> _sphereBuffer;
         private ReadOnlyBuffer<ShaderMaterial> _materialBuffer;
         private readonly GraphicsDevice _gpu;
 
@@ -21,7 +23,8 @@ namespace RenderSharp.Renderer
         private readonly
             Func<ShaderScene, Int2, Int2,
                 ReadWriteTexture2D<Float4>,
-                ReadOnlyBuffer<ShaderSphere>,
+                ReadOnlyBuffer<ShaderTriangle>,
+                //ReadOnlyBuffer<ShaderSphere>,
                 ReadOnlyBuffer<ShaderMaterial>,
                 RayTraceShader> _shaderFactory;
 
