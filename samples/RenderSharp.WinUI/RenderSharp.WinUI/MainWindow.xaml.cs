@@ -3,10 +3,6 @@ using RenderSharp.Common.Components;
 using RenderSharp.Common.Objects.Meshes;
 using RenderSharp.Import;
 using RenderSharp.Renderer;
-using System;
-using Windows.Storage.Pickers;
-using Windows.UI.Core;
-using WinRT;
 
 namespace RenderSharp.WinUI
 {
