@@ -1,5 +1,5 @@
-﻿using ComputeSharp;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Numerics;
 
 namespace RenderSharp.Common.Objects.Meshes
 {
@@ -7,9 +7,9 @@ namespace RenderSharp.Common.Objects.Meshes
     {
         public Face()
         {
-            Verticies = new List<Float3>();
+            Verticies = new List<Vector3>();
         }
 
-        public List<Float3> Verticies { get; }
+        public List<Vector3> Verticies { get; }
     }
 }

@@ -6,6 +6,7 @@ using CommonCamera = RenderSharp.Common.Components.Camera;
 using CommonScene = RenderSharp.Common.Components.Scene;
 using CommonSky = RenderSharp.Common.Skys.Sky;
 using CommonSphere = RenderSharp.Common.Objects.Sphere;
+using CommonObject = RenderSharp.Common.Objects.IObject;
 using CommonWorld = RenderSharp.Common.Components.World;
 using ShaderCamera = RenderSharp.RayTracing.HLSL.Components.Camera;
 using ShaderScene = RenderSharp.RayTracing.HLSL.Components.Scene;
@@ -60,11 +61,11 @@ namespace RenderSharp.RayTracing.HLSL.Conversion
             ShaderWorld output;
             output.sky = ConvertSky(world.Sky);
 
-            ShaderSphere[] spheres = new ShaderSphere[world.Spheres.Count];
+            ShaderSphere[] spheres = new ShaderSphere[world.Geometry.Count];
 
-            for (int i = 0; i < world.Spheres.Count; i++)
+            for (int i = 0; i < world.Geometry.Count; i++)
             {
-                spheres[i] = ConvertSphere(world.Spheres[i]);
+                spheres[i] = ConvertObject(world.Geometry[i]);
             }
 
             LoadGeometry(spheres);
@@ -84,19 +85,28 @@ namespace RenderSharp.RayTracing.HLSL.Conversion
             return ShaderCamera.CreateCamera(camera.Origin, camera.Look, camera.FocalLength, camera.FOV, camera.Aperture);
         }
 
-        public ShaderSphere ConvertSphere(CommonSphere sphere)
+        public ShaderSphere ConvertObject(CommonObject @object)
         {
             ShaderSphere output;
-            output.center = sphere.Center;
-            output.radius = sphere.Radius;
-            
-            if (_materialMap.ContainsKey(sphere.Material))
+            switch (@object)
             {
-                output.matId = _materialMap[sphere.Material];
+                case CommonSphere sphere:
+                    output.center = sphere.Center;
+                    output.radius = sphere.Radius;
+                    break;
+                default:
+                    output.center = Float3.Zero;
+                    output.radius = 0;
+                    break;
+            }
+            
+            if (_materialMap.ContainsKey(@object.Material))
+            {
+                output.matId = _materialMap[@object.Material];
             } else
             {
                 int id = _materialMap.Count;
-                _materialMap.Add(sphere.Material, id);
+                _materialMap.Add(@object.Material, id);
                 output.matId = id;
             }
 

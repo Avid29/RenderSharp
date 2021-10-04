@@ -16,6 +16,6 @@ namespace RenderSharp.Common.Objects
 
         public float Radius { get; }
 
-        public IMaterial Material { get; }
+        public IMaterial Material { get; set; }
     }
 }
