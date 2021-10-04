@@ -1,19 +1,9 @@
-﻿using ComputeSharp;
-using System.Numerics;
+﻿using System.Numerics;
 
-namespace RenderSharp.Common.Components
+namespace RenderSharp.RayTracing.CPU.Components
 {
-    public class Camera
+    public struct Camera
     {
-        public Camera(Vector3 origin, Vector3 look, float fov, float aperture)
-        {
-            Origin = origin;
-            Look = look;
-            FocalLength = Vector3.Distance(origin, look);
-            FOV = fov;
-            Aperture = aperture;
-        }
-
         public Camera(Vector3 origin, Vector3 look, float focalLength, float fov, float aperture)
         {
             Origin = origin;
@@ -27,9 +17,9 @@ namespace RenderSharp.Common.Components
 
         public Vector3 Look { get; }
 
-        public float FOV { get; }
-
         public float FocalLength { get; }
+
+        public float FOV { get; }
 
         public float Aperture { get; }
     }
