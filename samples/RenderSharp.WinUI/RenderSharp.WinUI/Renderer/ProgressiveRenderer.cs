@@ -16,6 +16,7 @@ namespace RenderSharp.WinUI.Renderer
         private int currentTile = 0;
         private int tileCount = -1;
         private bool done = false;
+        private int tileHeight = 20;
 
         public ProgressiveRenderer(T tileRenderer) : this(Gpu.Default, tileRenderer)
         { }
@@ -33,10 +34,10 @@ namespace RenderSharp.WinUI.Renderer
 
         public void Execute(IReadWriteTexture2D<Float4> texture, TimeSpan timespan)
         {
-            if (tileCount != texture.Height)
+            if (tileCount != MathF.Ceiling((float)texture.Height / tileHeight))
             {
                 currentTile = 0;
-                tileCount = texture.Height;
+                tileCount = (int)MathF.Ceiling((float)texture.Height / tileHeight);
                 done = false;
             }
 
@@ -44,8 +45,14 @@ namespace RenderSharp.WinUI.Renderer
 
             if (done) return;
 
-            Int2 tileSize = new Int2(texture.Width, 1);
-            Int2 offset = new Int2(0, currentTile);
+            Int2 offset = new Int2(0, currentTile * tileHeight);
+            Int2 tileSize = new Int2(texture.Width, tileHeight);
+
+            if (offset.Y + tileSize.Y > texture.Height)
+            {
+                tileSize.Y = texture.Height - offset.Y;
+            }
+
             _tileRenderer.Render(texture, tileSize, offset);
 
             currentTile++;
