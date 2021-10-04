@@ -12,9 +12,12 @@ namespace RenderSharp.RayTracing.HLSL
     /// An <see cref="IPixelShader{Float4}"/> that ray traces a scene to render.
     /// </summary>
     [AutoConstructor]
-    public readonly partial struct RayTraceShader : IPixelShader<Float4>
+    public readonly partial struct RayTraceShader : IComputeShader
     {
         private readonly Scene scene;
+        private readonly Int2 _fullSize;
+        private readonly Int2 _offset;
+        private readonly ReadWriteTexture2D<Float4> output;
         private readonly ReadOnlyBuffer<Sphere> geometry;
         private readonly ReadOnlyBuffer<Material> materials;
 
@@ -82,11 +85,10 @@ namespace RenderSharp.RayTracing.HLSL
             return color;
         }
 
-        public Float4 Execute()
+        public void Execute()
         {
             // Image
-            Float2 size = DispatchSize.XY;
-            float aspectRatio = size.X / size.Y;
+            float aspectRatio = (float)_fullSize.X / _fullSize.Y;
 
             // Camera
             FullCamera camera = FullCamera.Create(scene.camera, aspectRatio);
@@ -95,13 +97,16 @@ namespace RenderSharp.RayTracing.HLSL
             Float4 color = Float4.Zero;
             for (int s = 0; s < scene.config.samples; s++)
             {
-                uint randState = (uint)(ThreadIds.X * 1973 + ThreadIds.Y * 9277 + s * 26699) | 1;
-                float u = (ThreadIds.X + RandUtils.RandomFloat(ref randState)) / size.X;
-                float v = 1 - ((ThreadIds.Y + RandUtils.RandomFloat(ref randState)) / size.Y);
+                int x = _offset.X + ThreadIds.X;
+                int y = _offset.Y + ThreadIds.Y;
+                uint randState = (uint)(x * 1973 + y * 9277 + s * 26699) | 1;
+                float u = (x + RandUtils.RandomFloat(ref randState)) / _fullSize.X;
+                float v = 1 - ((y + RandUtils.RandomFloat(ref randState)) / _fullSize.Y);
                 Ray ray = FullCamera.CreateRay(camera, u, v, ref randState);
                 color += BounceRay(scene, ray, ref randState);
             }
-            return color / scene.config.samples;
+
+            output[ThreadIds.XY] = color / scene.config.samples;
         }
     }
 }

@@ -11,6 +11,9 @@ namespace RenderSharp.WinUI.Renderer
     public class CPURenderer : ISceneRenderer
     {
         private ShaderScene _scene;
+        private int currentBar = 0;
+        private bool done = false;
+        private const int BAR_COUNT = 10;
 
         public void AllocateResources(CommonScene scene)
         {
@@ -20,11 +23,22 @@ namespace RenderSharp.WinUI.Renderer
 
         public void Execute(IReadWriteTexture2D<Float4> texture, TimeSpan timespan)
         {
-            RayTracer rayTracer = new RayTracer(_scene);
-            Float4[,] frame = rayTracer.Render(new Int2(texture.Width, texture.Height));
-            ReadOnlyTexture2D<Float4> gpuFrame = Gpu.Default.AllocateReadOnlyTexture2D(frame);
+            if (currentBar >= BAR_COUNT)
+                done = true;
 
-            Gpu.Default.ForEach(texture, new OverlayShader(Int2.Zero, gpuFrame, texture));
+            if (done) return;
+
+            Int2 size = new Int2(texture.Width, texture.Height);
+            Int2 barSize = new Int2(size.X, size.Y / BAR_COUNT);
+            RayTracer rayTracer = new RayTracer(size, _scene);
+
+            Int2 offset = new Int2(0, barSize.Y * currentBar);
+            Float4[,] frame = rayTracer.Render(offset, barSize);
+            ReadWriteTexture2D<Float4> gpuFrame = Gpu.Default.AllocateReadWriteTexture2D(frame);
+
+            Gpu.Default.ForEach(texture, new OverlayShader(offset, gpuFrame, texture));
+
+            currentBar++;
         }
     }
 }

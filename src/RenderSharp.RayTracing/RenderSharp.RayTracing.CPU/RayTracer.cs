@@ -11,11 +11,12 @@ namespace RenderSharp.RayTracing.CPU
     public class RayTracer
     {
         private Scene _scene;
-        private Int2 _size;
+        private Int2 _fullSize;
 
-        public RayTracer(Scene scene)
+        public RayTracer(Int2 size, Scene scene)
         {
             _scene = scene;
+            _fullSize = size;
         }
 
         private Vector4 BounceRay(Ray ray, ref uint randState)
@@ -52,7 +53,7 @@ namespace RenderSharp.RayTracing.CPU
         public Float4 Execute(Int2 pos)
         {
             // Image
-            float aspectRatio = (float)_size.X / _size.Y;
+            float aspectRatio = (float)_fullSize.X / _fullSize.Y;
 
             // Camera
             FullCamera camera = new FullCamera(_scene.Camera, aspectRatio);
@@ -62,8 +63,8 @@ namespace RenderSharp.RayTracing.CPU
             for (int s = 0; s < _scene.Config.Samples; s++)
             {
                 uint randState = (uint)(pos.X * 1973 + pos.Y * 9277 + s * 26699) | 1;
-                float u = (pos.X + RandUtils.RandomFloat(ref randState)) / _size.X;
-                float v = 1 - ((pos.Y + RandUtils.RandomFloat(ref randState)) / _size.Y);
+                float u = (pos.X + RandUtils.RandomFloat(ref randState)) / _fullSize.X;
+                float v = 1 - ((pos.Y + RandUtils.RandomFloat(ref randState)) / _fullSize.Y);
                 Ray ray = camera.CreateRay(u, v, ref randState);
                 color += BounceRay(ray, ref randState);
             }
@@ -71,15 +72,14 @@ namespace RenderSharp.RayTracing.CPU
             return color / _scene.Config.Samples;
         }
 
-        public Float4[,] Render(Int2 size)
+        public Float4[,] Render(Int2 offset, Int2 size)
         {
-            _size = size;
             Float4[,] frame = new Float4[size.Y, size.X];
             Parallel.For(0, size.Y, y =>
             {
                 for (int x = 0; x < size.X; x++)
                 {
-                    frame[y,x] = Execute(new Int2(x, y));
+                    frame[y,x] = Execute(new Int2(offset.X + x, offset.Y + y));
                 }
             });
 
