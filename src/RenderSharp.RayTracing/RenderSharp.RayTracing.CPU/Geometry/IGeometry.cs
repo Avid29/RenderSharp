@@ -1,4 +1,5 @@
-﻿using RenderSharp.RayTracing.CPU.Materials;
+﻿using RenderSharp.RayTracing.CPU.BVH;
+using RenderSharp.RayTracing.CPU.Materials;
 using RenderSharp.RayTracing.CPU.Rays;
 
 namespace RenderSharp.RayTracing.CPU.Geometry
@@ -10,5 +11,7 @@ namespace RenderSharp.RayTracing.CPU.Geometry
         public bool IsHit(Ray ray, out RayCast cast);
 
         public bool IsHit(Ray ray, float maxClip, out RayCast cast);
+
+        public AABB GetBoundingBox();
     }
 }

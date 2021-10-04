@@ -1,5 +1,7 @@
-﻿using RenderSharp.RayTracing.CPU.Materials;
+﻿using RenderSharp.RayTracing.CPU.BVH;
+using RenderSharp.RayTracing.CPU.Materials;
 using RenderSharp.RayTracing.CPU.Rays;
+using System;
 using System.Numerics;
 
 namespace RenderSharp.RayTracing.CPU.Geometry
@@ -50,6 +52,22 @@ namespace RenderSharp.RayTracing.CPU.Geometry
 
             cast = new RayCast(q, normal, t);
             return true;
+        }
+
+        public AABB GetBoundingBox()
+        {
+            float x, y, z;
+            x = MathF.Min(A.X, MathF.Min(B.X, C.X));
+            y = MathF.Min(A.Y, MathF.Min(B.Y, C.Y));
+            z = MathF.Min(A.Z, MathF.Min(B.Z, C.Z));
+            Vector3 min = new Vector3(x, y, z);
+
+            x = MathF.Max(A.X, MathF.Max(B.X, C.X));
+            y = MathF.Max(A.Y, MathF.Max(B.Y, C.Y));
+            z = MathF.Max(A.Z, MathF.Max(B.Z, C.Z));
+            Vector3 max = new Vector3(x, y, z);
+
+            return new AABB(max, min);
         }
     }
 }
