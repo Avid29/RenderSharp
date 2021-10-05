@@ -1,4 +1,4 @@
-﻿namespace RenderSharp.RayTracing.CPU.Components
+﻿namespace RenderSharp.RayTracing.CPU.Scenes
 {
     public struct RayTracingConfig
     {

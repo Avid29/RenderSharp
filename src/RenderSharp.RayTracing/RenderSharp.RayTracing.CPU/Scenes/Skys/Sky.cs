@@ -1,7 +1,7 @@
-﻿using RenderSharp.RayTracing.CPU.Rays;
+﻿using RenderSharp.RayTracing.CPU.Scenes.Rays;
 using System.Numerics;
 
-namespace RenderSharp.RayTracing.CPU.Skys
+namespace RenderSharp.RayTracing.CPU.Scenes.Skys
 {
     public struct Sky
     {

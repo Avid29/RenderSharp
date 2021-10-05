@@ -1,4 +1,6 @@
-﻿namespace RenderSharp.RayTracing.CPU.Components
+﻿using RenderSharp.RayTracing.CPU.Scenes.Cameras;
+
+namespace RenderSharp.RayTracing.CPU.Scenes
 {
     public struct Scene
     {

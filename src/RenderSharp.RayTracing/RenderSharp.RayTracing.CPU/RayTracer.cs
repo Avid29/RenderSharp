@@ -1,7 +1,8 @@
 ﻿using ComputeSharp;
-using RenderSharp.RayTracing.CPU.Components;
-using RenderSharp.RayTracing.CPU.Materials;
-using RenderSharp.RayTracing.CPU.Rays;
+using RenderSharp.RayTracing.CPU.Scenes;
+using RenderSharp.RayTracing.CPU.Scenes.Cameras;
+using RenderSharp.RayTracing.CPU.Scenes.Materials;
+using RenderSharp.RayTracing.CPU.Scenes.Rays;
 using RenderSharp.RayTracing.CPU.Utils;
 using System.Numerics;
 using System.Threading.Tasks;

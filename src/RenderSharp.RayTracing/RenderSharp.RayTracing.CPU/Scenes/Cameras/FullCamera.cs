@@ -1,9 +1,9 @@
-﻿using RenderSharp.RayTracing.CPU.Rays;
+﻿using RenderSharp.RayTracing.CPU.Scenes.Rays;
 using RenderSharp.RayTracing.CPU.Utils;
 using System;
 using System.Numerics;
 
-namespace RenderSharp.RayTracing.CPU.Components
+namespace RenderSharp.RayTracing.CPU.Scenes.Cameras
 {
     public struct FullCamera
     {

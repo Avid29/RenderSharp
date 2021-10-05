@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace RenderSharp.RayTracing.CPU.Components
+namespace RenderSharp.RayTracing.CPU.Scenes.Cameras
 {
     public struct Camera
     {

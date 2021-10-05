@@ -1,11 +1,11 @@
-﻿using RenderSharp.RayTracing.CPU.BVH;
-using RenderSharp.RayTracing.CPU.Materials;
-using RenderSharp.RayTracing.CPU.Rays;
+﻿using RenderSharp.RayTracing.CPU.Scenes.BVH;
+using RenderSharp.RayTracing.CPU.Scenes.Materials;
+using RenderSharp.RayTracing.CPU.Scenes.Rays;
 using RenderSharp.RayTracing.CPU.Utils;
 using System;
 using System.Numerics;
 
-namespace RenderSharp.RayTracing.CPU.Geometry
+namespace RenderSharp.RayTracing.CPU.Scenes.Geometry
 {
     public struct Sphere : IGeometry
     {

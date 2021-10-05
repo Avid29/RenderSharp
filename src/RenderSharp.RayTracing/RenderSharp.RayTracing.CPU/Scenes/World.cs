@@ -1,11 +1,11 @@
-﻿using RenderSharp.RayTracing.CPU.BVH;
-using RenderSharp.RayTracing.CPU.Geometry;
-using RenderSharp.RayTracing.CPU.Materials;
-using RenderSharp.RayTracing.CPU.Rays;
-using RenderSharp.RayTracing.CPU.Skys;
+﻿using RenderSharp.RayTracing.CPU.Scenes.BVH;
+using RenderSharp.RayTracing.CPU.Scenes.Geometry;
+using RenderSharp.RayTracing.CPU.Scenes.Materials;
+using RenderSharp.RayTracing.CPU.Scenes.Rays;
+using RenderSharp.RayTracing.CPU.Scenes.Skys;
 using System.Collections.Generic;
 
-namespace RenderSharp.RayTracing.CPU.Components
+namespace RenderSharp.RayTracing.CPU.Scenes
 {
     public struct World
     {

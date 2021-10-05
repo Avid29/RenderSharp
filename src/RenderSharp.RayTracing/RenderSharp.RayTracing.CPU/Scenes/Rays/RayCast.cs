@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace RenderSharp.RayTracing.CPU.Rays
+namespace RenderSharp.RayTracing.CPU.Scenes.Rays
 {
     public struct RayCast
     {

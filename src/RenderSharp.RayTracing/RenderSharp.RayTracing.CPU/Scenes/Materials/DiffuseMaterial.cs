@@ -1,8 +1,8 @@
-﻿using RenderSharp.RayTracing.CPU.Rays;
+﻿using RenderSharp.RayTracing.CPU.Scenes.Rays;
 using RenderSharp.RayTracing.CPU.Utils;
 using System.Numerics;
 
-namespace RenderSharp.RayTracing.CPU.Materials
+namespace RenderSharp.RayTracing.CPU.Scenes.Materials
 {
     public struct DiffuseMaterial : IMaterial
     {
