@@ -30,7 +30,7 @@ namespace RenderSharp.RayTracing.CPU.BVH
                 minClip = t0 > minClip ? t0 : minClip;
                 maxClip = t1 < maxClip ? t1 : maxClip;
 
-                if (maxClip <= minClip) return false;
+                if (maxClip < minClip) return false;
             }
 
             return true;

@@ -1,5 +1,6 @@
 ﻿using ComputeSharp;
 using RenderSharp.RayTracing.HLSL;
+using RenderSharp.RayTracing.HLSL.BVH;
 using RenderSharp.RayTracing.HLSL.Conversion;
 using RenderSharp.WinUI.Renderer;
 using System;
@@ -17,6 +18,8 @@ namespace RenderSharp.Renderer
         private ReadOnlyBuffer<ShaderTriangle> _geometryBuffer;
         //private ReadOnlyBuffer<ShaderSphere> _sphereBuffer;
         private ReadOnlyBuffer<ShaderMaterial> _materialBuffer;
+        private ReadOnlyBuffer<BVHNode> _bvhHeap;
+        private int _bvhDepth;
         private readonly GraphicsDevice _gpu;
 
         // TODO: Replace RayTracerShader with a generic T for any renderer
@@ -26,6 +29,8 @@ namespace RenderSharp.Renderer
                 ReadOnlyBuffer<ShaderTriangle>,
                 //ReadOnlyBuffer<ShaderSphere>,
                 ReadOnlyBuffer<ShaderMaterial>,
+                ReadOnlyBuffer<BVHNode>,
+                ReadWriteTexture3D<int>,
                 RayTraceShader> _shaderFactory;
 
         public ShaderRenderer() : this(Gpu.Default)
@@ -34,22 +39,28 @@ namespace RenderSharp.Renderer
         public ShaderRenderer(GraphicsDevice gpu)
         {
             _gpu = gpu;
-            _shaderFactory = static (s, f, t, o, g, m) => new RayTraceShader(s, f, t, o, g, m);
+            _shaderFactory = static (sce, sz, offset, output, geometries, materials, bvh, stack) =>
+                new RayTraceShader(sce, sz, offset, output, geometries, materials, bvh, stack);
         }
 
         public void AllocateResources(CommonScene scene)
         {
             SceneConverter converter = new SceneConverter(_gpu);
             _scene = converter.ConvertScene(scene);
-            if (converter.IsGeomertyLoaded) _geometryBuffer = converter.GeometryBuffer;
-            if (converter.AreMaterialsLoaded) _materialBuffer = converter.MaterialBuffer;
+
+            _materialBuffer = converter.MaterialBuffer;
+            _bvhHeap = converter.BVHHeap;
+            _bvhDepth = converter.BVHDepth;
+            _geometryBuffer = converter.GeometryBuffer;
         }
 
         public void Render(IReadWriteTexture2D<Float4> texture, Int2 size, Int2 offset)
         {
             Int2 fullSize = new Int2(texture.Width, texture.Height);
             var tile = _gpu.AllocateReadWriteTexture2D<Float4>(size.X, size.Y);
-            _gpu.For(tile.Width, tile.Height, _shaderFactory(_scene, fullSize, offset, tile, _geometryBuffer, _materialBuffer));
+            var stack = _gpu.AllocateReadWriteTexture3D<int>(size.X, size.Y, _bvhDepth + 1);
+
+            _gpu.For(tile.Width, tile.Height, _shaderFactory(_scene, fullSize, offset, tile, _geometryBuffer, _materialBuffer, _bvhHeap, stack));
             _gpu.ForEach(texture, new OverlayShader(offset, tile, texture));
         }
     }

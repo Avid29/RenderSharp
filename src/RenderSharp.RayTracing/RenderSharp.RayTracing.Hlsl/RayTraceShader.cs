@@ -1,4 +1,5 @@
 ﻿using ComputeSharp;
+using RenderSharp.RayTracing.HLSL.BVH;
 using RenderSharp.RayTracing.HLSL.Components;
 using RenderSharp.RayTracing.HLSL.Geometry;
 using RenderSharp.RayTracing.HLSL.Materials;
@@ -20,8 +21,15 @@ namespace RenderSharp.RayTracing.HLSL
         private readonly ReadWriteTexture2D<Float4> output;
         private readonly ReadOnlyBuffer<Triangle> geometry;
         private readonly ReadOnlyBuffer<Material> materials;
+        private readonly ReadOnlyBuffer<BVHNode> bvhHeap;
+        private readonly ReadWriteTexture3D<int> bvhStack;
 
-        public bool GetHit(Ray ray, out RayCast cast, out Material material)
+        public bool GetHit(Ray ray, out RayCast cast, out Material material, Int2 pos)
+        {
+            return GetHitWithBVH(ray, out cast, out material, pos);
+        }
+
+        public bool GetHitWithBVH(Ray ray, out RayCast cast, out Material material, Int2 pos)
         {
             cast.origin = 0;
             cast.normal = 0;
@@ -35,19 +43,39 @@ namespace RenderSharp.RayTracing.HLSL
             float closest = float.MaxValue;
 
             RayCast cacheCast;
-            
-            // Check each triangle
-            for (int i = 0; i < geometry.Length; i++)
+
+            // Init stack with root BVH
+            int stackIndex = 0;
+            bvhStack[pos.X, pos.Y, 0] = 0;
+
+            do
             {
-                Triangle tri = geometry[i];
-                if (Triangle.IsHit(tri, closest, ray, out cacheCast))
+                // Pop the stack
+                int nodeIndex = bvhStack[pos.X, pos.Y, stackIndex--];
+                BVHNode node = bvhHeap[nodeIndex];
+
+                if (BVHNode.IsHit(node, ray, closest))
                 {
-                    hit = true;
-                    closest = cacheCast.coefficient;
-                    cast = cacheCast;
-                    material = materials[tri.matId];
+                    if (node.geoI != -1)
+                    {
+                        // Leaf node
+                        Triangle triange = geometry[node.geoI];
+                        if (Triangle.IsHit(triange, ray, out cacheCast))
+                        {
+                            hit = true;
+                            closest = cacheCast.coefficient;
+                            cast = cacheCast;
+                            material = materials[triange.matId];
+                        }
+                    }
+                    else
+                    {
+                        // Push stack
+                        bvhStack[pos.X, pos.Y, ++stackIndex] = node.leftI;
+                        bvhStack[pos.X, pos.Y, ++stackIndex] = node.rightI;
+                    }
                 }
-            }
+            } while (stackIndex != -1) ;
 
             return hit;
         }
@@ -59,7 +87,7 @@ namespace RenderSharp.RayTracing.HLSL
         /// <param name="ray">The original ray to bounce.</param>
         /// <param name="randState">A integer used through out the shader to provide a random number.</param>
         /// <returns>The color of pixel from the original ray.</returns>
-        private Float4 BounceRay(Scene scene, Ray ray, ref uint randState)
+        private Float4 BounceRay(Scene scene, Ray ray, ref uint randState, Int2 pos)
         {
             Float4 color = Float4.Zero;
             Float4 cumAttenuation = Float4.One;
@@ -67,7 +95,7 @@ namespace RenderSharp.RayTracing.HLSL
             // Bounce the ray around the scene iteratively
             for (int depth = 0; depth < scene.config.maxBounces; depth++)
             {
-                if (GetHit(ray, out RayCast cast, out Material material))
+                if (GetHit(ray, out RayCast cast, out Material material, pos))
                 {
                     Material.Emit(material, out Float4 emission);
                     color += emission * cumAttenuation;
@@ -89,6 +117,9 @@ namespace RenderSharp.RayTracing.HLSL
 
         public void Execute()
         {
+            // Position
+            Int2 pos = ThreadIds.XY;
+
             // Image
             float aspectRatio = (float)_fullSize.X / _fullSize.Y;
 
@@ -105,10 +136,41 @@ namespace RenderSharp.RayTracing.HLSL
                 float u = (x + RandUtils.RandomFloat(ref randState)) / _fullSize.X;
                 float v = 1 - ((y + RandUtils.RandomFloat(ref randState)) / _fullSize.Y);
                 Ray ray = FullCamera.CreateRay(camera, u, v, ref randState);
-                color += BounceRay(scene, ray, ref randState);
+                color += BounceRay(scene, ray, ref randState, pos);
             }
 
-            output[ThreadIds.XY] = color / scene.config.samples;
+            output[pos] = color / scene.config.samples;
+        }
+
+        public bool GetHitNoBVH(Ray ray, out RayCast cast, out Material material, Int2 pos)
+        {
+            cast.origin = 0;
+            cast.normal = 0;
+            cast.coefficient = 0;
+            material.albedo = Float4.Zero;
+            material.emission = Float4.Zero;
+            material.roughness = 0;
+            material.metallic = 0;
+
+            bool hit = false;
+            float closest = float.MaxValue;
+
+            RayCast cacheCast;
+
+            // Check each triangle
+            for (int i = 0; i < geometry.Length; i++)
+            {
+                Triangle tri = geometry[i];
+                if (Triangle.IsHit(tri, closest, ray, out cacheCast))
+                {
+                    hit = true;
+                    closest = cacheCast.coefficient;
+                    cast = cacheCast;
+                    material = materials[tri.matId];
+                }
+            }
+
+            return hit;
         }
     }
 }

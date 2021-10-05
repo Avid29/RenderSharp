@@ -1,6 +1,8 @@
 ﻿using ComputeSharp;
+using RenderSharp.RayTracing.HLSL.BVH;
 using RenderSharp.RayTracing.HLSL.Rays;
 using RenderSharp.RayTracing.HLSL.Utils;
+using System;
 
 namespace RenderSharp.RayTracing.HLSL.Geometry
 {
@@ -56,6 +58,22 @@ namespace RenderSharp.RayTracing.HLSL.Geometry
             cast.normal = normal;
             cast.coefficient = t;
             return true;
+        }
+
+        public static AABB GetBoundingBox(Triangle triangle)
+        {
+            float x, y, z;
+            x = MathF.Min(triangle.a.X, MathF.Min(triangle.b.X, triangle.c.X));
+            y = MathF.Min(triangle.a.Y, MathF.Min(triangle.b.Y, triangle.c.Y));
+            z = MathF.Min(triangle.a.Z, MathF.Min(triangle.b.Z, triangle.c.Z));
+            Float3 min = new Float3(x, y, z);
+
+            x = MathF.Max(triangle.a.X, MathF.Max(triangle.b.X, triangle.c.X));
+            y = MathF.Max(triangle.a.Y, MathF.Max(triangle.b.Y, triangle.c.Y));
+            z = MathF.Max(triangle.a.Z, MathF.Max(triangle.b.Z, triangle.c.Z));
+            Float3 max = new Float3(x, y, z);
+
+            return AABB.Create(max, min);
         }
     }
 }
