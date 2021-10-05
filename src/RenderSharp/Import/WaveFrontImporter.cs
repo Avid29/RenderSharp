@@ -1,4 +1,4 @@
-﻿using RenderSharp.Common.Objects.Meshes;
+﻿using RenderSharp.Common.Scenes.Objects.Meshes;
 using System;
 using System.IO;
 using System.Numerics;

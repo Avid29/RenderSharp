@@ -1,6 +1,6 @@
 ﻿using ComputeSharp;
 
-namespace RenderSharp.RayTracing.HLSL.Rays
+namespace RenderSharp.RayTracing.HLSL.Scenes.Rays
 {
     public struct RayCast
     {

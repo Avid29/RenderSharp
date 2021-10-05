@@ -1,4 +1,4 @@
-﻿namespace RenderSharp.RayTracing.HLSL.Components
+﻿namespace RenderSharp.RayTracing.HLSL.Scenes
 {
     public struct RayTracingConfig
     {

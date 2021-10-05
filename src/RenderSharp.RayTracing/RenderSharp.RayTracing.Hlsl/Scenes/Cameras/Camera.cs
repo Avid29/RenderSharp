@@ -1,6 +1,6 @@
 ﻿using ComputeSharp;
 
-namespace RenderSharp.RayTracing.HLSL.Components
+namespace RenderSharp.RayTracing.HLSL.Scenes.Cameras
 {
     public struct Camera
     {

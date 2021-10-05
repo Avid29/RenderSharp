@@ -1,8 +1,8 @@
 ﻿using ComputeSharp;
-using RenderSharp.RayTracing.HLSL.Rays;
+using RenderSharp.RayTracing.HLSL.Scenes.Rays;
 using System;
 
-namespace RenderSharp.RayTracing.HLSL.BVH
+namespace RenderSharp.RayTracing.HLSL.Scenes.BVH
 {
     public struct AABB
     {

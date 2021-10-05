@@ -1,4 +1,4 @@
-﻿using RenderSharp.Common.Materials;
+﻿using RenderSharp.Common.Scenes.Materials;
 using System.Collections.Generic;
 using System.Numerics;
 

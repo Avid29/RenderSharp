@@ -1,8 +1,8 @@
 ﻿using ComputeSharp;
-using RenderSharp.RayTracing.HLSL.Rays;
+using RenderSharp.RayTracing.HLSL.Scenes.Rays;
 using System.Numerics;
 
-namespace RenderSharp.RayTracing.HLSL.Skys
+namespace RenderSharp.RayTracing.HLSL.Scenes.Skys
 {
     public struct Sky
     {

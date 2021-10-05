@@ -2,14 +2,12 @@
 using RenderSharp.Renderer;
 using System;
 using CommonScene = RenderSharp.Common.Scenes.Scene;
-using ShaderScene = RenderSharp.RayTracing.HLSL.Components.Scene;
 
 namespace RenderSharp.WinUI.Renderer
 {
     public class ProgressiveRenderer<T> : ISceneRenderer
         where T : ITileRenderer
     {
-        private ShaderScene _scene;
         private readonly GraphicsDevice _gpu;
         private T _tileRenderer;
 

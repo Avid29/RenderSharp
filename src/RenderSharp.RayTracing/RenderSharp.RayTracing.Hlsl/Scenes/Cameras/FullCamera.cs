@@ -1,9 +1,9 @@
 ﻿using ComputeSharp;
-using RenderSharp.RayTracing.HLSL.Rays;
+using RenderSharp.RayTracing.HLSL.Scenes.Rays;
 using RenderSharp.RayTracing.HLSL.Utils;
 using System;
 
-namespace RenderSharp.RayTracing.HLSL.Components
+namespace RenderSharp.RayTracing.HLSL.Scenes.Cameras
 {
     public struct FullCamera
     {

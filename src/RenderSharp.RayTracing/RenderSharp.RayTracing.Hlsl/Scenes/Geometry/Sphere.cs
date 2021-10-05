@@ -1,10 +1,10 @@
 ﻿using ComputeSharp;
-using RenderSharp.RayTracing.HLSL.Rays;
+using RenderSharp.RayTracing.HLSL.Scenes.Rays;
 using RenderSharp.RayTracing.HLSL.Utils;
 using System;
 using System.Numerics;
 
-namespace RenderSharp.RayTracing.HLSL.Geometry
+namespace RenderSharp.RayTracing.HLSL.Scenes.Geometry
 {
     public struct Sphere
     {

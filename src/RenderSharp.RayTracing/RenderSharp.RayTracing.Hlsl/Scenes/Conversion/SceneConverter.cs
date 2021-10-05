@@ -1,7 +1,7 @@
 ﻿using ComputeSharp;
 using RenderSharp.Common.Scenes.Materials;
 using RenderSharp.Common.Scenes.Objects.Meshes;
-using RenderSharp.RayTracing.HLSL.BVH;
+using RenderSharp.RayTracing.HLSL.Scenes.BVH;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -11,13 +11,12 @@ using CommonScene = RenderSharp.Common.Scenes.Scene;
 using CommonSky = RenderSharp.Common.Scenes.Skys.Sky;
 using CommonSphere = RenderSharp.Common.Scenes.Objects.Sphere;
 using CommonWorld = RenderSharp.Common.Scenes.World;
-using ShaderCamera = RenderSharp.RayTracing.HLSL.Components.Camera;
-using ShaderMaterial = RenderSharp.RayTracing.HLSL.Materials.Material;
-using ShaderScene = RenderSharp.RayTracing.HLSL.Components.Scene;
-using ShaderSky = RenderSharp.RayTracing.HLSL.Skys.Sky;
-using ShaderSphere = RenderSharp.RayTracing.HLSL.Geometry.Sphere;
-using ShaderTriangle = RenderSharp.RayTracing.HLSL.Geometry.Triangle;
-using ShaderWorld = RenderSharp.RayTracing.HLSL.Components.World;
+using ShaderCamera = RenderSharp.RayTracing.HLSL.Scenes.Cameras.Camera;
+using ShaderMaterial = RenderSharp.RayTracing.HLSL.Scenes.Materials.Material;
+using ShaderScene = RenderSharp.RayTracing.HLSL.Scenes.Scene;
+using ShaderSky = RenderSharp.RayTracing.HLSL.Scenes.Skys.Sky;
+using ShaderTriangle = RenderSharp.RayTracing.HLSL.Scenes.Geometry.Triangle;
+using ShaderWorld = RenderSharp.RayTracing.HLSL.Scenes.World;
 
 namespace RenderSharp.RayTracing.HLSL.Conversion
 {

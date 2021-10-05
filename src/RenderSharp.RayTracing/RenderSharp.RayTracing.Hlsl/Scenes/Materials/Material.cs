@@ -1,8 +1,8 @@
 ﻿using ComputeSharp;
-using RenderSharp.RayTracing.HLSL.Rays;
+using RenderSharp.RayTracing.HLSL.Scenes.Rays;
 using RenderSharp.RayTracing.HLSL.Utils;
 
-namespace RenderSharp.RayTracing.HLSL.Materials
+namespace RenderSharp.RayTracing.HLSL.Scenes.Materials
 {
     public struct Material
     {

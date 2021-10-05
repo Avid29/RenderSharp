@@ -1,4 +1,6 @@
-﻿namespace RenderSharp.RayTracing.HLSL.Components
+﻿using RenderSharp.RayTracing.HLSL.Scenes.Cameras;
+
+namespace RenderSharp.RayTracing.HLSL.Scenes
 {
     public struct Scene
     {

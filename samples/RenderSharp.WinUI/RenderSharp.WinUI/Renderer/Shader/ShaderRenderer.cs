@@ -1,14 +1,14 @@
 ﻿using ComputeSharp;
 using RenderSharp.RayTracing.HLSL;
-using RenderSharp.RayTracing.HLSL.BVH;
+using RenderSharp.RayTracing.HLSL.Scenes.BVH;
 using RenderSharp.RayTracing.HLSL.Conversion;
 using RenderSharp.WinUI.Renderer;
 using System;
 using CommonScene = RenderSharp.Common.Scenes.Scene;
-using ShaderMaterial = RenderSharp.RayTracing.HLSL.Materials.Material;
-using ShaderScene = RenderSharp.RayTracing.HLSL.Components.Scene;
-using ShaderSphere = RenderSharp.RayTracing.HLSL.Geometry.Sphere;
-using ShaderTriangle = RenderSharp.RayTracing.HLSL.Geometry.Triangle;
+using ShaderMaterial = RenderSharp.RayTracing.HLSL.Scenes.Materials.Material;
+using ShaderScene = RenderSharp.RayTracing.HLSL.Scenes.Scene;
+using ShaderSphere = RenderSharp.RayTracing.HLSL.Scenes.Geometry.Sphere;
+using ShaderTriangle = RenderSharp.RayTracing.HLSL.Scenes.Geometry.Triangle;
 
 namespace RenderSharp.Renderer
 {

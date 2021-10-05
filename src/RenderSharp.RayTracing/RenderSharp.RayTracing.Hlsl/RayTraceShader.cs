@@ -1,10 +1,11 @@
 ﻿using ComputeSharp;
-using RenderSharp.RayTracing.HLSL.BVH;
-using RenderSharp.RayTracing.HLSL.Components;
-using RenderSharp.RayTracing.HLSL.Geometry;
-using RenderSharp.RayTracing.HLSL.Materials;
-using RenderSharp.RayTracing.HLSL.Rays;
-using RenderSharp.RayTracing.HLSL.Skys;
+using RenderSharp.RayTracing.HLSL.Scenes;
+using RenderSharp.RayTracing.HLSL.Scenes.BVH;
+using RenderSharp.RayTracing.HLSL.Scenes.Cameras;
+using RenderSharp.RayTracing.HLSL.Scenes.Geometry;
+using RenderSharp.RayTracing.HLSL.Scenes.Materials;
+using RenderSharp.RayTracing.HLSL.Scenes.Rays;
+using RenderSharp.RayTracing.HLSL.Scenes.Skys;
 using RenderSharp.RayTracing.HLSL.Utils;
 
 namespace RenderSharp.RayTracing.HLSL

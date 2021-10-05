@@ -1,6 +1,6 @@
-﻿using RenderSharp.RayTracing.HLSL.Rays;
+﻿using RenderSharp.RayTracing.HLSL.Scenes.Rays;
 
-namespace RenderSharp.RayTracing.HLSL.BVH
+namespace RenderSharp.RayTracing.HLSL.Scenes.BVH
 {
     public struct BVHNode
     {
