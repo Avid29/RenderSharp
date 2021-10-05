@@ -1,17 +1,16 @@
 ﻿using ComputeSharp;
 
-namespace RenderSharp.Common.Materials
+namespace RenderSharp.Common.Scenes.Materials
 {
-    public class DiffuseMaterial : IMaterial
+    public class MetalMaterial : IMaterial
     {
-        public DiffuseMaterial(Float4 albedo, float roughness = 1)
+        public MetalMaterial(Float4 albedo, float roughness)
         {
             Albedo = albedo;
             Roughness = roughness;
         }
 
         public Float4 Albedo { get; }
-
         public float Roughness { get; }
     }
 }

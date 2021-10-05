@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
 
-namespace RenderSharp.Common.Objects.Meshes
+namespace RenderSharp.Common.Scenes.Objects.Meshes
 {
     public class Face
     {

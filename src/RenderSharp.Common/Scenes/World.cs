@@ -1,8 +1,8 @@
-﻿using RenderSharp.Common.Objects;
-using RenderSharp.Common.Skys;
+﻿using RenderSharp.Common.Scenes.Objects;
+using RenderSharp.Common.Scenes.Skys;
 using System.Collections.Generic;
 
-namespace RenderSharp.Common.Components
+namespace RenderSharp.Common.Scenes
 {
     public class World
     {

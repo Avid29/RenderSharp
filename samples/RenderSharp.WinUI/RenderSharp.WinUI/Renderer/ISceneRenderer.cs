@@ -1,6 +1,6 @@
 ﻿using ComputeSharp;
 using ComputeSharp.WinUI;
-using RenderSharp.Common.Components;
+using RenderSharp.Common.Scenes;
 
 namespace RenderSharp.Renderer
 {

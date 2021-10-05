@@ -1,7 +1,7 @@
 ﻿using ComputeSharp;
 using RenderSharp.Renderer;
 using System;
-using CommonScene = RenderSharp.Common.Components.Scene;
+using CommonScene = RenderSharp.Common.Scenes.Scene;
 using ShaderScene = RenderSharp.RayTracing.HLSL.Components.Scene;
 
 namespace RenderSharp.WinUI.Renderer
@@ -16,7 +16,7 @@ namespace RenderSharp.WinUI.Renderer
         private int currentTile = 0;
         private int tileCount = -1;
         private bool done = false;
-        private int tileHeight = 5;
+        private int tileHeight = 25;
 
         public ProgressiveRenderer(T tileRenderer) : this(Gpu.Default, tileRenderer)
         { }

@@ -1,7 +1,7 @@
 ﻿using ComputeSharp;
-using RenderSharp.Common.Materials;
+using RenderSharp.Common.Scenes.Materials;
 
-namespace RenderSharp.Common.Objects
+namespace RenderSharp.Common.Scenes.Objects
 {
     public class Sphere : IObject
     {

@@ -1,7 +1,7 @@
 ﻿using ComputeSharp;
 using RenderSharp.RayTracing.CPU;
 using RenderSharp.RayTracing.CPU.Conversion;
-using CommonScene = RenderSharp.Common.Components.Scene;
+using CommonScene = RenderSharp.Common.Scenes.Scene;
 using ShaderScene = RenderSharp.RayTracing.CPU.Components.Scene;
 
 namespace RenderSharp.WinUI.Renderer

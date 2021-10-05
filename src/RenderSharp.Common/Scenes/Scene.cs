@@ -1,10 +1,10 @@
 ﻿using ComputeSharp;
-using RenderSharp.Common.Materials;
-using RenderSharp.Common.Objects;
-using RenderSharp.Common.Objects.Meshes;
-using RenderSharp.Common.Skys;
+using RenderSharp.Common.Scenes.Materials;
+using RenderSharp.Common.Scenes.Objects;
+using RenderSharp.Common.Scenes.Objects.Meshes;
+using RenderSharp.Common.Scenes.Skys;
 
-namespace RenderSharp.Common.Components
+namespace RenderSharp.Common.Scenes
 {
     public class Scene
     {

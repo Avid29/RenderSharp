@@ -1,7 +1,7 @@
 ﻿using ComputeSharp;
 using System.Numerics;
 
-namespace RenderSharp.Common.Components
+namespace RenderSharp.Common.Scenes
 {
     public class Camera
     {

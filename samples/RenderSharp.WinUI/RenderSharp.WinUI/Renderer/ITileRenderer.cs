@@ -1,5 +1,5 @@
 ﻿using ComputeSharp;
-using CommonScene = RenderSharp.Common.Components.Scene;
+using CommonScene = RenderSharp.Common.Scenes.Scene;
 
 namespace RenderSharp.WinUI.Renderer
 {

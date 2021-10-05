@@ -1,6 +1,6 @@
 ﻿using ComputeSharp;
 
-namespace RenderSharp.Common.Skys
+namespace RenderSharp.Common.Scenes.Skys
 {
     public class Sky
     {

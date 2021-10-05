@@ -1,6 +1,6 @@
 ﻿using ComputeSharp;
 
-namespace RenderSharp.Common.Materials
+namespace RenderSharp.Common.Scenes.Materials
 {
     public class EmissiveMaterial : IMaterial
     {

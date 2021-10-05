@@ -4,7 +4,7 @@ using RenderSharp.RayTracing.HLSL.BVH;
 using RenderSharp.RayTracing.HLSL.Conversion;
 using RenderSharp.WinUI.Renderer;
 using System;
-using CommonScene = RenderSharp.Common.Components.Scene;
+using CommonScene = RenderSharp.Common.Scenes.Scene;
 using ShaderMaterial = RenderSharp.RayTracing.HLSL.Materials.Material;
 using ShaderScene = RenderSharp.RayTracing.HLSL.Components.Scene;
 using ShaderSphere = RenderSharp.RayTracing.HLSL.Geometry.Sphere;
