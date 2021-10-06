@@ -85,10 +85,10 @@ namespace RenderSharp.Render
                 }
             }
 
-            // Join the other threads
+            // The main thread is also rendering until it finishes
             RenderLoop();
 
-
+            // Join the other threads
             if (Renderer.IsCPU)
             {
                 foreach (Thread thread in threads)
