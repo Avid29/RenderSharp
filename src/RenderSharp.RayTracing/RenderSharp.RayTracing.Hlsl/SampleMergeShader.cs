@@ -16,8 +16,10 @@ namespace RenderSharp.RayTracing.HLSL
 
             for (int s = 0; s < samples; s++)
             {
-                output[pos + offset] += colorStack[new Int3(pos, s)] / samples;
+                output[pos + offset] += colorStack[new Int3(pos, s)];
             }
+
+            output[pos + offset] /= samples;
         }
     }
 }

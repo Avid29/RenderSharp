@@ -44,7 +44,7 @@ namespace RenderSharp.RayTracing.HLSL
             Gpu.Default.For(tile.Width, tile.Height, samples,
                 new PathTraceShader(_scene, _fullSize, tile.Offset, _bvhDepth + 1, _geometryBuffer, _materialBuffer, _bvhHeap, bvhStack, attenuationStack, colorStack));
 
-            Gpu.Default.For(tile.Width, tile.Width, new SampleMergeShader(samples, tile.Offset, _buffer.Buffer, colorStack));
+            Gpu.Default.For(tile.Width, tile.Height, new SampleMergeShader(samples, tile.Offset, _buffer.Buffer, colorStack));
         }
 
         public void RenderTile(Tile tile)
