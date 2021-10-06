@@ -36,14 +36,15 @@ namespace RenderSharp.RayTracing.HLSL
 
         public void TraceBounces(Tile tile)
         {
+            int samples = _scene.config.samples;
             var bvhStack = Gpu.Default.AllocateReadWriteTexture3D<int>(tile.Width, tile.Height, _bvhDepth + 1);
-            var attenuationStack = Gpu.Default.AllocateReadWriteTexture2D<Float4>(tile.Width, tile.Height);
-            var colorStack = Gpu.Default.AllocateReadWriteTexture2D<Float4>(tile.Width, tile.Height);
-            for (int s = 0; s < _scene.config.samples; s++)
-            {
-                Gpu.Default.For(tile.Width, tile.Height,
-                    new PathTraceShader(_scene, _fullSize, tile.Offset, s, _buffer.Buffer, _geometryBuffer, _materialBuffer, _bvhHeap, bvhStack, attenuationStack, colorStack));
-            }
+            var attenuationStack = Gpu.Default.AllocateReadWriteTexture3D<Float4>(tile.Width, tile.Height, samples);
+            var colorStack = Gpu.Default.AllocateReadWriteTexture3D<Float4>(tile.Width, tile.Height, samples);
+
+            Gpu.Default.For(tile.Width, tile.Height, samples,
+                new PathTraceShader(_scene, _fullSize, tile.Offset, _buffer.Buffer, _geometryBuffer, _materialBuffer, _bvhHeap, bvhStack, attenuationStack, colorStack));
+            Gpu.Default.For(tile.Width, tile.Height, new SampleMergeShader(samples, tile.Offset, _buffer.Buffer, colorStack));
+            
         }
 
         public void RenderTile(Tile tile)

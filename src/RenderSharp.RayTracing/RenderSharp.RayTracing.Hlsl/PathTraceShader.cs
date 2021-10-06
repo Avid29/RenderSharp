@@ -19,14 +19,13 @@ namespace RenderSharp.RayTracing.HLSL
         private readonly Scene scene;
         private readonly Int2 fullSize;
         private readonly Int2 offset;
-        private readonly int sample;
         private readonly ReadWriteTexture2D<Float4> output;
         private readonly ReadOnlyBuffer<Triangle> geometry;
         private readonly ReadOnlyBuffer<Material> materials;
         private readonly ReadOnlyBuffer<BVHNode> bvhHeap;
         private readonly ReadWriteTexture3D<int> bvhStack;
-        private readonly ReadWriteTexture2D<Float4> attenuationBuffer;
-        private readonly ReadWriteTexture2D<Float4> colorStack;
+        private readonly ReadWriteTexture3D<Float4> attenuationBuffer;
+        private readonly ReadWriteTexture3D<Float4> colorStack;
 
         public bool GetHit(Ray ray, out RayCast cast, out Material material, Int2 pos)
         {
@@ -91,7 +90,7 @@ namespace RenderSharp.RayTracing.HLSL
         /// <param name="ray">The original ray to bounce.</param>
         /// <param name="randState">A integer used through out the shader to provide a random number.</param>
         /// <returns>The color of pixel from the original ray.</returns>
-        private Ray BounceRay(Scene scene, Ray ray, ref uint randState, Int2 pos)
+        private Ray BounceRay(Scene scene, Ray ray, ref uint randState, Int3 pos)
         {
             if (GetHit(ray, out RayCast cast, out Material material, pos.XY))
             {
@@ -106,7 +105,6 @@ namespace RenderSharp.RayTracing.HLSL
                 // No object was hit
                 // Therefore the sky was hit
                 colorStack[pos] += attenuationBuffer[pos] * Sky.Color(scene.world.sky, ray);
-                output[pos + offset] += colorStack[pos] / scene.config.samples;
                 ray = Ray.Create();
             }
 
@@ -116,13 +114,12 @@ namespace RenderSharp.RayTracing.HLSL
         public void Execute()
         {
             // Position
-            Int2 pos = ThreadIds.XY;
+            Int3 pos = ThreadIds.XYZ;
             int x = offset.X + ThreadIds.X;
             int y = offset.Y + ThreadIds.Y;
-            uint randState = (uint)(x * 1973 + y * 9277 + sample * 26699) | 1;
+            int s = ThreadIds.Z;
+            uint randState = (uint)(x * 1973 + y * 9277 + s * 26699) | 1;
             attenuationBuffer[pos] = Float4.One;
-            colorStack[pos] = Float4.Zero;
-
 
             float aspectRatio = (float)fullSize.X / fullSize.Y;
             FullCamera camera = FullCamera.Create(scene.camera, aspectRatio);
@@ -135,8 +132,6 @@ namespace RenderSharp.RayTracing.HLSL
                 if (ray.direction.X == 0 && ray.direction.Y == 0 & ray.direction.Z == 0) return;
                 ray = BounceRay(scene, ray, ref randState, pos);
             }
-
-            output[pos + offset] += colorStack[pos] / scene.config.samples;
         }
 
         public bool GetHitNoBVH(Ray ray, out RayCast cast, out Material material, Int2 pos)
