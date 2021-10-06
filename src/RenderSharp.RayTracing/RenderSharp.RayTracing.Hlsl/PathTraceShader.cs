@@ -19,7 +19,7 @@ namespace RenderSharp.RayTracing.HLSL
         private readonly Scene scene;
         private readonly Int2 fullSize;
         private readonly Int2 offset;
-        private readonly ReadWriteTexture2D<Float4> output;
+        private readonly int bvhDepth;
         private readonly ReadOnlyBuffer<Triangle> geometry;
         private readonly ReadOnlyBuffer<Material> materials;
         private readonly ReadOnlyBuffer<BVHNode> bvhHeap;
@@ -27,12 +27,12 @@ namespace RenderSharp.RayTracing.HLSL
         private readonly ReadWriteTexture3D<Float4> attenuationBuffer;
         private readonly ReadWriteTexture3D<Float4> colorStack;
 
-        public bool GetHit(Ray ray, out RayCast cast, out Material material, Int2 pos)
+        public bool GetHit(Ray ray, out RayCast cast, out Material material, Int3 pos)
         {
             return GetHitWithBVH(ray, out cast, out material, pos);
         }
 
-        public bool GetHitWithBVH(Ray ray, out RayCast cast, out Material material, Int2 pos)
+        public bool GetHitWithBVH(Ray ray, out RayCast cast, out Material material, Int3 pos)
         {
             cast.origin = 0;
             cast.normal = 0;
@@ -49,12 +49,12 @@ namespace RenderSharp.RayTracing.HLSL
 
             // Init stack with root BVH
             int stackIndex = 0;
-            bvhStack[pos.X, pos.Y, 0] = 0;
+            bvhStack[pos.X, pos.Y, (pos.Z * bvhDepth) + stackIndex] = 0;
 
             do
             {
                 // Pop the stack
-                int nodeIndex = bvhStack[pos.X, pos.Y, stackIndex--];
+                int nodeIndex = bvhStack[pos.X, pos.Y, (pos.Z * bvhDepth) + (stackIndex--)];
                 BVHNode node = bvhHeap[nodeIndex];
 
                 if (BVHNode.IsHit(node, ray, closest))
@@ -74,8 +74,8 @@ namespace RenderSharp.RayTracing.HLSL
                     else
                     {
                         // Push stack
-                        bvhStack[pos.X, pos.Y, ++stackIndex] = node.leftI;
-                        bvhStack[pos.X, pos.Y, ++stackIndex] = node.rightI;
+                        bvhStack[pos.X, pos.Y, (pos.Z * bvhDepth) + (++stackIndex)] = node.leftI;
+                        bvhStack[pos.X, pos.Y, (pos.Z * bvhDepth) + (++stackIndex)] = node.rightI;
                     }
                 }
             } while (stackIndex != -1) ;
@@ -92,7 +92,7 @@ namespace RenderSharp.RayTracing.HLSL
         /// <returns>The color of pixel from the original ray.</returns>
         private Ray BounceRay(Scene scene, Ray ray, ref uint randState, Int3 pos)
         {
-            if (GetHit(ray, out RayCast cast, out Material material, pos.XY))
+            if (GetHit(ray, out RayCast cast, out Material material, pos))
             {
                 Material.Emit(material, out Float4 emission);
                 colorStack[pos] += emission * attenuationBuffer[pos];
@@ -129,7 +129,7 @@ namespace RenderSharp.RayTracing.HLSL
 
             for (int b = 0; b < scene.config.maxBounces; b++)
             {
-                if (ray.direction.X == 0 && ray.direction.Y == 0 & ray.direction.Z == 0) return;
+                if (ray.direction.X == 0 && ray.direction.Y == 0 & ray.direction.Z == 0) break;
                 ray = BounceRay(scene, ray, ref randState, pos);
             }
         }
