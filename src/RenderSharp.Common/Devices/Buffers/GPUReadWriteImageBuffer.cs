@@ -20,6 +20,8 @@ namespace RenderSharp.Common.Devices.Buffers
             _buffer = buffer;
         }
 
+        public ReadWriteTexture2D<Float4> Buffer => _buffer;
+
         public int Width => _buffer.Width;
 
         public int Height => _buffer.Height;

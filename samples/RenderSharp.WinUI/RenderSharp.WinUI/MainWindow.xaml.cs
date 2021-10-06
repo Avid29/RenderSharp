@@ -4,6 +4,7 @@ using RenderSharp.Common.Scenes;
 using RenderSharp.Common.Scenes.Objects.Meshes;
 using RenderSharp.Import;
 using RenderSharp.RayTracing.CPU;
+using RenderSharp.RayTracing.HLSL;
 using RenderSharp.Renderer;
 using RenderSharp.WinUI.Renderer;
 
@@ -31,10 +32,10 @@ namespace RenderSharp.WinUI
 
             Mesh mesh = WaveFrontImporter.LoadMesh(path);
             Shader.Scene = Scene.CreateMeshScene(mesh);
-            Shader.Setup(new CPURayTraceRenderer());
+            Shader.Setup(new HlslRayTraceRenderer());
         }
 
-        public RenderViewer<CPURayTraceRenderer> Shader = new RenderViewer<CPURayTraceRenderer>();
+        public RenderViewer<HlslRayTraceRenderer> Shader = new RenderViewer<HlslRayTraceRenderer>();
         //public ISceneRenderer Shader = new ProgressiveRenderer<CPURenderer>(new CPURenderer());
     }
 }

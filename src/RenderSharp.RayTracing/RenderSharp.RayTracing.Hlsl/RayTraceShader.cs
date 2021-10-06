@@ -140,7 +140,7 @@ namespace RenderSharp.RayTracing.HLSL
                 color += BounceRay(scene, ray, ref randState, pos);
             }
 
-            output[pos] = color / scene.config.samples;
+            output[pos + _offset] = color / scene.config.samples;
         }
 
         public bool GetHitNoBVH(Ray ray, out RayCast cast, out Material material, Int2 pos)
