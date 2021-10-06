@@ -2,7 +2,6 @@
 using RenderSharp.Common.Scenes.Objects.Meshes;
 using RenderSharp.RayTracing.CPU.Scenes;
 using RenderSharp.RayTracing.CPU.Scenes.Geometry;
-using RenderSharp.RayTracing.CPU.Scenes.Materials;
 using System.Collections.Generic;
 using System.Numerics;
 using CommonCamera = RenderSharp.Common.Scenes.Camera;
@@ -19,6 +18,7 @@ using ShaderGeometry = RenderSharp.RayTracing.CPU.Scenes.Geometry.IGeometry;
 using ShaderMaterial = RenderSharp.RayTracing.CPU.Scenes.Materials.IMaterial;
 using ShaderScene = RenderSharp.RayTracing.CPU.Scenes.Scene;
 using ShaderSky = RenderSharp.RayTracing.CPU.Scenes.Skys.Sky;
+using ShaderSMaterial = RenderSharp.RayTracing.CPU.Scenes.Materials.SuperMaterial;
 using ShaderSphere = RenderSharp.RayTracing.CPU.Scenes.Geometry.Sphere;
 using ShaderWorld = RenderSharp.RayTracing.CPU.Scenes.World;
 
@@ -102,9 +102,9 @@ namespace RenderSharp.RayTracing.CPU.Conversion
                 case CommonDiffuse diffuse:
                     return new ShaderDiffuse(diffuse.Albedo, diffuse.Roughness);
                 case MetalMaterial metal:
-                    return new SuperMaterial(metal.Albedo, 1f, metal.Roughness, Vector4.Zero);
+                    return new ShaderSMaterial(metal.Albedo, 1f, metal.Roughness, Vector4.Zero);
                 case EmissiveMaterial emission:
-                    return new SuperMaterial(emission.Emission, 0f, 1f, emission.Emission);
+                    return new ShaderSMaterial(emission.Emission, 0f, 1f, emission.Emission);
                 default:
                     return null;
             }

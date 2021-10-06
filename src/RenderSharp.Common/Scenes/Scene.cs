@@ -3,6 +3,7 @@ using RenderSharp.Common.Scenes.Materials;
 using RenderSharp.Common.Scenes.Objects;
 using RenderSharp.Common.Scenes.Objects.Meshes;
 using RenderSharp.Common.Scenes.Skys;
+using System.Collections.Generic;
 
 namespace RenderSharp.Common.Scenes
 {
@@ -43,12 +44,19 @@ namespace RenderSharp.Common.Scenes
 
         public static Scene CreateMeshScene(Mesh mesh)
         {
-            DiffuseMaterial diffuse = new DiffuseMaterial(new Float4(0.5f, 0.5f, 0.5f, 1f), 0.5f);
-            mesh.Material = diffuse;
+            return CreateMeshScene(new List<Mesh>() { mesh });
+        }
 
+        public static Scene CreateMeshScene(List<Mesh> meshes)
+        {
             Scene scene = CreateEmptyScene();
             scene.Camera = new Camera(new Float3(1.75f, 1.5f, 2f), new Float3(0f, 0f, 0f), 90f, 0.01f);
-            scene.World.Geometry.Add(mesh);
+
+            foreach (var mesh in meshes)
+            {
+                scene.World.Geometry.Add(mesh);
+            }
+
             return scene;
         }
     }

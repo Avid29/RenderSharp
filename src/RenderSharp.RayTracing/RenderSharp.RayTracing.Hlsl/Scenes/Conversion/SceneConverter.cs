@@ -36,6 +36,7 @@ namespace RenderSharp.RayTracing.HLSL.Conversion
 
         public SceneConverter(GraphicsDevice gpu)
         {
+            _materialMap.Add(new DiffuseMaterial(), 0);
             _gpu = gpu;
             _isGeometryLoaded = false;
             _geometries = new List<ShaderTriangle>();
@@ -97,17 +98,20 @@ namespace RenderSharp.RayTracing.HLSL.Conversion
 
         public void ConvertObject(CommonObject @object)
         {
-            int matId;
+            int matId = 0;
 
-            if (_materialMap.ContainsKey(@object.Material))
+            if (@object.Material != null)
             {
-                matId = _materialMap[@object.Material];
-            }
-            else
-            {
-                int id = _materialMap.Count;
-                _materialMap.Add(@object.Material, id);
-                matId = id;
+                if (_materialMap.ContainsKey(@object.Material))
+                {
+                    matId = _materialMap[@object.Material];
+                }
+                else
+                {
+                    int id = _materialMap.Count;
+                    _materialMap.Add(@object.Material, id);
+                    matId = id;
+                }
             }
 
             switch (@object)
@@ -145,6 +149,9 @@ namespace RenderSharp.RayTracing.HLSL.Conversion
 
             switch (material)
             {
+                case SuperMaterial super:
+                    output.albedo = super.Albedo;
+                    break;
                 case DiffuseMaterial diffuse:
                     output.albedo = diffuse.Albedo;
                     output.roughness = diffuse.Roughness;

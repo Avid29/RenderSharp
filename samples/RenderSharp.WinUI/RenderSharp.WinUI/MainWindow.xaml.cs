@@ -1,7 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using RenderSharp.Common.Scenes;
-using RenderSharp.Common.Scenes.Objects.Meshes;
-using RenderSharp.Import;
+using RenderSharp.Import.WaveFront;
 using RenderSharp.RayTracing.HLSL;
 using RenderSharp.WinUI.Renderer;
 
@@ -25,10 +24,10 @@ namespace RenderSharp.WinUI
             //FileOpenPicker picker = new FileOpenPicker() { CommitButtonText = "Select", SuggestedStartLocation = PickerLocationId.Objects3D, FileTypeFilter = { ".obj" } };
             //var file = await picker.PickSingleFileAsync();
             //string path = file.Path;
-            string path = @"C:\Users\avid2\3D Objects\CompanionCube.obj";
+            string path = @"C:\Users\avid2\3D Objects\CompanionCube-Mat.obj";
+            WaveFrontImporter importer = new WaveFrontImporter(path);
 
-            Mesh mesh = WaveFrontImporter.LoadMesh(path);
-            Shader.Scene = Scene.CreateMeshScene(mesh);
+            Shader.Scene = Scene.CreateMeshScene(importer.Objects);
             Shader.Setup(new HlslRayTraceRenderer());
         }
 

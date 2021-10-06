@@ -12,6 +12,8 @@ namespace RenderSharp.Common.Scenes.Objects.Meshes
             Faces = new List<Face>();
         }
 
+        public string Name { get; set; }
+
         public List<Vector3> Verticies { get; }
 
         public List<Face> Faces { get; }
