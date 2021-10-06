@@ -23,6 +23,8 @@ namespace RenderSharp.RayTracing.HLSL
 
         public IReadWriteImageBuffer Buffer => _buffer;
 
+        public bool IsCPU => false;
+
         public void Setup(CommonScene scene, int imageWidth, int imageHeight)
         {
             SceneConverter converter = new SceneConverter(Gpu.Default);

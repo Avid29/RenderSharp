@@ -11,5 +11,7 @@ namespace RenderSharp.Common.Render
         public void RenderTile(Tile tile);
 
         public IReadWriteImageBuffer Buffer { get; }
+
+        public bool IsCPU { get; }
     }
 }

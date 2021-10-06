@@ -73,21 +73,28 @@ namespace RenderSharp.Render
 
         private void StartRenderLoops()
         {
-            // Boot other threads
-            Thread[] threads = new Thread[Environment.ProcessorCount - 1];
-            for (int i = 0; i < threads.Length; i++)
+            Thread[] threads = null;
+            if (Renderer.IsCPU)
             {
-                threads[i] = new Thread(() => RenderLoop());
-                threads[i].Start();
+                // Boot other threads
+                threads = new Thread[Environment.ProcessorCount - 1];
+                for (int i = 0; i < threads.Length; i++)
+                {
+                    threads[i] = new Thread(() => RenderLoop());
+                    threads[i].Start();
+                }
             }
 
             // Join the other threads
             RenderLoop();
 
 
-            foreach (Thread thread in threads)
+            if (Renderer.IsCPU)
             {
-                thread.Join();
+                foreach (Thread thread in threads)
+                {
+                    thread.Join();
+                }
             }
         }
 

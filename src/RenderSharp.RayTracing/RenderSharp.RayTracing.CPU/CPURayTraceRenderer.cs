@@ -14,6 +14,8 @@ namespace RenderSharp.RayTracing.CPU
 
         public IReadWriteImageBuffer Buffer => _buffer;
 
+        public bool IsCPU => true;
+
         public void Setup(CommonScene scene, int imageWidth, int imageHeight)
         {
             SceneConverter converter = new SceneConverter();
