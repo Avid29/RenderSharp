@@ -7,7 +7,6 @@ using RenderSharp.RayTracing.CPU.Scenes.Materials;
 using RenderSharp.RayTracing.CPU.Scenes.Rays;
 using RenderSharp.RayTracing.CPU.Utils;
 using System.Numerics;
-using System.Threading.Tasks;
 
 namespace RenderSharp.RayTracing.CPU
 {
