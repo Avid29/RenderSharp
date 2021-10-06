@@ -1,26 +1,26 @@
-﻿using RenderSharp.Common.Materials;
-using RenderSharp.Common.Objects.Meshes;
-using RenderSharp.RayTracing.CPU.Components;
-using RenderSharp.RayTracing.CPU.Geometry;
-using RenderSharp.RayTracing.CPU.Materials;
+﻿using RenderSharp.Common.Scenes.Materials;
+using RenderSharp.Common.Scenes.Objects.Meshes;
+using RenderSharp.RayTracing.CPU.Scenes;
+using RenderSharp.RayTracing.CPU.Scenes.Geometry;
+using RenderSharp.RayTracing.CPU.Scenes.Materials;
 using System.Collections.Generic;
 using System.Numerics;
-using CommonCamera = RenderSharp.Common.Components.Camera;
-using CommonDiffuse = RenderSharp.Common.Materials.DiffuseMaterial;
-using CommonMaterial = RenderSharp.Common.Materials.IMaterial;
-using CommonObject = RenderSharp.Common.Objects.IObject;
-using CommonScene = RenderSharp.Common.Components.Scene;
-using CommonSky = RenderSharp.Common.Skys.Sky;
-using CommonSphere = RenderSharp.Common.Objects.Sphere;
-using CommonWorld = RenderSharp.Common.Components.World;
-using ShaderCamera = RenderSharp.RayTracing.CPU.Components.Camera;
-using ShaderDiffuse = RenderSharp.RayTracing.CPU.Materials.DiffuseMaterial;
-using ShaderGeometry = RenderSharp.RayTracing.CPU.Geometry.IGeometry;
-using ShaderMaterial = RenderSharp.RayTracing.CPU.Materials.IMaterial;
-using ShaderScene = RenderSharp.RayTracing.CPU.Components.Scene;
-using ShaderSky = RenderSharp.RayTracing.CPU.Skys.Sky;
-using ShaderSphere = RenderSharp.RayTracing.CPU.Geometry.Sphere;
-using ShaderWorld = RenderSharp.RayTracing.CPU.Components.World;
+using CommonCamera = RenderSharp.Common.Scenes.Camera;
+using CommonDiffuse = RenderSharp.Common.Scenes.Materials.DiffuseMaterial;
+using CommonMaterial = RenderSharp.Common.Scenes.Materials.IMaterial;
+using CommonObject = RenderSharp.Common.Scenes.Objects.IObject;
+using CommonScene = RenderSharp.Common.Scenes.Scene;
+using CommonSky = RenderSharp.Common.Scenes.Skys.Sky;
+using CommonSphere = RenderSharp.Common.Scenes.Objects.Sphere;
+using CommonWorld = RenderSharp.Common.Scenes.World;
+using ShaderCamera = RenderSharp.RayTracing.CPU.Scenes.Cameras.Camera;
+using ShaderDiffuse = RenderSharp.RayTracing.CPU.Scenes.Materials.DiffuseMaterial;
+using ShaderGeometry = RenderSharp.RayTracing.CPU.Scenes.Geometry.IGeometry;
+using ShaderMaterial = RenderSharp.RayTracing.CPU.Scenes.Materials.IMaterial;
+using ShaderScene = RenderSharp.RayTracing.CPU.Scenes.Scene;
+using ShaderSky = RenderSharp.RayTracing.CPU.Scenes.Skys.Sky;
+using ShaderSphere = RenderSharp.RayTracing.CPU.Scenes.Geometry.Sphere;
+using ShaderWorld = RenderSharp.RayTracing.CPU.Scenes.World;
 
 namespace RenderSharp.RayTracing.CPU.Conversion
 {

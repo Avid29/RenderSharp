@@ -1,8 +1,8 @@
 ﻿using Microsoft.UI.Xaml;
-using RenderSharp.Common.Components;
-using RenderSharp.Common.Objects.Meshes;
+using RenderSharp.Common.Scenes;
+using RenderSharp.Common.Scenes.Objects.Meshes;
 using RenderSharp.Import;
-using RenderSharp.Renderer;
+using RenderSharp.RayTracing.HLSL;
 using RenderSharp.WinUI.Renderer;
 
 namespace RenderSharp.WinUI
@@ -19,21 +19,20 @@ namespace RenderSharp.WinUI
             InitScene();
         }
 
-        public async void InitScene()
+        public void InitScene()
         {
             // TODO: File Picker
             //FileOpenPicker picker = new FileOpenPicker() { CommitButtonText = "Select", SuggestedStartLocation = PickerLocationId.Objects3D, FileTypeFilter = { ".obj" } };
             //var file = await picker.PickSingleFileAsync();
             //string path = file.Path;
-            string path = @"C:\Users\avid2\3D Objects\CompanionCube.obj";
+            string path = @"C:\Users\avid2\3D Objects\TriMonkey.obj";
 
             Mesh mesh = WaveFrontImporter.LoadMesh(path);
-            Scene scene = Scene.CreateMeshScene(mesh);
-
-            Shader.AllocateResources(scene);
+            Shader.Scene = Scene.CreateMeshScene(mesh);
+            Shader.Setup(new HlslRayTraceRenderer());
         }
 
-        public ISceneRenderer Shader = new ProgressiveRenderer<ShaderRenderer>(new ShaderRenderer());
+        public RenderViewer<HlslRayTraceRenderer> Shader = new RenderViewer<HlslRayTraceRenderer>();
         //public ISceneRenderer Shader = new ProgressiveRenderer<CPURenderer>(new CPURenderer());
     }
 }
