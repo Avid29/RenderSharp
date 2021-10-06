@@ -1,11 +1,8 @@
-﻿using ComputeSharp.WinUI;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using RenderSharp.Common.Scenes;
 using RenderSharp.Common.Scenes.Objects.Meshes;
 using RenderSharp.Import;
-using RenderSharp.RayTracing.CPU;
 using RenderSharp.RayTracing.HLSL;
-using RenderSharp.Renderer;
 using RenderSharp.WinUI.Renderer;
 
 namespace RenderSharp.WinUI
