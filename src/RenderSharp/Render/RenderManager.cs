@@ -2,6 +2,7 @@
 using RenderSharp.Common.Render;
 using RenderSharp.Common.Render.Tiles;
 using RenderSharp.Common.Scenes;
+using RenderSharp.Render.Analyzer;
 using RenderSharp.Render.Tiles;
 using RenderSharp.WinUI.Renderer;
 using System;
@@ -14,6 +15,7 @@ namespace RenderSharp.Render
         where TRenderer : IRenderer
     {
         private TileManager _tileManager;
+        private RenderAnalyzer _analyzer;
         private ReadWriteTexture2D<Float4> _output;
 
         /// <remarks>
@@ -25,6 +27,7 @@ namespace RenderSharp.Render
         {
             _state = RenderState.NotReady;
             Renderer = renderer;
+            _analyzer = new RenderAnalyzer();
         }
 
         public bool IsReady => State == RenderState.Ready;
@@ -57,6 +60,7 @@ namespace RenderSharp.Render
             _output = Gpu.Default.AllocateReadWriteTexture2D<Float4>( width, height);
 
             _state = RenderState.Starting;
+            _analyzer.Begin();
 
             // Fire and forget
             await Task.Run(() =>
@@ -96,6 +100,8 @@ namespace RenderSharp.Render
                     thread.Join();
                 }
             }
+
+            _analyzer.End();
         }
 
         private void RenderLoop()
