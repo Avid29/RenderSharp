@@ -61,7 +61,7 @@ namespace RenderSharp.RayTracing.HLSL.Conversion
 
             // Default config for now
             output.config.samples = 64;
-            output.config.maxBounces = 64;
+            output.config.maxBounces = 12;
 
             FinishMaterialLoading();
 
