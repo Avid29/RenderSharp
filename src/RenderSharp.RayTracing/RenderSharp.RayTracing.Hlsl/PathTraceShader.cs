@@ -25,8 +25,6 @@ namespace RenderSharp.RayTracing.HLSL
         private readonly ReadOnlyBuffer<Material> materials;
         private readonly ReadOnlyBuffer<BVHNode> bvhHeap;
         private readonly ReadWriteTexture3D<int> bvhStack;
-        private readonly ReadWriteTexture2D<Float4> bounceOrigin; // Float3 texture not supported
-        private readonly ReadWriteTexture2D<Float4> bounceDirection; // Float3 texture not supported
         private readonly ReadWriteTexture2D<Float4> attenuationBuffer;
         private readonly ReadWriteTexture2D<Float4> colorStack;
 
@@ -93,7 +91,7 @@ namespace RenderSharp.RayTracing.HLSL
         /// <param name="ray">The original ray to bounce.</param>
         /// <param name="randState">A integer used through out the shader to provide a random number.</param>
         /// <returns>The color of pixel from the original ray.</returns>
-        private void BounceRay(Scene scene, Ray ray, ref uint randState, Int2 pos)
+        private Ray BounceRay(Scene scene, Ray ray, ref uint randState, Int2 pos)
         {
             if (GetHit(ray, out RayCast cast, out Material material, pos.XY))
             {
@@ -102,10 +100,6 @@ namespace RenderSharp.RayTracing.HLSL
 
                 Material.Scatter(material, ray, cast, ref randState, out Float4 attenuation, out ray);
                 attenuationBuffer[pos] *= attenuation;
-
-                Float2x4 matrix = Ray.AsMatrix4(ray);
-                bounceOrigin[pos] = matrix[0];
-                bounceDirection[pos] = matrix[1];
             }
             else
             {
@@ -113,10 +107,10 @@ namespace RenderSharp.RayTracing.HLSL
                 // Therefore the sky was hit
                 colorStack[pos] += attenuationBuffer[pos] * Sky.Color(scene.world.sky, ray);
                 output[pos + offset] += colorStack[pos] / scene.config.samples;
-
-                bounceOrigin[pos] = Float4.Zero;
-                bounceDirection[pos] = Float4.Zero;
+                ray = Ray.Create();
             }
+
+            return ray;
         }
 
         public void Execute()
@@ -139,8 +133,7 @@ namespace RenderSharp.RayTracing.HLSL
             for (int b = 0; b < scene.config.maxBounces; b++)
             {
                 if (ray.direction.X == 0 && ray.direction.Y == 0 & ray.direction.Z == 0) return;
-                BounceRay(scene, ray, ref randState, pos);
-                ray = Ray.Create(bounceOrigin[pos], bounceDirection[pos]);
+                ray = BounceRay(scene, ray, ref randState, pos);
             }
 
             output[pos + offset] += colorStack[pos] / scene.config.samples;

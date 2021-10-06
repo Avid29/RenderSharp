@@ -37,14 +37,12 @@ namespace RenderSharp.RayTracing.HLSL
         public void TraceBounces(Tile tile)
         {
             var bvhStack = Gpu.Default.AllocateReadWriteTexture3D<int>(tile.Width, tile.Height, _bvhDepth + 1);
-            var bounceOrigin = Gpu.Default.AllocateReadWriteTexture2D<Float4>(tile.Width, tile.Height); // Float3 texture not supported
-            var bounceDirection = Gpu.Default.AllocateReadWriteTexture2D<Float4>(tile.Width, tile.Height); // Float3 texture not supported
             var attenuationStack = Gpu.Default.AllocateReadWriteTexture2D<Float4>(tile.Width, tile.Height);
             var colorStack = Gpu.Default.AllocateReadWriteTexture2D<Float4>(tile.Width, tile.Height);
             for (int s = 0; s < _scene.config.samples; s++)
             {
                 Gpu.Default.For(tile.Width, tile.Height,
-                    new PathTraceShader(_scene, _fullSize, tile.Offset, s, _buffer.Buffer, _geometryBuffer, _materialBuffer, _bvhHeap, bvhStack, bounceOrigin, bounceDirection, attenuationStack, colorStack));
+                    new PathTraceShader(_scene, _fullSize, tile.Offset, s, _buffer.Buffer, _geometryBuffer, _materialBuffer, _bvhHeap, bvhStack, attenuationStack, colorStack));
             }
         }
 
