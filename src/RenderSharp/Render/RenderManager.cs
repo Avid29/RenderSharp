@@ -101,6 +101,7 @@ namespace RenderSharp.Render
                 }
             }
 
+            _state = RenderState.Done;
             _analyzer.End();
         }
 
