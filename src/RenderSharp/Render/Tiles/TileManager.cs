@@ -26,12 +26,13 @@ namespace RenderSharp.Render
 
         public Tile GetNextTile()
         {
-            if (PreviousTileIndex >= TileCount - 1)
+            if (PreviousTileIndex > TileCount - 1)
                 return new Tile(0, 0, 0, 0); // TODO: Throw 
 
             // TODO: More ordering options
+            Tile tile = NextTileFromSide(_config.Order);
             PreviousTileIndex++;
-            return NextTileFromSide(_config.Order);
+            return tile;
         }
 
         private int DetermineTileCount()
@@ -58,14 +59,14 @@ namespace RenderSharp.Render
                 col = swap;
             }
 
-            int x = row * offsetX;
-            int y = col * offsetY;
+            int x = col * offsetX;
+            int y = row * offsetY;
 
             int width = offsetX;
             if (x + width > _imageWidth) width = _imageWidth - x;
 
             int height = offsetY;
-            if (y + height > _imageWidth) height = _imageWidth - y;
+            if (y + height > _imageHeight) height = _imageHeight - y;
 
             return new Tile(x, y, width, height);
         }
