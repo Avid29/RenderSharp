@@ -1,7 +1,11 @@
 ﻿using ComputeSharp;
 using RenderSharp.Common.Render;
 using RenderSharp.Common.Render.Tiles;
+using RenderSharp.Common.Scenes;
 using RenderSharp.Render.Tiles;
+using RenderSharp.WinUI.Renderer;
+using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace RenderSharp.Render
@@ -10,12 +14,12 @@ namespace RenderSharp.Render
         where TRenderer : IRenderer
     {
         private TileManager _tileManager;
+        private ReadWriteTexture2D<Float4> _output;
 
         /// <remarks>
         /// Use property, field may be inaccurate.
         /// </remarks>
         private RenderState _state;
-        private IReadWriteTexture2D<Float4> _output;
 
         public RenderManager(TRenderer renderer)
         {
@@ -23,21 +27,9 @@ namespace RenderSharp.Render
             Renderer = renderer;
         }
 
-        public IReadWriteTexture2D<Float4> Output
-        {
-            get => _output;
-            set
-            {
-                if (IsRunning)
-                    return; // TODO: Throw
-
-                _output = value;
-            }
-        }
-
         public bool IsReady => State == RenderState.Ready;
 
-        public bool IsRunning => _state == RenderState.Running;
+        public bool IsRunning => _state == RenderState.Running || _state == RenderState.Starting;
 
         public bool IsDone => _state == RenderState.Done;
 
@@ -53,41 +45,79 @@ namespace RenderSharp.Render
 
         public TRenderer Renderer { get; }
 
-        public async void Begin()
+        public async void Render(Scene scene, int width, int height)
         {
-            _state = RenderState.Starting;
             if (!IsReady)
             {
                 _state = RenderState.Error;
                 return; // TODO: Throw
             }
 
-            _state = RenderState.Running;
 
-            await Task.Run(() => Render());
+            _output = Gpu.Default.AllocateReadWriteTexture2D<Float4>( width, height);
+
+            _state = RenderState.Starting;
+
+            // Fire and forget
+            await Task.Run(() =>
+            {
+                // TODO: Take the config as input
+                TileConfig defaultConfig = new TileConfig(24, 24, TileOrder.TopBottom);
+                _tileManager = new TileManager(_output.Width, _output.Height, defaultConfig);
+                Renderer.Setup(scene, _output.Width, _output.Height);
+
+                _state = RenderState.Running;
+                StartRenderLoops();
+            });
         }
 
-        private Task Render()
+        private void StartRenderLoops()
         {
-            // TODO: Take the config as input
-            TileConfig defaultConfig = new TileConfig(24, 24, TileOrder.TopBottom);
-
-            _tileManager = new TileManager(Output.Width, Output.Height, defaultConfig);
-
-            while (!_tileManager.Finished)
+            // Boot other threads
+            Thread[] threads = new Thread[Environment.ProcessorCount - 1];
+            for (int i = 0; i < threads.Length; i++)
             {
-                Tile tile = _tileManager.GetNextTile();
-                Renderer.RenderTile(tile);
+                threads[i] = new Thread(() => RenderLoop());
+                threads[i].Start();
             }
 
-            return Task.CompletedTask;
+            // Join the other threads
+            RenderLoop();
+
+
+            foreach (Thread thread in threads)
+            {
+                thread.Join();
+            }
+        }
+
+        private void RenderLoop()
+        {
+            while (!_tileManager.Finished)
+            {
+                Tile tile;
+                lock (_tileManager) tile = _tileManager.GetNextTile();
+
+                Renderer.RenderTile(tile);
+
+                // Update
+                Renderer.Buffer.CopyToGPU(_output);
+            }
         }
 
         private bool CheckReady()
         {
             bool isReady = true;
-            isReady = isReady && Output != null;
+            //isReady = isReady && _output != null;
             return isReady;
+        }
+
+        public void WriteProgress(IReadWriteTexture2D<Float4> image)
+        {
+            if (_output == null)
+                return;
+
+            Gpu.Default.ForEach(image, new OverlayShaderI(new Int2(0, 0), _output, image));
         }
     }
 }

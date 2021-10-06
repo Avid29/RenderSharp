@@ -3,7 +3,7 @@
 namespace RenderSharp.WinUI.Renderer
 {
     [AutoConstructor]
-    public partial struct OverlayShader : IPixelShader<Float4>
+    public partial struct OverlayShaderI : IPixelShader<Float4>
     {
         Int2 offset;
         ReadWriteTexture2D<Float4> overlay;
@@ -24,7 +24,7 @@ namespace RenderSharp.WinUI.Renderer
 
         public Float4 Execute()
         {
-            Int2 size = new Int2(overlay.Width, overlay.Width);
+            Int2 size = new Int2(overlay.Width, overlay.Height);
             Int2 buttomRight = size + offset;
 
             Int2 pos = ThreadIds.XY;

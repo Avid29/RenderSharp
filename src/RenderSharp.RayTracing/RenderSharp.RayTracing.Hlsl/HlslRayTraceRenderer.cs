@@ -2,7 +2,7 @@
 
 namespace RenderSharp.RayTracing.HLSL
 {
-    public class HlslRayTraceRenderer : IRenderer
-    {
-    }
+    //public class HlslRayTraceRenderer : IRenderer
+    //{
+    //}
 }

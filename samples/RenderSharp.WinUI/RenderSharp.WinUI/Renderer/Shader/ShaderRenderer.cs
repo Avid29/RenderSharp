@@ -61,7 +61,7 @@ namespace RenderSharp.Renderer
             var stack = _gpu.AllocateReadWriteTexture3D<int>(size.X, size.Y, _bvhDepth + 1);
 
             _gpu.For(tile.Width, tile.Height, _shaderFactory(_scene, fullSize, offset, tile, _geometryBuffer, _materialBuffer, _bvhHeap, stack));
-            _gpu.ForEach(texture, new OverlayShader(offset, tile, texture));
+            _gpu.ForEach(texture, new OverlayShaderI(offset, tile, texture));
         }
     }
 }

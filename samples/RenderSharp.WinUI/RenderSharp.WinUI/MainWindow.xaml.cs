@@ -1,7 +1,9 @@
-﻿using Microsoft.UI.Xaml;
+﻿using ComputeSharp.WinUI;
+using Microsoft.UI.Xaml;
 using RenderSharp.Common.Scenes;
 using RenderSharp.Common.Scenes.Objects.Meshes;
 using RenderSharp.Import;
+using RenderSharp.RayTracing.CPU;
 using RenderSharp.Renderer;
 using RenderSharp.WinUI.Renderer;
 
@@ -19,7 +21,7 @@ namespace RenderSharp.WinUI
             InitScene();
         }
 
-        public async void InitScene()
+        public void InitScene()
         {
             // TODO: File Picker
             //FileOpenPicker picker = new FileOpenPicker() { CommitButtonText = "Select", SuggestedStartLocation = PickerLocationId.Objects3D, FileTypeFilter = { ".obj" } };
@@ -28,12 +30,11 @@ namespace RenderSharp.WinUI
             string path = @"C:\Users\avid2\3D Objects\TriMonkey.obj";
 
             Mesh mesh = WaveFrontImporter.LoadMesh(path);
-            Scene scene = Scene.CreateMeshScene(mesh);
-
-            Shader.AllocateResources(scene);
+            Shader.Scene = Scene.CreateMeshScene(mesh);
+            Shader.Setup(new CPURayTraceRenderer());
         }
 
-        public ISceneRenderer Shader = new ProgressiveRenderer<ShaderRenderer>(new ShaderRenderer());
+        public RenderViewer<CPURayTraceRenderer> Shader = new RenderViewer<CPURayTraceRenderer>();
         //public ISceneRenderer Shader = new ProgressiveRenderer<CPURenderer>(new CPURenderer());
     }
 }
