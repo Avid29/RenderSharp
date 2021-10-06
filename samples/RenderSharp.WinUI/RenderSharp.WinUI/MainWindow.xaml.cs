@@ -25,7 +25,7 @@ namespace RenderSharp.WinUI
             //FileOpenPicker picker = new FileOpenPicker() { CommitButtonText = "Select", SuggestedStartLocation = PickerLocationId.Objects3D, FileTypeFilter = { ".obj" } };
             //var file = await picker.PickSingleFileAsync();
             //string path = file.Path;
-            string path = @"C:\Users\avid2\3D Objects\TriMonkey.obj";
+            string path = @"C:\Users\avid2\3D Objects\CompanionCube.obj";
 
             Mesh mesh = WaveFrontImporter.LoadMesh(path);
             Scene scene = Scene.CreateMeshScene(mesh);
@@ -34,5 +34,6 @@ namespace RenderSharp.WinUI
         }
 
         public ISceneRenderer Shader = new ProgressiveRenderer<ShaderRenderer>(new ShaderRenderer());
+        //public ISceneRenderer Shader = new ProgressiveRenderer<CPURenderer>(new CPURenderer());
     }
 }

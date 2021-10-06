@@ -1,4 +1,5 @@
-﻿using RenderSharp.RayTracing.CPU.Materials;
+﻿using RenderSharp.RayTracing.CPU.BVH;
+using RenderSharp.RayTracing.CPU.Materials;
 using RenderSharp.RayTracing.CPU.Rays;
 using RenderSharp.RayTracing.CPU.Utils;
 using System;
@@ -60,6 +61,11 @@ namespace RenderSharp.RayTracing.CPU.Geometry
             Vector3 castNormal = (castPoint - Center) / Radius;
             cast = new RayCast(castPoint, castNormal, dist);
             return true;
+        }
+
+        public AABB GetBoundingBox()
+        {
+            return new AABB(Center + new Vector3(Radius), Center - new Vector3(Radius));
         }
     }
 }

@@ -16,7 +16,7 @@ namespace RenderSharp.WinUI.Renderer
         private int currentTile = 0;
         private int tileCount = -1;
         private bool done = false;
-        private int tileHeight = 20;
+        private int tileHeight = 5;
 
         public ProgressiveRenderer(T tileRenderer) : this(Gpu.Default, tileRenderer)
         { }

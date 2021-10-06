@@ -1,6 +1,8 @@
 ﻿using ComputeSharp;
 using RenderSharp.Common.Materials;
 using RenderSharp.Common.Objects.Meshes;
+using RenderSharp.RayTracing.HLSL.BVH;
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 using CommonCamera = RenderSharp.Common.Components.Camera;
@@ -22,10 +24,14 @@ namespace RenderSharp.RayTracing.HLSL.Conversion
     public class SceneConverter
     {
         private List<ShaderTriangle> _geometries;
+        private BVHNode[] _bvhBuffer;
         private GraphicsDevice _gpu;
         private Dictionary<IMaterial, int> _materialMap = new Dictionary<IMaterial, int>();
         private ReadOnlyBuffer<ShaderTriangle> _geometryBuffer;
         private ReadOnlyBuffer<ShaderMaterial> _materialBuffer;
+        private ReadOnlyBuffer<BVHNode> _bvhHeap;
+        private int _bvhDepth;
+        private int _bvhPos;
         private bool _isGeometryLoaded;
         private bool _areMaterialsLoaded;
 
@@ -43,6 +49,10 @@ namespace RenderSharp.RayTracing.HLSL.Conversion
         public ReadOnlyBuffer<ShaderTriangle> GeometryBuffer => _geometryBuffer;
 
         public ReadOnlyBuffer<ShaderMaterial> MaterialBuffer => _materialBuffer;
+
+        public ReadOnlyBuffer<BVHNode> BVHHeap => _bvhHeap;
+
+        public int BVHDepth => _bvhDepth;
 
         public ShaderScene ConvertScene(CommonScene scene)
         {
@@ -69,7 +79,7 @@ namespace RenderSharp.RayTracing.HLSL.Conversion
                 ConvertObject(world.Geometry[i]);
             }
 
-            LoadGeometry(_geometries.ToArray());
+            BuildBVHTree(_geometries.ToArray());
 
             return output;
         }
@@ -154,13 +164,47 @@ namespace RenderSharp.RayTracing.HLSL.Conversion
             return output;
         }
 
-        public void LoadGeometry(ShaderTriangle[] geometry)
+        public void BuildBVHTree(ShaderTriangle[] geometries)
         {
-            if (_isGeometryLoaded)
-                _geometryBuffer.Dispose();
+            _bvhDepth = 0;
+            _bvhBuffer = new BVHNode[(geometries.Length * 2) - 1];
+            _bvhPos = _bvhBuffer.Length - 1;
+            BuildBVH(geometries, 0, 0);
+            _bvhHeap = _gpu.AllocateReadOnlyBuffer(_bvhBuffer);
+            _geometryBuffer = _gpu.AllocateReadOnlyBuffer(geometries);
+        }
 
-            _geometryBuffer = _gpu.AllocateReadOnlyBuffer(geometry);
-            _isGeometryLoaded = true;
+        public int BuildBVH(Span<ShaderTriangle> geometries, int index, int depth)
+        {
+            int axis = depth;
+
+            if (_bvhDepth < depth) _bvhDepth = depth;
+
+            BVHNode node;
+            node.geoI = -1;
+            node.leftI = -1;
+            node.rightI = -1;
+
+            if (geometries.Length == 1)
+            {
+                node.geoI = index;
+                node.boundingBox = ShaderTriangle.GetBoundingBox(geometries[0]);
+            } else
+            {
+                geometries.Sort((a, b) => ShaderTriangle.GetBoundingBox(a).maximum[axis].CompareTo(ShaderTriangle.GetBoundingBox(b).maximum[axis]));
+
+                int mid = geometries.Length / 2;
+                node.rightI = BuildBVH(geometries.Slice(mid, geometries.Length - mid), index + mid, depth + 1);
+                node.leftI = BuildBVH(geometries.Slice(0, mid), index, depth + 1);
+
+                AABB rightBB = _bvhBuffer[node.rightI].boundingBox;
+                AABB leftBB = _bvhBuffer[node.leftI].boundingBox;
+
+                node.boundingBox = AABB.GetSurroundingBox(rightBB, leftBB);
+            }
+
+            _bvhBuffer[_bvhPos] = node;
+            return _bvhPos--;
         }
 
         public void FinishMaterialLoading()
