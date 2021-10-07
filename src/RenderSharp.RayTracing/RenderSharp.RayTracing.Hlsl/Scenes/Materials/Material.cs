@@ -29,7 +29,7 @@ namespace RenderSharp.RayTracing.HLSL.Scenes.Materials
             else reflect = RandUtils.RandomFloat(ref randState) < material.metallic;
 
             Float3 target;
-            if (reflect) target = Hlsl.Reflect(Hlsl.Normalize(ray.direction), cast.normal); // Render as metal.
+            if (reflect) target = Hlsl.Reflect(Hlsl.Normalize(ray.direction), Hlsl.Normalize(cast.normal)); // Render as metal.
             else target = cast.origin + cast.normal; // Render as diffuse
 
             // Apply roughness

@@ -30,7 +30,7 @@ namespace RenderSharp.RayTracing.CPU.Scenes.Materials
             else reflect = RandUtils.RandomFloat(ref randState) < Metallic;
 
             Vector3 target;
-            if (reflect) target = Vector3.Reflect(Vector3.Normalize(ray.Direction), cast.Normal); // Render as metal.
+            if (reflect) target = Vector3.Reflect(Vector3.Normalize(ray.Direction), Vector3.Normalize(cast.Normal)); // Render as metal.
             else target = cast.Origin + cast.Normal; // Render as diffuse
 
             // Apply roughness
