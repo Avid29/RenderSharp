@@ -45,8 +45,14 @@ namespace RenderSharp.Import.WaveFront
                     case "Kd":
                         _activeMaterial.Albedo = ParseColor(parts);
                         break;
+                    case "Ks":
+                        _activeMaterial.Specular = ParseFloat(parts);
+                        break;
                     case "Ke":
                         _activeMaterial.Emission = ParseColor(parts);
+                        break;
+                    case "Ni":
+                        _activeMaterial.Fresnel = ParseFloat(parts);
                         break;
                 }
             }
@@ -65,6 +71,11 @@ namespace RenderSharp.Import.WaveFront
             a = float.Parse(parts[4]);
 
             return new Vector4(r, g, b, a);
+        }
+
+        private float ParseFloat(string[] parts)
+        {
+            return float.Parse(parts[1]);
         }
     }
 }

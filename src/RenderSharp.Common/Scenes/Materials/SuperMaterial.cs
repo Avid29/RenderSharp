@@ -12,6 +12,10 @@ namespace RenderSharp.Common.Scenes.Materials
 
         public float Metallic { get; set; }
 
+        public float Specular { get; set; }
+
         public float Roughness { get; set; }
+
+        public float Fresnel { get; set; }
     }
 }
