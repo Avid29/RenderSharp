@@ -151,6 +151,9 @@ namespace RenderSharp.RayTracing.HLSL.Conversion
             {
                 case SuperMaterial super:
                     output.albedo = super.Albedo;
+                    output.emission = super.Emission;
+                    output.roughness = super.Roughness;
+                    output.metallic = super.Metallic;
                     break;
                 case DiffuseMaterial diffuse:
                     output.albedo = diffuse.Albedo;

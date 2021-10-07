@@ -99,6 +99,8 @@ namespace RenderSharp.RayTracing.CPU.Conversion
         {
             switch (material)
             {
+                case SuperMaterial super:
+                    return new ShaderSMaterial(super.Albedo, super.Metallic, super.Roughness, super.Emission);
                 case CommonDiffuse diffuse:
                     return new ShaderDiffuse(diffuse.Albedo, diffuse.Roughness);
                 case MetalMaterial metal:

@@ -45,6 +45,9 @@ namespace RenderSharp.Import.WaveFront
                     case "Kd":
                         _activeMaterial.Albedo = ParseColor(parts);
                         break;
+                    case "Ke":
+                        _activeMaterial.Emission = ParseColor(parts);
+                        break;
                 }
             }
         }

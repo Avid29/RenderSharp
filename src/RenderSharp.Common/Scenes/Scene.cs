@@ -47,12 +47,12 @@ namespace RenderSharp.Common.Scenes
             return CreateMeshScene(new List<Mesh>() { mesh });
         }
 
-        public static Scene CreateMeshScene(List<Mesh> meshes)
+        public static Scene CreateMeshScene(List<Mesh> objects)
         {
             Scene scene = CreateEmptyScene();
             scene.Camera = new Camera(new Float3(1.75f, 1.5f, 2f), new Float3(0f, 0f, 0f), 90f, 0.01f);
 
-            foreach (var mesh in meshes)
+            foreach (var mesh in objects)
             {
                 scene.World.Geometry.Add(mesh);
             }
