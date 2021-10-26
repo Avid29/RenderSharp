@@ -9,5 +9,7 @@ namespace RenderSharp.Common.Devices.Buffers
         int Height { get; }
 
         public void CopyToGPU(ReadWriteTexture2D<Float4> output);
+
+        public void CopyToGPU(ReadWriteTexture2D<Float4> output, Int2 offset, Int2 size);
     }
 }

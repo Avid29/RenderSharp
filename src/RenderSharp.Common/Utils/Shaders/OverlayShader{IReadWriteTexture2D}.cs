@@ -6,6 +6,7 @@ namespace RenderSharp.WinUI.Renderer
     public partial struct OverlayShaderI : IPixelShader<Float4>
     {
         Int2 offset;
+        Int2 size;
         ReadWriteTexture2D<Float4> overlay;
         IReadWriteTexture2D<Float4> fallback;
 
@@ -24,13 +25,12 @@ namespace RenderSharp.WinUI.Renderer
 
         public Float4 Execute()
         {
-            Int2 size = new Int2(overlay.Width, overlay.Height);
             Int2 buttomRight = size + offset;
 
-            Int2 pos = ThreadIds.XY;
+            Int2 pos = ThreadIds.XY + offset;
             if (IsWithin(pos, offset, buttomRight))
             {
-                return overlay[pos - offset];
+                return overlay[pos];
             } else
             {
                 return fallback[pos];

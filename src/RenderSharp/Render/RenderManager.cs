@@ -114,7 +114,7 @@ namespace RenderSharp.Render
                 Renderer.RenderTile(tile);
 
                 // Update
-                Renderer.Buffer.CopyToGPU(_output);
+                Renderer.Buffer.CopyToGPU(_output, tile.Offset, tile.Size);
             }
         }
 
@@ -130,7 +130,7 @@ namespace RenderSharp.Render
             if (_output == null)
                 return;
 
-            Gpu.Default.ForEach(image, new OverlayShaderI(new Int2(0, 0), _output, image));
+            Gpu.Default.ForEach(image, new OverlayShaderI(Int2.Zero, new Int2(_output.Width, _output.Height), _output, image));
         }
     }
 }

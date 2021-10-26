@@ -28,7 +28,12 @@ namespace RenderSharp.Common.Devices.Buffers
 
         public void CopyToGPU(ReadWriteTexture2D<Float4> output)
         {
-            Gpu.Default.For(output.Width, output.Height, new OverlayShader(new Int2(0, 0), _buffer, output));
+            CopyToGPU(output, Int2.Zero, new Int2(output.Width, output.Height));
+        }
+
+        public void CopyToGPU(ReadWriteTexture2D<Float4> output, Int2 offset, Int2 size)
+        {
+            Gpu.Default.For(size.X, size.Y, new OverlayShader(offset, size, _buffer, output));
         }
     }
 }

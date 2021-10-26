@@ -6,6 +6,7 @@ namespace RenderSharp.WinUI.Renderer
     public partial struct OverlayShader : IComputeShader
     {
         Int2 offset;
+        Int2 size;
         ReadWriteTexture2D<Float4> overlay;
         ReadWriteTexture2D<Float4> baseTexture;
 
@@ -24,13 +25,12 @@ namespace RenderSharp.WinUI.Renderer
 
         public void Execute()
         {
-            Int2 size = new Int2(overlay.Width, overlay.Height);
             Int2 buttomRight = size + offset;
 
-            Int2 pos = ThreadIds.XY;
+            Int2 pos = ThreadIds.XY + offset;
             if (IsWithin(pos, offset, buttomRight))
             {
-                baseTexture[pos] = overlay[pos - offset];
+                baseTexture[pos] = overlay[pos];
             }
         }
     }

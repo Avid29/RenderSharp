@@ -1,14 +1,8 @@
 ﻿using Microsoft.UI.Xaml;
 using RenderSharp.Common.Scenes;
-using RenderSharp.Common.Scenes.Materials;
-using RenderSharp.Common.Scenes.Objects.Meshes;
 using RenderSharp.Import.WaveFront;
 using RenderSharp.RayTracing.HLSL;
 using RenderSharp.WinUI.Renderer;
-using System.Numerics;
-using System.Collections.Generic;
-using RenderSharp.Common.Scenes.Objects;
-using RenderSharp.RayTracing.CPU;
 
 namespace RenderSharp.WinUI
 {
@@ -30,7 +24,7 @@ namespace RenderSharp.WinUI
             //FileOpenPicker picker = new FileOpenPicker() { CommitButtonText = "Select", SuggestedStartLocation = PickerLocationId.Objects3D, FileTypeFilter = { ".obj" } };
             //var file = await picker.PickSingleFileAsync();
             //string path = file.Path;
-            string path = @"C:\Users\avid2\3D Objects\TriCube-Emission.obj";
+            string path = @"C:\Users\avid2\3D Objects\CompanionCubeSmall-Mat.obj";
             WaveFrontImporter importer = new WaveFrontImporter(path);
 
             Shader.Scene = Scene.CreateMeshScene(importer.Objects);
