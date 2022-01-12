@@ -4,8 +4,11 @@ using RenderSharp.Common.Render.Tiles;
 using RenderSharp.RayTracing.HLSL.Conversion;
 using RenderSharp.RayTracing.HLSL.Scenes;
 using RenderSharp.RayTracing.HLSL.Scenes.BVH;
+using RenderSharp.RayTracing.HLSL.Scenes.Cameras;
 using RenderSharp.RayTracing.HLSL.Scenes.Geometry;
 using RenderSharp.RayTracing.HLSL.Scenes.Materials;
+using RenderSharp.RayTracing.HLSL.Scenes.Rays;
+using RenderSharp.RayTracing.HLSL.Shaders;
 using CommonScene = RenderSharp.Common.Scenes.Scene;
 
 namespace RenderSharp.RayTracing.HLSL
@@ -13,42 +16,52 @@ namespace RenderSharp.RayTracing.HLSL
     public class RayTracer
     {
         private Scene _scene;
-        private GPUReadWriteImageBuffer _buffer;
-        private ReadOnlyBuffer<Triangle> _geometryBuffer;
-        private ReadOnlyBuffer<Material> _materialBuffer;
-        private ReadOnlyBuffer<BVHNode> _bvhHeap;
+        private FullCamera _camera;
         private int _bvhDepth;
         Int2 _fullSize;
 
-        public RayTracer(CommonScene scene, Int2 size, GPUReadWriteImageBuffer buffer)
+        private GPUReadWriteImageBuffer _renderbuffer;
+        private ReadOnlyBuffer<Triangle> _geometryBuffer;
+        private ReadOnlyBuffer<BVHNode> _bvhHeap;
+
+        private ReadWriteTexture3D<int> _bvhStack;
+        private ReadWriteTexture2D<Float4> _attenuationStack;
+        private ReadWriteTexture2D<Float4> _colorStack;
+
+        private ReadWriteBuffer<RayCast> _rayCastBuffer;
+        private ReadWriteTexture2D<int> _materialBuffer;
+
+        public RayTracer(CommonScene scene, Int2 size, GPUReadWriteImageBuffer renderBuffer)
         {
             _fullSize = size;
 
             SceneConverter converter = new SceneConverter(Gpu.Default);
             _scene = converter.ConvertScene(scene);
+            _camera = FullCamera.Create(_scene.camera, (float)size.X / size.Y);
 
-            _materialBuffer = converter.MaterialBuffer;
             _bvhHeap = converter.BVHHeap;
             _bvhDepth = converter.BVHDepth;
             _geometryBuffer = converter.GeometryBuffer;
-            _buffer = buffer;
+            _renderbuffer = renderBuffer;
         }
 
         public void TraceBounces(Tile tile)
         {
             int samples = _scene.config.samples;
-            var bvhStack = Gpu.Default.AllocateReadWriteTexture3D<int>(tile.Width, tile.Height, samples * (_bvhDepth + 1));
-            var attenuationStack = Gpu.Default.AllocateReadWriteTexture3D<Float4>(tile.Width, tile.Height, samples);
-            var colorStack = Gpu.Default.AllocateReadWriteTexture3D<Float4>(tile.Width, tile.Height, samples);
 
-            Gpu.Default.For(tile.Width, tile.Height, samples,
-                new PathTraceShader(_scene, _fullSize, tile.Offset, _bvhDepth + 1, _geometryBuffer, _materialBuffer, _bvhHeap, bvhStack, attenuationStack, colorStack));
-
-            Gpu.Default.For(tile.Width, tile.Height, new SampleMergeShader(samples, tile.Offset, _buffer.Buffer, colorStack));
+            Gpu.Default.For(tile.Width, tile.Height, new CameraCastShader(_scene, _camera, tile.Offset, _fullSize, _rayCastBuffer));
+            Gpu.Default.For(tile.Width, tile.Width, new CollisionShader(_scene, _geometryBuffer, _bvhHeap, _bvhStack, _rayCastBuffer, _materialBuffer));
         }
 
         public void RenderTile(Tile tile)
         {
+            int samples = _scene.config.samples;
+            _bvhStack = Gpu.Default.AllocateReadWriteTexture3D<int>(tile.Width, tile.Height, samples);
+            _rayCastBuffer = Gpu.Default.AllocateReadWriteBuffer<RayCast>(tile.Width * tile.Height);
+            _attenuationStack = Gpu.Default.AllocateReadWriteTexture2D<Float4>(tile.Width, tile.Height);
+            _colorStack = Gpu.Default.AllocateReadWriteTexture2D<Float4>(tile.Width, tile.Height);
+            _materialBuffer = Gpu.Default.AllocateReadWriteTexture2D<int>(tile.Width, tile.Height);
+
             TraceBounces(tile);
         }
     }

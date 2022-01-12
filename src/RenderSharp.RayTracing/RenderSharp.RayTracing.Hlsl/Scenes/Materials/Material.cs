@@ -21,7 +21,7 @@ namespace RenderSharp.RayTracing.HLSL.Scenes.Materials
             return material;
         }
 
-        public static void Scatter(Material material, Ray ray, RayCast cast, ref uint randState, out Float4 attenuation, out Ray scatter)
+        public static void Scatter(Material material, RayCast ray, RayCast cast, ref uint randState, out Float4 attenuation, out RayCast scatter)
         {
             bool reflect;
             if (material.metallic == 1) reflect = true;
@@ -29,14 +29,14 @@ namespace RenderSharp.RayTracing.HLSL.Scenes.Materials
             else reflect = RandUtils.RandomFloat(ref randState) < material.metallic;
 
             Float3 target;
-            if (reflect) target = Hlsl.Reflect(Hlsl.Normalize(ray.direction), cast.normal); // Render as metal.
+            if (reflect) target = Hlsl.Reflect(Hlsl.Normalize(ray.normal), cast.normal); // Render as metal.
             else target = cast.origin + cast.normal; // Render as diffuse
 
             // Apply roughness
             target += material.roughness * RandUtils.RandomInUnitSphere(ref randState);
 
             attenuation = material.albedo;
-            scatter = Ray.Create(cast.origin, target - cast.origin);
+            scatter = RayCast.Create(cast.origin, target - cast.origin, -1);
         }
 
         public static void Emit(Material material, out Float4 emission)

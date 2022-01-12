@@ -21,12 +21,12 @@ namespace RenderSharp.RayTracing.HLSL.Scenes.Geometry
             return triangle;
         }
 
-        public static bool IsHit(Triangle tri, Ray ray, out RayCast cast)
+        public static bool IsHit(Triangle tri, RayCast ray, out RayCast cast)
         {
             return IsHit(tri, float.MaxValue, ray, out cast);
         }
 
-        public static bool IsHit(Triangle tri, float maxClip, Ray ray, out RayCast cast)
+        public static bool IsHit(Triangle tri, float maxClip, RayCast ray, out RayCast cast)
         {
             // Set cast defaults
             cast.coefficient = 0;
@@ -41,12 +41,12 @@ namespace RenderSharp.RayTracing.HLSL.Scenes.Geometry
 
             // Find the ray's distance from the triangle's plane
             float d = Hlsl.Dot(normal, tri.a);
-            float t = (d - Hlsl.Dot(normal, ray.origin)) / Hlsl.Dot(normal, ray.direction);
+            float t = (d - Hlsl.Dot(normal, ray.origin)) / Hlsl.Dot(normal, ray.normal);
 
             if (t < 0.0001f || t > maxClip) return false;
 
             // Find the collision point to the plane
-            Float3 q = Ray.PointAt(ray, t);
+            Float3 q = RayCast.PointAt(ray, t);
 
             // Ensure the collision point is in the bounds of the face
             if (Hlsl.Dot(Hlsl.Cross(tri.b - tri.a, q - tri.a), normal) < 0) return false;

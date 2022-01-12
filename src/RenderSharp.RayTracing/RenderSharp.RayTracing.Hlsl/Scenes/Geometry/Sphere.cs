@@ -12,12 +12,12 @@ namespace RenderSharp.RayTracing.HLSL.Scenes.Geometry
         public float radius;
         public int matId;
 
-        public static bool IsHit(Sphere sphere, Ray ray, out RayCast cast)
+        public static bool IsHit(Sphere sphere, RayCast ray, out RayCast cast)
         {
             return IsHit(sphere, float.MaxValue, ray, out cast);
         }
 
-        public static bool IsHit(Sphere sphere, float maxClip, Ray ray, out RayCast cast)
+        public static bool IsHit(Sphere sphere, float maxClip, RayCast ray, out RayCast cast)
         {
             // Set cast defaults
             cast.coefficient = 0;
@@ -25,8 +25,8 @@ namespace RenderSharp.RayTracing.HLSL.Scenes.Geometry
             cast.normal = Float3.Zero;
 
             Float3 oc = ray.origin - sphere.center;
-            float a = FloatUtils.LengthSquared(ray.direction);
-            float b = Vector3.Dot(oc, ray.direction);
+            float a = FloatUtils.LengthSquared(ray.normal);
+            float b = Vector3.Dot(oc, ray.normal);
             float c = FloatUtils.LengthSquared(oc) - sphere.radius * sphere.radius;
 
             float disc = b * b - a * c;
@@ -51,7 +51,7 @@ namespace RenderSharp.RayTracing.HLSL.Scenes.Geometry
 
             // Build ray cast
             cast.coefficient = dist;
-            cast.origin = Ray.PointAt(ray, dist);
+            cast.origin = RayCast.PointAt(ray, dist);
             cast.normal = (cast.origin - sphere.center) / sphere.radius;
             return true;
         }
