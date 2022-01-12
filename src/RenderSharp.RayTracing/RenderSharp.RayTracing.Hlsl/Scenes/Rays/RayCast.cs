@@ -18,15 +18,5 @@ namespace RenderSharp.RayTracing.HLSL.Scenes.Rays
             ray.coefficient = coefficient;
             return ray;
         }
-
-        public static Float3 HitPoint(RayCast ray)
-        {
-            return ray.origin + ray.coefficient * ray.normal;
-        }
-
-        public static Float3 PointAt(RayCast ray, float c)
-        {
-            return ray.origin + c * ray.normal;
-        }
     }
 }

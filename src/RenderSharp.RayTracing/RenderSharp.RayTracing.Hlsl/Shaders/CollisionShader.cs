@@ -18,6 +18,7 @@ namespace RenderSharp.RayTracing.HLSL.Shaders
         private readonly ReadOnlyBuffer<BVHNode> bvhHeap;
 
         private readonly ReadWriteTexture3D<int> bvhStack;
+        private readonly ReadWriteBuffer<Ray> rayBuffer;
         private readonly ReadWriteBuffer<RayCast> rayCastBuffer;
         private readonly ReadWriteTexture2D<int> materialBuffer;
 
@@ -27,7 +28,7 @@ namespace RenderSharp.RayTracing.HLSL.Shaders
             Int2 dis = DispatchSize.XY;
             int bPos = pos.X * dis.X + pos.Y;
 
-            RayCast ray = rayCastBuffer[bPos];
+            Ray ray = rayBuffer[bPos];
 
             // Cache nearest hit info
             float nearest = float.MaxValue;
@@ -52,7 +53,8 @@ namespace RenderSharp.RayTracing.HLSL.Shaders
                         if (Triangle.IsHit(triangle, ray, out RayCast newCast))
                         {
                             nearest = newCast.coefficient;
-                            materialBuffer[pos] = triangle.matId;
+                            materialBuffer[pos] = 0;
+                            //materialBuffer[pos] = triangle.matId;
                             rayCastBuffer[bPos] = newCast;
                         }
                     }

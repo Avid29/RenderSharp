@@ -9,6 +9,7 @@ using RenderSharp.RayTracing.HLSL.Scenes.Geometry;
 using RenderSharp.RayTracing.HLSL.Scenes.Materials;
 using RenderSharp.RayTracing.HLSL.Scenes.Rays;
 using RenderSharp.RayTracing.HLSL.Shaders;
+using RenderSharp.RayTracing.HLSL.Shaders.Materials;
 using CommonScene = RenderSharp.Common.Scenes.Scene;
 
 namespace RenderSharp.RayTracing.HLSL
@@ -25,11 +26,13 @@ namespace RenderSharp.RayTracing.HLSL
         private ReadOnlyBuffer<BVHNode> _bvhHeap;
 
         private ReadWriteTexture3D<int> _bvhStack;
-        private ReadWriteTexture2D<Float4> _attenuationStack;
-        private ReadWriteTexture2D<Float4> _colorStack;
+        private ReadWriteTexture2D<Float4> _attenuationBuffer;
+        private ReadWriteTexture2D<Float4> _colorBuffer;
 
+        private ReadWriteBuffer<Ray> _rayBuffer;
         private ReadWriteBuffer<RayCast> _rayCastBuffer;
         private ReadWriteTexture2D<int> _materialBuffer;
+        private ReadWriteTexture2D<uint> _randStates;
 
         public RayTracer(CommonScene scene, Int2 size, GPUReadWriteImageBuffer renderBuffer)
         {
@@ -47,20 +50,33 @@ namespace RenderSharp.RayTracing.HLSL
 
         public void TraceBounces(Tile tile)
         {
-            int samples = _scene.config.samples;
+            GraphicsDevice.Default.For(tile.Width, tile.Height, new InitalizeShader(_scene, tile.Offset, _attenuationBuffer, _randStates));
+            GraphicsDevice.Default.For(tile.Width, tile.Height, new CameraCastShader(_scene, _camera, tile.Offset, _fullSize, _rayBuffer));
+            
+            // Render each object with this diffuse material.
+            DiffuseMaterial diffuse = DiffuseMaterial.Create(float4.One * .8f, .5f);
 
-            GraphicsDevice.Default.For(tile.Width, tile.Height, new CameraCastShader(_scene, _camera, tile.Offset, _fullSize, _rayCastBuffer));
-            GraphicsDevice.Default.For(tile.Width, tile.Width, new CollisionShader(_scene, _geometryBuffer, _bvhHeap, _bvhStack, _rayCastBuffer, _materialBuffer));
+            for (int i = 0; i < _scene.config.maxBounces; i++)
+            {
+                GraphicsDevice.Default.For(tile.Width, tile.Width, new CollisionShader(_scene, _geometryBuffer, _bvhHeap, _bvhStack, _rayBuffer, _rayCastBuffer, _materialBuffer));
+
+                // TODO: Dyanmically select shader(s)
+                GraphicsDevice.Default.For(tile.Width, tile.Height, new DiffuseShader(0, _scene, diffuse, _rayBuffer, _rayCastBuffer, _materialBuffer, _attenuationBuffer, _colorBuffer, _randStates));
+
+                GraphicsDevice.Default.For(tile.Width, tile.Height, new SkyShader(_scene, new Float4(0.5f, 0.7f, 1f, 1f), _rayBuffer, _rayCastBuffer, _materialBuffer, _attenuationBuffer, _colorBuffer));
+            }
         }
 
         public void RenderTile(Tile tile)
         {
             int samples = _scene.config.samples;
-            _bvhStack = GraphicsDevice.Default.AllocateReadWriteTexture3D<int>(tile.Width, tile.Height, samples);
+            _bvhStack = GraphicsDevice.Default.AllocateReadWriteTexture3D<int>(tile.Width, tile.Height, _bvhDepth + 1);
+            _rayBuffer = GraphicsDevice.Default.AllocateReadWriteBuffer<Ray>(tile.Width * tile.Height);
             _rayCastBuffer = GraphicsDevice.Default.AllocateReadWriteBuffer<RayCast>(tile.Width * tile.Height);
-            _attenuationStack = GraphicsDevice.Default.AllocateReadWriteTexture2D<Float4>(tile.Width, tile.Height);
-            _colorStack = GraphicsDevice.Default.AllocateReadWriteTexture2D<Float4>(tile.Width, tile.Height);
+            _attenuationBuffer = GraphicsDevice.Default.AllocateReadWriteTexture2D<Float4>(tile.Width, tile.Height);
+            _colorBuffer = GraphicsDevice.Default.AllocateReadWriteTexture2D<Float4>(tile.Width, tile.Height);
             _materialBuffer = GraphicsDevice.Default.AllocateReadWriteTexture2D<int>(tile.Width, tile.Height);
+            _randStates = GraphicsDevice.Default.AllocateReadWriteTexture2D<uint>(tile.Width, tile.Height);
 
             TraceBounces(tile);
         }

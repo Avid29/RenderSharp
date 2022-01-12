@@ -17,11 +17,11 @@ namespace RenderSharp.RayTracing.HLSL.Scenes.BVH
             return box;
         }
 
-        public static bool IsHit(AABB box, RayCast ray, float maxClip, float minClip)
+        public static bool IsHit(AABB box, Ray ray, float maxClip, float minClip)
         {
             for (int axis = 0; axis < 3; axis++)
             {
-                float invD = 1f / ray.normal[axis];
+                float invD = 1f / ray.direction[axis];
                 float t0 = (box.minimum[axis] - ray.origin[axis]) * invD;
                 float t1 = (box.maximum[axis] - ray.origin[axis]) * invD;
 
@@ -57,11 +57,11 @@ namespace RenderSharp.RayTracing.HLSL.Scenes.BVH
             return Create(max, min);
         }
 
-        public static bool IsHitOld(AABB box, RayCast ray, float maxClip, float minClip)
+        public static bool IsHitOld(AABB box, Ray ray, float maxClip, float minClip)
         {
             for (int axis = 0; axis < 3; axis++)
             {
-                float invD = 1f / ray.normal[axis];
+                float invD = 1f / ray.direction[axis];
                 float t0 = (box.minimum[axis] - ray.origin[axis]) * invD;
                 float t1 = (box.maximum[axis] - ray.origin[axis]) * invD;
 

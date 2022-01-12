@@ -17,7 +17,7 @@ namespace RenderSharp.RayTracing.HLSL.Shaders
         private readonly FullCamera camera;
         private readonly Int2 offset;
         private readonly Int2 fullSize;
-        private readonly ReadWriteBuffer<RayCast> rayCastBuffer;
+        private readonly ReadWriteBuffer<Ray> rayBuffer;
 
         public void Execute()
         {
@@ -32,8 +32,8 @@ namespace RenderSharp.RayTracing.HLSL.Shaders
 
             float u = (x + RandUtils.RandomFloat(ref randState) / fullSize.X);
             float v = 1 - ((y + RandUtils.RandomFloat(ref randState)) / fullSize.Y);
-            RayCast ray = FullCamera.CreateRay(camera, u, v, ref randState);
-            rayCastBuffer[bPos] = ray;
+            Ray ray = FullCamera.CreateRay(camera, u, v, ref randState);
+            rayBuffer[bPos] = ray;
         }
     }
 }

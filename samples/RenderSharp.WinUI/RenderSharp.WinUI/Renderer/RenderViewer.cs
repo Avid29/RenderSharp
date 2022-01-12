@@ -19,12 +19,13 @@ namespace RenderSharp.WinUI.Renderer
 
         public Scene Scene { get; set; }
 
-        public void Execute(IReadWriteTexture2D<Float4> texture, TimeSpan timespan)
+        public bool TryExecute(IReadWriteTexture2D<Float4> texture, TimeSpan timespan, object parameter)
         {
             // Begin render if not begun
             if (!_renderManager.IsRunning) _renderManager.Render(Scene, texture.Width, texture.Height);
 
             _renderManager.WriteProgress(texture);
+            return true;
         }
     }
 }

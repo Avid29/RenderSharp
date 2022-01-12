@@ -38,15 +38,14 @@ namespace RenderSharp.RayTracing.HLSL.Scenes.Cameras
             return camera;
         }
 
-        public static RayCast CreateRay(FullCamera camera, float u, float v, ref uint randState)
+        public static Ray CreateRay(FullCamera camera, float u, float v, ref uint randState)
         {
             Float3 rd = camera.lensRadius * RandUtils.RandomInUnitDisk(ref randState);
             Float3 offset = camera.u * rd.X + camera.v * rd.Y;
 
-            RayCast ray;
+            Ray ray;
             ray.origin = camera.origin + offset;
-            ray.normal = camera.lowerLeftCorner + u * camera.horizontal + v * camera.vertical - camera.origin - offset;
-            ray.coefficient = -1;
+            ray.direction = camera.lowerLeftCorner + u * camera.horizontal + v * camera.vertical - camera.origin - offset;
             return ray;
         }
     }

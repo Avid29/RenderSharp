@@ -8,5 +8,5 @@
     xmlns:computesharp="using:ComputeSharp.WinUI"
     mc:Ignorable="d">
 
-    <computesharp:ComputeShaderPanel ShaderRunner="{x:Bind Shader}"/>
+    <computesharp:AnimatedComputeShaderPanel ShaderRunner="{x:Bind Shader}"/>
 </Window>
