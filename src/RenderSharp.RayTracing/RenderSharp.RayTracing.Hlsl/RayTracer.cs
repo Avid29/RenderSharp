@@ -35,7 +35,7 @@ namespace RenderSharp.RayTracing.HLSL
         {
             _fullSize = size;
 
-            SceneConverter converter = new SceneConverter(Gpu.Default);
+            SceneConverter converter = new SceneConverter(GraphicsDevice.Default);
             _scene = converter.ConvertScene(scene);
             _camera = FullCamera.Create(_scene.camera, (float)size.X / size.Y);
 
@@ -49,18 +49,18 @@ namespace RenderSharp.RayTracing.HLSL
         {
             int samples = _scene.config.samples;
 
-            Gpu.Default.For(tile.Width, tile.Height, new CameraCastShader(_scene, _camera, tile.Offset, _fullSize, _rayCastBuffer));
-            Gpu.Default.For(tile.Width, tile.Width, new CollisionShader(_scene, _geometryBuffer, _bvhHeap, _bvhStack, _rayCastBuffer, _materialBuffer));
+            GraphicsDevice.Default.For(tile.Width, tile.Height, new CameraCastShader(_scene, _camera, tile.Offset, _fullSize, _rayCastBuffer));
+            GraphicsDevice.Default.For(tile.Width, tile.Width, new CollisionShader(_scene, _geometryBuffer, _bvhHeap, _bvhStack, _rayCastBuffer, _materialBuffer));
         }
 
         public void RenderTile(Tile tile)
         {
             int samples = _scene.config.samples;
-            _bvhStack = Gpu.Default.AllocateReadWriteTexture3D<int>(tile.Width, tile.Height, samples);
-            _rayCastBuffer = Gpu.Default.AllocateReadWriteBuffer<RayCast>(tile.Width * tile.Height);
-            _attenuationStack = Gpu.Default.AllocateReadWriteTexture2D<Float4>(tile.Width, tile.Height);
-            _colorStack = Gpu.Default.AllocateReadWriteTexture2D<Float4>(tile.Width, tile.Height);
-            _materialBuffer = Gpu.Default.AllocateReadWriteTexture2D<int>(tile.Width, tile.Height);
+            _bvhStack = GraphicsDevice.Default.AllocateReadWriteTexture3D<int>(tile.Width, tile.Height, samples);
+            _rayCastBuffer = GraphicsDevice.Default.AllocateReadWriteBuffer<RayCast>(tile.Width * tile.Height);
+            _attenuationStack = GraphicsDevice.Default.AllocateReadWriteTexture2D<Float4>(tile.Width, tile.Height);
+            _colorStack = GraphicsDevice.Default.AllocateReadWriteTexture2D<Float4>(tile.Width, tile.Height);
+            _materialBuffer = GraphicsDevice.Default.AllocateReadWriteTexture2D<int>(tile.Width, tile.Height);
 
             TraceBounces(tile);
         }

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ComputeSharp" Version="2.0.0-alpha.6" />
+    <PackageReference Include="ComputeSharp" Version="2.0.0-alpha.12" />
   </ItemGroup>
 
 </Project>

@@ -56,7 +56,7 @@ namespace RenderSharp.Render
                 return; // TODO: Throw
             }
 
-            _output = Gpu.Default.AllocateReadWriteTexture2D<Float4>( width, height);
+            _output = GraphicsDevice.Default.AllocateReadWriteTexture2D<Float4>( width, height);
 
             _state = RenderState.Starting;
             _analyzer.Begin();
@@ -130,7 +130,7 @@ namespace RenderSharp.Render
             if (_output == null)
                 return;
 
-            Gpu.Default.ForEach(image, new OverlayShaderI(new Int2(0, 0), _output, image));
+            GraphicsDevice.Default.ForEach(image, new OverlayShaderI(new Int2(0, 0), _output, image));
         }
     }
 }

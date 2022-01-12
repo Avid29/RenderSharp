@@ -10,6 +10,7 @@ namespace RenderSharp.RayTracing.HLSL.Shaders
     /// A shader that finds collisions on a buffer of ray casts
     /// </summary>
     [AutoConstructor]
+    [EmbeddedBytecode(DispatchAxis.XY)]
     public partial struct CollisionShader : IComputeShader
     {
         private readonly Scene scene;

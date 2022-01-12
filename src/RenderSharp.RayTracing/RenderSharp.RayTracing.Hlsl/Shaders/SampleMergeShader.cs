@@ -3,6 +3,7 @@
 namespace RenderSharp.RayTracing.HLSL
 {
     [AutoConstructor]
+    [EmbeddedBytecode(DispatchAxis.XY)]
     public readonly partial struct SampleMergeShader : IComputeShader
     {
         private readonly int samples;

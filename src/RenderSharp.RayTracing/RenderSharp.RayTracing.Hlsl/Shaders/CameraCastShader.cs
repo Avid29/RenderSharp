@@ -10,6 +10,7 @@ namespace RenderSharp.RayTracing.HLSL.Shaders
     /// A shader that genereates the intial rays from a Camera for a tile.
     /// </summary>
     [AutoConstructor]
+    [EmbeddedBytecode(DispatchAxis.XY)]
     public partial struct CameraCastShader : IComputeShader
     {
         private readonly Scene scene;

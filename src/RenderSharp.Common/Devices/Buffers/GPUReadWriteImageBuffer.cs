@@ -7,7 +7,7 @@ namespace RenderSharp.Common.Devices.Buffers
     {
         private ReadWriteTexture2D<Float4> _buffer;
 
-        public GPUReadWriteImageBuffer(int width, int height) : this(Gpu.Default, width, height)
+        public GPUReadWriteImageBuffer(int width, int height) : this(GraphicsDevice.Default, width, height)
         { }
 
         public GPUReadWriteImageBuffer(GraphicsDevice gpu, int width, int height)
@@ -28,7 +28,7 @@ namespace RenderSharp.Common.Devices.Buffers
 
         public void CopyToGPU(ReadWriteTexture2D<Float4> output)
         {
-            Gpu.Default.For(output.Width, output.Height, new OverlayShader(new Int2(0, 0), _buffer, output));
+            GraphicsDevice.Default.For(output.Width, output.Height, new OverlayShader(new Int2(0, 0), _buffer, output));
         }
     }
 }

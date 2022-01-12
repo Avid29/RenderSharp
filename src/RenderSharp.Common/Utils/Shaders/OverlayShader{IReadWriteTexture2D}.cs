@@ -3,6 +3,7 @@
 namespace RenderSharp.WinUI.Renderer
 {
     [AutoConstructor]
+    [EmbeddedBytecode(DispatchAxis.XZ)]
     public partial struct OverlayShaderI : IPixelShader<Float4>
     {
         Int2 offset;

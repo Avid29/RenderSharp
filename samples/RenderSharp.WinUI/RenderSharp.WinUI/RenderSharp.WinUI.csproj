@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0-windows10.0.19041.0</TargetFramework>
+    <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <RootNamespace>RenderSharp.WinUI</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ComputeSharp.WinUI" Version="2.0.0-alpha.6" />
+    <PackageReference Include="ComputeSharp.WinUI" Version="2.0.0-alpha.12" />
     <PackageReference Include="Microsoft.ProjectReunion" Version="0.8.4" />
     <PackageReference Include="Microsoft.ProjectReunion.Foundation" Version="0.8.4" />
     <PackageReference Include="Microsoft.ProjectReunion.WinUI" Version="0.8.4" />

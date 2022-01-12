@@ -3,6 +3,7 @@
 namespace RenderSharp.WinUI.Renderer
 {
     [AutoConstructor]
+    [EmbeddedBytecode(DispatchAxis.XZ)]
     public partial struct OverlayShader : IComputeShader
     {
         Int2 offset;
