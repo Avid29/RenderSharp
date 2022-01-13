@@ -50,6 +50,8 @@ namespace RenderSharp.RayTracing.HLSL
 
         public void TraceBounces(Tile tile)
         {
+            // TODO: Multiple samples
+
             GraphicsDevice.Default.For(tile.Width, tile.Height, new InitalizeShader(_scene, tile.Offset, _attenuationBuffer, _randStates));
             GraphicsDevice.Default.For(tile.Width, tile.Height, new CameraCastShader(_scene, _camera, tile.Offset, _fullSize, _rayBuffer));
             
@@ -58,11 +60,14 @@ namespace RenderSharp.RayTracing.HLSL
 
             for (int i = 0; i < _scene.config.maxBounces; i++)
             {
+                // Find collisions from the ray buffer and write the cast information to the cast buffer
                 GraphicsDevice.Default.For(tile.Width, tile.Width, new CollisionShader(_scene, _geometryBuffer, _bvhHeap, _bvhStack, _rayBuffer, _rayCastBuffer, _materialBuffer));
 
-                // TODO: Dyanmically select shader(s)
+                // TODO: Check which materials were hit and dyanmically select the shader(s) to run
+                // These shaders also scatter the ray, overwriting the ray in the ray buffer
                 GraphicsDevice.Default.For(tile.Width, tile.Height, new DiffuseShader(0, _scene, diffuse, _rayBuffer, _rayCastBuffer, _materialBuffer, _attenuationBuffer, _colorBuffer, _randStates));
 
+                // Run the Sky shader (will also be checked dynamically)
                 GraphicsDevice.Default.For(tile.Width, tile.Height, new SkyShader(_scene, new Float4(0.5f, 0.7f, 1f, 1f), _rayBuffer, _rayCastBuffer, _materialBuffer, _attenuationBuffer, _colorBuffer));
             }
         }

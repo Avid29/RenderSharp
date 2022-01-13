@@ -26,6 +26,8 @@ namespace RenderSharp.RayTracing.HLSL.Shaders.Materials
         public void Execute()
         {
             Int2 pos = ThreadIds.XY;
+
+            // This ray didn't hit an object with this material
             if (materialBuffer[pos] != matId) return;
 
             Int2 dis = DispatchSize.XY;
