@@ -12,9 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="ComputeSharp.WinUI" Version="2.0.0-alpha.12" />
-    <PackageReference Include="Microsoft.ProjectReunion" Version="0.8.4" />
-    <PackageReference Include="Microsoft.ProjectReunion.Foundation" Version="0.8.4" />
-    <PackageReference Include="Microsoft.ProjectReunion.WinUI" Version="0.8.4" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.0.0" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
 
