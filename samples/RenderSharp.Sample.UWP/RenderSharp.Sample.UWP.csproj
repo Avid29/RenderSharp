@@ -11,7 +11,7 @@
     <AssemblyName>RenderSharp.Sample.UWP</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.22000.0</TargetPlatformVersion>
+    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.19041.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
@@ -113,6 +113,9 @@
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
   </PropertyGroup>
   <PropertyGroup>
+	<!--<LangVersion>10</LangVersion>-->
+  </PropertyGroup>
+  <PropertyGroup>
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
@@ -156,6 +159,20 @@
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.12</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\RenderSharp.Common\RenderSharp.Common.csproj">
+      <Project>{5675fecd-a1f9-4af4-a450-c11bf29931d1}</Project>
+      <Name>RenderSharp.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\RenderSharp.RayTracing\RenderSharp.RayTracing.csproj">
+      <Project>{bab55014-22e1-4ea8-8924-702073068dc4}</Project>
+      <Name>RenderSharp.RayTracing</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\RenderSharp\RenderSharp.csproj">
+      <Project>{57a42522-eeb9-42b8-84ae-f1e33b873476}</Project>
+      <Name>RenderSharp</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="..\RenderSharp.Sample.Shared\RenderSharp.Sample.Shared.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

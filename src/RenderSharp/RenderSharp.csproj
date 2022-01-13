@@ -8,4 +8,9 @@
     <PackageReference Include="ComputeSharp" Version="2.0.0-alpha.12" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\RenderSharp.Common\RenderSharp.Common.csproj" />
+    <ProjectReference Include="..\RenderSharp.RayTracing\RenderSharp.RayTracing.csproj" />
+  </ItemGroup>
+
 </Project>

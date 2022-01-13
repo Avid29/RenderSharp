@@ -9,5 +9,6 @@
     <Import_RootNamespace>RenderSharp.Sample.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Renderer\RenderViewer.cs" />
   </ItemGroup>
 </Project>

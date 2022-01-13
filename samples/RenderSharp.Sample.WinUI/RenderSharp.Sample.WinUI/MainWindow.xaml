@@ -5,9 +5,8 @@
     xmlns:local="using:RenderSharp.Sample.WinUI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:computesharp="using:ComputeSharp.WinUI"
     mc:Ignorable="d">
 
-    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Button x:Name="myButton" Click="myButton_Click">Click Me</Button>
-    </StackPanel>
+    <computesharp:AnimatedComputeShaderPanel ShaderRunner="{x:Bind Shader}"/>
 </Window>

@@ -14,24 +14,29 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderSharp.Sample.UWP", "s
 EndProject
 Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "RenderSharp.Sample.WinUI (Package)", "samples\RenderSharp.Sample.WinUI\RenderSharp.Sample.WinUI (Package)\RenderSharp.Sample.WinUI (Package).wapproj", "{C1809ACF-6A78-472B-8887-40DDFA5DB35A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderSharp.Sample.WinUI", "samples\RenderSharp.Sample.WinUI\RenderSharp.Sample.WinUI\RenderSharp.Sample.WinUI.csproj", "{C622B94E-4D21-4C86-A315-CBC7073E586C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderSharp.Sample.WinUI", "samples\RenderSharp.Sample.WinUI\RenderSharp.Sample.WinUI\RenderSharp.Sample.WinUI.csproj", "{C622B94E-4D21-4C86-A315-CBC7073E586C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{57A42522-EEB9-42B8-84AE-F1E33B873476} = {57A42522-EEB9-42B8-84AE-F1E33B873476}
 	EndProjectSection
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "RenderSharp.Sample.Shared", "samples\RenderSharp.Sample.Shared\RenderSharp.Sample.Shared.shproj", "{C12C9912-61D0-4D06-8F3A-C14A4173FDC7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderSharp", "src\RenderSharp\RenderSharp.csproj", "{57A42522-EEB9-42B8-84AE-F1E33B873476}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderSharp", "src\RenderSharp\RenderSharp.csproj", "{57A42522-EEB9-42B8-84AE-F1E33B873476}"
 	ProjectSection(ProjectDependencies) = postProject
 		{BAB55014-22E1-4EA8-8924-702073068DC4} = {BAB55014-22E1-4EA8-8924-702073068DC4}
 		{5675FECD-A1F9-4AF4-A450-C11BF29931D1} = {5675FECD-A1F9-4AF4-A450-C11BF29931D1}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderSharp.Common", "src\RenderSharp.Common\RenderSharp.Common.csproj", "{5675FECD-A1F9-4AF4-A450-C11BF29931D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderSharp.Common", "src\RenderSharp.Common\RenderSharp.Common.csproj", "{5675FECD-A1F9-4AF4-A450-C11BF29931D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderSharp.RayTracing", "src\RenderSharp.RayTracing\RenderSharp.RayTracing.csproj", "{BAB55014-22E1-4EA8-8924-702073068DC4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderSharp.RayTracing", "src\RenderSharp.RayTracing\RenderSharp.RayTracing.csproj", "{BAB55014-22E1-4EA8-8924-702073068DC4}"
 	ProjectSection(ProjectDependencies) = postProject
 		{5675FECD-A1F9-4AF4-A450-C11BF29931D1} = {5675FECD-A1F9-4AF4-A450-C11BF29931D1}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{49C32BF4-BEDE-4164-A13F-F27A7418F4D3}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
 	EndProjectSection
 EndProject
 Global

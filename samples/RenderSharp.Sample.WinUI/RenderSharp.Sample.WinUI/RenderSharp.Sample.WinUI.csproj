@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
@@ -12,10 +12,14 @@
 
   <ItemGroup>
     <PackageReference Include="ComputeSharp.WinUI" Version="2.0.0-alpha.12" />
-    <PackageReference Include="Microsoft.ProjectReunion" Version="0.8.6" />
-    <PackageReference Include="Microsoft.ProjectReunion.Foundation" Version="0.8.6" />
-    <PackageReference Include="Microsoft.ProjectReunion.WinUI" Version="0.8.6" />
+    <PackageReference Include="Microsoft.ProjectReunion" Version="0.8.4" />
+    <PackageReference Include="Microsoft.ProjectReunion.Foundation" Version="0.8.4" />
+    <PackageReference Include="Microsoft.ProjectReunion.WinUI" Version="0.8.4" />
     <Manifest Include="$(ApplicationManifest)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\RenderSharp\RenderSharp.csproj" />
   </ItemGroup>
 
   <Import Project="..\..\RenderSharp.Sample.Shared\RenderSharp.Sample.Shared.projitems" Label="Shared" />
