@@ -7,6 +7,7 @@ using ComputeSharp.Uwp;
 using ComputeSharp;
 using System;
 using RenderSharp.Render;
+using RenderSharp.Scenes;
 
 #nullable enable
 
@@ -15,16 +16,21 @@ namespace RenderSharp.Sample.Shared.Renderer
     public class RenderViewer<TRenderer> : IShaderRunner
         where TRenderer : IRenderer
     {
-        private TRenderer _renderer;
+        private RenderManager<TRenderer> _renderManager;
 
         public RenderViewer(TRenderer renderer)
         {
-            _renderer = renderer;
+            _renderManager = new RenderManager<TRenderer>(renderer);
         }
+
+        public Scene Scene { get; set; }
 
         public bool TryExecute(IReadWriteTexture2D<Float4> texture, TimeSpan timespan, object? parameter)
         {
-            _renderer.Render(texture);
+            // Begin render if not begun
+            if (!_renderManager.IsRunning) _renderManager.Render(Scene, texture.Width, texture.Height);
+
+            _renderManager.WriteProgress(texture);
             return true;
         }
     }
