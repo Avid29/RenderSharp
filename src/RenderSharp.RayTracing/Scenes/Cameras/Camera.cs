@@ -1,14 +1,16 @@
-﻿namespace RenderSharp.RayTracing.Scenes.Cameras
+﻿using System.Numerics;
+
+namespace RenderSharp.RayTracing.Scenes.Cameras
 {
     public struct Camera
     {
-        public float3 origin;
-        public float3 look;
+        public Vector3 origin;
+        public Vector3 look;
         public float focalLength;
         public float fov;
         public float aperture;
 
-        public static Camera CreateCamera(float3 origin, float3 look, float focalLength, float fov, float aperture)
+        public static Camera Create(Vector3 origin, Vector3 look, float focalLength, float fov, float aperture)
         {
             Camera camera;
             camera.origin = origin;

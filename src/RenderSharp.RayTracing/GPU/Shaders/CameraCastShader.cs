@@ -18,22 +18,23 @@ namespace RenderSharp.RayTracing.GPU.Shaders
         private readonly int2 offset;
         private readonly int2 fullSize;
         private readonly ReadWriteBuffer<Ray> rayBuffer;
+        private readonly ReadWriteTexture2D<uint> randStates;
 
         public void Execute()
         {
             int2 pos = ThreadIds.XY;
             int2 dis = DispatchSize.XY;
             int bPos = pos.X * dis.X + pos.Y;
+            uint randState = randStates[pos];
 
-            int x = offset.X + ThreadIds.X;
-            int y = offset.Y + ThreadIds.Y;
-            int s = scene.config.samples;
-            uint randState = (uint)(x * 1973 + y * 9277 + s * 26699) | 1;
-
-            float u = (x + RandUtils.RandomFloat(ref randState) / fullSize.X);
+            int x = offset.X + pos.X;
+            int y = offset.Y + pos.Y;
+            float u = (x + RandUtils.RandomFloat(ref randState)) / fullSize.X;
             float v = 1 - ((y + RandUtils.RandomFloat(ref randState)) / fullSize.Y);
+
             Ray ray = FullCamera.CreateRay(camera, u, v, ref randState);
             rayBuffer[bPos] = ray;
+            randStates[pos] = randState;
         }
     }
 }

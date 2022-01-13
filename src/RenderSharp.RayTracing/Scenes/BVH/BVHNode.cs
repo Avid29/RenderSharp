@@ -9,6 +9,10 @@ namespace RenderSharp.RayTracing.Scenes.BVH
         public int rightI;
         public int geoI;
 
+        public static BVHNode Create(AABB aabb, int geoI) => Create(aabb, -1, -1, geoI);
+
+        public static BVHNode Create(AABB aabb, int leftI, int rightI) => Create(aabb, leftI, rightI, -1);
+
         public static BVHNode Create(AABB aabb, int leftI, int rightI, int geoI)
         {
             BVHNode node;

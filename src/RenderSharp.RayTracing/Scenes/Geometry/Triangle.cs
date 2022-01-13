@@ -3,15 +3,16 @@ using RenderSharp.RayTracing.Scenes.BVH;
 using RenderSharp.RayTracing.Scenes.Rays;
 using RenderSharp.RayTracing.Utils;
 using System;
+using System.Numerics;
 
 namespace RenderSharp.RayTracing.Scenes.Geometry
 {
     public struct Triangle
     {
-        public float3 a, b, c;
+        public Vector3 a, b, c;
         public int matId;
 
-        public static Triangle Create(float3 a, float3 b, float3 c, int matId)
+        public static Triangle Create(Vector3 a, Vector3 b, Vector3 c, int matId)
         {
             Triangle triangle;
             triangle.a = a;
@@ -30,10 +31,10 @@ namespace RenderSharp.RayTracing.Scenes.Geometry
         {
             // Set cast defaults
             cast.coefficient = 0;
-            cast.origin = float3.Zero;
-            cast.normal = float3.Zero;
+            cast.origin = Vector3.Zero;
+            cast.normal = Vector3.Zero;
 
-            float3 normal = Hlsl.Cross(tri.b - tri.a, tri.c - tri.a);
+            Vector3 normal = Hlsl.Cross(tri.b - tri.a, tri.c - tri.a);
             if (FloatUtils.LengthSquared(normal) < 0)
             {
                 normal *= -1;
@@ -46,7 +47,7 @@ namespace RenderSharp.RayTracing.Scenes.Geometry
             if (t < 0.0001f || t > maxClip) return false;
 
             // Find the collision point to the plane
-            float3 q = Ray.PointAt(ray, t);
+            Vector3 q = Ray.PointAt(ray, t);
 
             // Ensure the collision point is in the bounds of the face
             if (Hlsl.Dot(Hlsl.Cross(tri.b - tri.a, q - tri.a), normal) < 0) return false;
@@ -72,7 +73,7 @@ namespace RenderSharp.RayTracing.Scenes.Geometry
             y = Math.Min(triangle.a.Y, Math.Min(triangle.b.Y, triangle.c.Y));
             z = Math.Min(triangle.a.Z, Math.Min(triangle.b.Z, triangle.c.Z));
 #endif
-            float3 min = new float3(x, y, z);
+            Vector3 min = new Vector3(x, y, z);
 
 #if NET5_0_OR_GREATER
             x = MathF.Max(triangle.a.X, MathF.Max(triangle.b.X, triangle.c.X));
@@ -83,7 +84,7 @@ namespace RenderSharp.RayTracing.Scenes.Geometry
             y = Math.Max(triangle.a.Y, Math.Max(triangle.b.Y, triangle.c.Y));
             z = Math.Max(triangle.a.Z, Math.Max(triangle.b.Z, triangle.c.Z));
 #endif
-            float3 max = new float3(x, y, z);
+            Vector3 max = new Vector3(x, y, z);
 
             return AABB.Create(max, min);
         }

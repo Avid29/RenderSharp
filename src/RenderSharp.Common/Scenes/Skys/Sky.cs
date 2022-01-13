@@ -4,11 +4,11 @@ namespace RenderSharp.Scenes.Skys
 {
     public class Sky
     {
-        public Sky(Vector4 color)
+        public Sky(Vector4 albedo)
         {
-            Color = color;
+            Albedo = albedo;
         }
 
-        public Vector4 Color { get; }
+        public Vector4 Albedo { get; }
     }
 }

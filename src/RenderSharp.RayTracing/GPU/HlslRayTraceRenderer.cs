@@ -24,7 +24,7 @@ namespace RenderSharp.RayTracing.GPU
         {
             _buffer = new GPUReadWriteImageBuffer(imageWidth, imageHeight);
 
-            _rayTracer = new RayTracer(new int2(imageWidth, imageHeight), _buffer);
+            _rayTracer = new RayTracer(scene, new int2(imageWidth, imageHeight), _buffer);
         }
     }
 }

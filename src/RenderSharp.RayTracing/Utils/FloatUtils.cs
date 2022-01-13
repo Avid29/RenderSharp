@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 
 namespace RenderSharp.RayTracing.Utils
 {
@@ -9,7 +10,7 @@ namespace RenderSharp.RayTracing.Utils
             return v2.X * v2.X + v2.Y * v2.Y;
         }
 
-        public static float LengthSquared(float3 v3)
+        public static float LengthSquared(Vector3 v3)
         {
             return v3.X * v3.X + v3.Y * v3.Y + v3.Z * v3.Z;
         }

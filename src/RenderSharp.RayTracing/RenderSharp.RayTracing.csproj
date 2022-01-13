@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="ComputeSharp" Version="2.0.0-alpha.12" />
+    <PackageReference Include="System.Memory" Version="4.5.4" />
   </ItemGroup>
 
   <ItemGroup>

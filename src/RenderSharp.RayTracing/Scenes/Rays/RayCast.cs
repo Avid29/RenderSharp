@@ -1,9 +1,11 @@
-﻿namespace RenderSharp.RayTracing.Scenes.Rays
+﻿using System.Numerics;
+
+namespace RenderSharp.RayTracing.Scenes.Rays
 {
     public struct RayCast
     {
-        public float3 origin;
-        public float3 normal;
+        public Vector3 origin;
+        public Vector3 normal;
         public float coefficient;
     }
 }

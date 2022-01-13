@@ -1,13 +1,15 @@
-﻿namespace RenderSharp.RayTracing.Scenes.Rays
+﻿using System.Numerics;
+
+namespace RenderSharp.RayTracing.Scenes.Rays
 {
     public struct Ray
     {
-        public float3 origin;
-        public float3 direction;
+        public Vector3 origin;
+        public Vector3 direction;
 
-        public static Ray Create() => Create(float3.Zero, float3.Zero);
+        public static Ray Create() => Create(Vector3.Zero, Vector3.Zero);
 
-        public static Ray Create(float3 origin, float3 direction)
+        public static Ray Create(Vector3 origin, Vector3 direction)
         {
             Ray ray;
             ray.origin = origin;
@@ -15,7 +17,7 @@
             return ray;
         }
 
-        public static float3 PointAt(Ray ray, float c)
+        public static Vector3 PointAt(Ray ray, float c)
         {
             return ray.origin + c * ray.direction;
         }

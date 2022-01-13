@@ -1,15 +1,15 @@
-﻿using ComputeSharp;
-using RenderSharp.RayTracing.Scenes.Rays;
+﻿using RenderSharp.RayTracing.Scenes.Rays;
 using System;
+using System.Numerics;
 
 namespace RenderSharp.RayTracing.Scenes.BVH
 {
     public struct AABB
     {
-        public float3 maximum;
-        public float3 minimum;
+        public Vector3 maximum;
+        public Vector3 minimum;
 
-        public static AABB Create(float3 maximum, float3 minimum)
+        public static AABB Create(Vector3 maximum, Vector3 minimum)
         {
             AABB box;
             box.maximum = maximum;
@@ -21,9 +21,9 @@ namespace RenderSharp.RayTracing.Scenes.BVH
         {
             for (int axis = 0; axis < 3; axis++)
             {
-                float invD = 1f / ray.direction[axis];
-                float t0 = (box.minimum[axis] - ray.origin[axis]) * invD;
-                float t1 = (box.maximum[axis] - ray.origin[axis]) * invD;
+                float invD = 1f / ((float3)ray.direction)[axis];
+                float t0 = (((float3)box.minimum)[axis] - ((float3)ray.origin)[axis]) * invD;
+                float t1 = (((float3)box.maximum)[axis] - ((float3)ray.origin)[axis]) * invD;
 
                 if (invD < 0.0f)
                 {
@@ -53,7 +53,7 @@ namespace RenderSharp.RayTracing.Scenes.BVH
             y = Math.Min(box1.minimum.Y, box2.minimum.Y);
             z = Math.Min(box1.minimum.Z, box2.minimum.Z);
 #endif
-            float3 min = new float3(x, y, z);
+            Vector3 min = new Vector3(x, y, z);
 
 #if NET5_0_OR_GREATER
             x = MathF.Max(box1.maximum.X, box2.maximum.X);
@@ -64,7 +64,7 @@ namespace RenderSharp.RayTracing.Scenes.BVH
             y = Math.Max(box1.maximum.Y, box2.maximum.Y);
             z = Math.Max(box1.maximum.Z, box2.maximum.Z);
 #endif
-            float3 max = new float3(x, y, z);
+            Vector3 max = new Vector3(x, y, z);
 
             return Create(max, min);
         }
@@ -73,9 +73,9 @@ namespace RenderSharp.RayTracing.Scenes.BVH
         {
             for (int axis = 0; axis < 3; axis++)
             {
-                float invD = 1f / ray.direction[axis];
-                float t0 = (box.minimum[axis] - ray.origin[axis]) * invD;
-                float t1 = (box.maximum[axis] - ray.origin[axis]) * invD;
+                float invD = 1f / ((float3)ray.direction)[axis];
+                float t0 = (((float3)box.minimum)[axis] - ((float3)ray.origin)[axis]) * invD;
+                float t1 = (((float3)box.maximum)[axis] - ((float3)ray.origin)[axis]) * invD;
 
                 if (t1 < t0)
                 {

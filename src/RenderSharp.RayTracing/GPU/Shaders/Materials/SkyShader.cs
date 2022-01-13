@@ -1,21 +1,17 @@
 ﻿using ComputeSharp;
 using RenderSharp.RayTracing.Scenes;
-using RenderSharp.RayTracing.Scenes.Materials;
 using RenderSharp.RayTracing.Scenes.Rays;
-using RenderSharp.RayTracing.Utils;
 using System.Numerics;
 
 namespace RenderSharp.RayTracing.GPU.Shaders.Materials
 {
     [AutoConstructor]
     [EmbeddedBytecode(DispatchAxis.XY)]
-    public partial struct DiffuseShader : IComputeShader
+    public partial struct SkyShader : IComputeShader
     {
-        private readonly int matId;
-
         private readonly Scene scene;
         private readonly int2 offset;
-        private readonly DiffuseMaterial material;
+        private readonly float4 albedo;
 
         private readonly ReadWriteBuffer<Ray> rayBuffer;
         private readonly ReadWriteBuffer<RayCast> rayCastBuffer;
@@ -23,29 +19,24 @@ namespace RenderSharp.RayTracing.GPU.Shaders.Materials
 
         private readonly ReadWriteTexture2D<float4> attenuationBuffer;
         private readonly ReadWriteTexture2D<float4> colorBuffer;
-        private readonly ReadWriteTexture2D<uint> randStates;
 
         public void Execute()
         {
             int2 pos = ThreadIds.XY;
-
-            // This ray didn't hit an object with this material
-            if (materialBuffer[pos] != matId) return;
+            if (materialBuffer[pos] != -1) return;
 
             int2 dis = DispatchSize.XY;
             int bPos = pos.X * dis.X + pos.Y;
-            uint randState = randStates[pos];
 
-            //Ray ray = rayBuffer[bPos];
+            Ray ray = rayBuffer[bPos];
             RayCast cast = rayCastBuffer[bPos];
 
-            Vector3 target = cast.origin + cast.normal;
-            target += material.roughness * RandUtils.RandomInUnitSphere(ref randState);
-            Ray scatter = Ray.Create(cast.origin, target - cast.origin);
+            Vector3 unitDirection = Vector3.Normalize(ray.direction);
+            float t = 0.5f * (unitDirection.Y + 1);
+            float4 rawColor = (1f - t) * float4.One + t * albedo;
 
-            rayBuffer[bPos] = scatter;
-            attenuationBuffer[pos] *= material.albedo;
-            randStates[pos] = randState;
+            float4 attenuation = attenuationBuffer[pos];
+            colorBuffer[pos + offset] += attenuation * rawColor;
         }
     }
 }

@@ -2,16 +2,17 @@
 using RenderSharp.RayTracing.Scenes.Rays;
 using RenderSharp.RayTracing.Utils;
 using System;
+using System.Numerics;
 
 namespace RenderSharp.RayTracing.Scenes.Cameras
 {
     public struct FullCamera
     {
-        public float3 origin;
-        public float3 horizontal;
-        public float3 vertical;
-        public float3 lowerLeftCorner;
-        public float3 u, v, w;
+        public Vector3 origin;
+        public Vector3 horizontal;
+        public Vector3 vertical;
+        public Vector3 lowerLeftCorner;
+        public Vector3 u, v, w;
         public float lensRadius;
 
         public static FullCamera Create(Camera specs, float aspectRatio)
@@ -25,16 +26,16 @@ namespace RenderSharp.RayTracing.Scenes.Cameras
             float height = 2 * h;
             float width = aspectRatio * height;
 
-             float3 vup =  float3.UnitY;
+            Vector3 vup = Vector3.UnitY;
 
             FullCamera camera;
             camera.origin = specs.origin;
-            camera.w = Hlsl.Normalize(specs.origin - specs.look);
-            camera.u = Hlsl.Normalize(Hlsl.Cross(vup, camera.w));
-            camera.v = Hlsl.Cross(camera.w, camera.u);
+            camera.w = Vector3.Normalize(specs.origin - specs.look);
+            camera.u = Vector3.Normalize(Vector3.Cross(vup, camera.w));
+            camera.v = Vector3.Cross(camera.w, camera.u);
             camera.horizontal = width * camera.u;
             camera.vertical = height * camera.v;
-             float3 depth = camera.w * specs.focalLength;
+            Vector3 depth = camera.w * specs.focalLength;
 
             camera.lowerLeftCorner = camera.origin - camera.horizontal / 2 - camera.vertical / 2 - depth;
 
@@ -44,8 +45,8 @@ namespace RenderSharp.RayTracing.Scenes.Cameras
 
         public static Ray CreateRay(FullCamera camera, float u, float v, ref uint randState)
         {
-            float3 rd = camera.lensRadius * RandUtils.RandomInUnitDisk(ref randState);
-            float3 offset = camera.u * rd.X + camera.v * rd.Y;
+            Vector3 rd = camera.lensRadius * RandUtils.RandomInUnitDisk(ref randState);
+            Vector3 offset = camera.u * rd.X + camera.v * rd.Y;
 
             Ray ray;
             ray.origin = camera.origin + offset;

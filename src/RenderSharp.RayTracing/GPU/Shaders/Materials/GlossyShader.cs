@@ -3,6 +3,7 @@ using RenderSharp.RayTracing.Scenes;
 using RenderSharp.RayTracing.Scenes.Materials;
 using RenderSharp.RayTracing.Scenes.Rays;
 using RenderSharp.RayTracing.Utils;
+using System.Numerics;
 
 namespace RenderSharp.RayTracing.GPU.Shaders.Materials
 {
@@ -13,6 +14,7 @@ namespace RenderSharp.RayTracing.GPU.Shaders.Materials
         private readonly int matId;
 
         private readonly Scene scene;
+        private readonly int2 offset;
         private readonly GlossyMaterial material;
 
         private readonly ReadWriteBuffer<Ray> rayBuffer;
@@ -37,7 +39,7 @@ namespace RenderSharp.RayTracing.GPU.Shaders.Materials
             Ray ray = rayBuffer[bPos];
             RayCast cast = rayCastBuffer[bPos];
 
-            float3 target = Hlsl.Reflect(Hlsl.Normalize(ray.direction), cast.normal);
+            Vector3 target = Hlsl.Reflect(Hlsl.Normalize(ray.direction), cast.normal);
             target += material.roughness * RandUtils.RandomInUnitSphere(ref randState);
             Ray scatter = Ray.Create(cast.origin, target - cast.origin);
 
