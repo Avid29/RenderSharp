@@ -6,7 +6,7 @@ namespace RenderSharp.RayTracing.GPU
 {
     public class HlslRayTraceRenderer : IRenderer
     {
-        public void Render(IReadWriteTexture2D<Float4> buffer)
+        public void Render(IReadWriteTexture2D<float4> buffer)
         {
             GraphicsDevice.Default.For(buffer.Width, buffer.Height, new TestShader(buffer));
         }
