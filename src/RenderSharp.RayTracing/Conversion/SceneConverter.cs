@@ -88,8 +88,8 @@ namespace RenderSharp.RayTracing.Conversion
             foreach (var face in mesh.Faces)
             {
                 Vector3 a = face.Verticies[0];
-                Vector3 b = face.Verticies[0];
-                Vector3 c = face.Verticies[0];
+                Vector3 b = face.Verticies[1];
+                Vector3 c = face.Verticies[2];
                 _geometries.Add(RayTrace.Geometry.Triangle.Create(a, b, c, 0)); // TODO: Material Id
             }
         }
