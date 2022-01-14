@@ -29,7 +29,7 @@ namespace RenderSharp.RayTracing.GPU.Shaders
 
             // Cache nearest hit info
             float nearest = float.MaxValue;
-            materialBuffer[pos] = -1; // -1 Means the sky was hit
+            if (materialBuffer[pos] >= 0) materialBuffer[pos] = -1; // -1 Means the sky was hit
 
             // Add the root BVH node to the stack
             int stackIndex = 0;

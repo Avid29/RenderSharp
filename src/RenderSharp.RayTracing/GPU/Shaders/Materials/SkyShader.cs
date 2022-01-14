@@ -37,6 +37,7 @@ namespace RenderSharp.RayTracing.GPU.Shaders.Materials
 
             float4 attenuation = attenuationBuffer[pos];
             colorBuffer[pos + offset] += attenuation * rawColor;
+            materialBuffer[pos] = -2;
         }
     }
 }
