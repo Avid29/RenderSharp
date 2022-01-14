@@ -61,7 +61,7 @@ namespace RenderSharp.RayTracing.GPU
             for (int i = 0; i < _scene.config.maxBounces; i++)
             {
                 // Find collisions from the ray buffer and write the cast information to the cast buffer
-                GraphicsDevice.Default.For(tile.Width, tile.Width, new CollisionShader(_scene, _geometryBuffer, _bvhBuffer, bvhStack, rayBuffer, rayCastBuffer, materialBuffer));
+                GraphicsDevice.Default.For(tile.Width, tile.Height, new CollisionShader(_scene, _geometryBuffer, _bvhBuffer, bvhStack, rayBuffer, rayCastBuffer, materialBuffer));
 
                 // TODO: Check which materials were hit and dyanmically select the shader(s) to run
                 // These shaders also scatter the ray, overwriting the ray in the ray buffer
