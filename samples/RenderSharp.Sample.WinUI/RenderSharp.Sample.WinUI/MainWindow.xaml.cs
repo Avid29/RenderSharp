@@ -1,4 +1,5 @@
 ﻿using Microsoft.UI.Xaml;
+using RenderSharp.Import;
 using RenderSharp.RayTracing.GPU;
 using RenderSharp.Sample.Shared.Renderer;
 using RenderSharp.Scenes;
@@ -21,12 +22,15 @@ namespace RenderSharp.Sample.WinUI
 
         private void Setup()
         {
-            Face face = new Face();
-            face.Verticies.Add(Vector3.UnitX);
-            face.Verticies.Add(Vector3.UnitY);
-            face.Verticies.Add(Vector3.UnitZ);
-            Mesh mesh = new Mesh();
-            mesh.Faces.Add(face);
+            string path = @"C:\Users\avid2\3D Objects\TriCube.obj";
+            Mesh mesh = WaveFrontImporter.LoadMesh(path);
+
+            //Face face = new Face();
+            //face.Verticies.Add(Vector3.UnitX);
+            //face.Verticies.Add(Vector3.UnitY);
+            //face.Verticies.Add(Vector3.UnitZ);
+            //Mesh mesh = new Mesh();
+            //mesh.Faces.Add(face);
             Shader.Scene = Scene.CreateMeshScene(mesh);
         }
 
