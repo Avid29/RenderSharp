@@ -53,7 +53,7 @@ namespace RenderSharp.RayTracing.GPU
             ReadWriteTexture2D<uint> randStates = GraphicsDevice.Default.AllocateReadWriteTexture2D<uint>(tile.Width, tile.Height);
 
             GraphicsDevice.Default.For(tile.Width, tile.Height, new InitalizeShader(_scene, tile.Offset, attenuationBuffer, randStates));
-            GraphicsDevice.Default.For(tile.Width, tile.Height, new CameraCastShader(_scene, _camera, tile.Offset, tile.Size, rayBuffer, randStates));
+            GraphicsDevice.Default.For(tile.Width, tile.Height, new CameraCastShader(_scene, _camera, tile.Offset, _fullSize, rayBuffer, randStates));
 
             // Render each object with this diffuse material.
             DiffuseMaterial diffuse = DiffuseMaterial.Create(float4.One * .8f, .5f);
