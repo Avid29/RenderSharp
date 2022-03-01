@@ -34,15 +34,15 @@ namespace RenderSharp.RayTracing.Scenes.Geometry
             cast.origin = Vector3.Zero;
             cast.normal = Vector3.Zero;
 
-            Vector3 normal = Hlsl.Cross(tri.b - tri.a, tri.c - tri.a);
+            Vector3 normal = Vector3.Cross(tri.b - tri.a, tri.c - tri.a);
             if (FloatUtils.LengthSquared(normal) < 0)
             {
                 normal *= -1;
             }
 
             // Find the ray's distance from the triangle's plane
-            float d = Hlsl.Dot(normal, tri.a);
-            float t = (d - Hlsl.Dot(normal, ray.origin)) / Hlsl.Dot(normal, ray.direction);
+            float d = Vector3.Dot(normal, tri.a);
+            float t = (d - Vector3.Dot(normal, ray.origin)) / Vector3.Dot(normal, ray.direction);
 
             if (t < 0.0001f || t > maxClip) return false;
 
@@ -50,9 +50,9 @@ namespace RenderSharp.RayTracing.Scenes.Geometry
             Vector3 q = Ray.PointAt(ray, t);
 
             // Ensure the collision point is in the bounds of the face
-            if (Hlsl.Dot(Hlsl.Cross(tri.b - tri.a, q - tri.a), normal) < 0) return false;
-            if (Hlsl.Dot(Hlsl.Cross(tri.c - tri.b, q - tri.b), normal) < 0) return false;
-            if (Hlsl.Dot(Hlsl.Cross(tri.a - tri.c, q - tri.c), normal) < 0) return false;
+            if (Vector3.Dot(Vector3.Cross(tri.b - tri.a, q - tri.a), normal) < 0) return false;
+            if (Vector3.Dot(Vector3.Cross(tri.c - tri.b, q - tri.b), normal) < 0) return false;
+            if (Vector3.Dot(Vector3.Cross(tri.a - tri.c, q - tri.c), normal) < 0) return false;
 
             // Build ray cast
             cast.origin = q;

@@ -1,4 +1,5 @@
 ﻿using Windows.UI.Xaml.Controls;
+using RenderSharp.RayTracing.CPU;
 using RenderSharp.RayTracing.GPU;
 using RenderSharp.Sample.Shared.Renderer;
 using RenderSharp.Scenes;
@@ -29,7 +30,7 @@ namespace RenderSharp.Sample.UWP
             mesh.Faces.Add(face);
             Shader.Scene = Scene.CreateMeshScene(mesh);
         }
-
-        public RenderViewer<HlslRayTraceRenderer> Shader = new RenderViewer<HlslRayTraceRenderer>(new HlslRayTraceRenderer());
+        //public RenderViewer<HlslRayTraceRenderer> Shader = new RenderViewer<HlslRayTraceRenderer>(new HlslRayTraceRenderer());
+        public RenderViewer<CPURayTraceRenderer> Shader = new RenderViewer<CPURayTraceRenderer>(new CPURayTraceRenderer());
     }
 }
