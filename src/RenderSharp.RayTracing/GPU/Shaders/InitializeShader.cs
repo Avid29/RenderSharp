@@ -1,5 +1,6 @@
 ﻿using ComputeSharp;
 using RenderSharp.RayTracing.Scenes;
+using System.Numerics;
 
 namespace RenderSharp.RayTracing.GPU.Shaders
 {
@@ -10,7 +11,7 @@ namespace RenderSharp.RayTracing.GPU.Shaders
         private readonly Scene scene;
         private readonly int2 offset;
 
-        private readonly ReadWriteTexture2D<float4> attenuationBuffer;
+        private readonly ReadWriteTexture2D<Vector4> attenuationBuffer;
         private readonly ReadWriteTexture2D<uint> randStates;
 
         public void Execute()
@@ -20,7 +21,7 @@ namespace RenderSharp.RayTracing.GPU.Shaders
             int y = offset.Y + ThreadIds.Y;
             int s = scene.config.samples;
 
-            attenuationBuffer[pos] = float4.One;
+            attenuationBuffer[pos] = Vector4.One;
             randStates[pos] = (uint)(x * 1973 + y * 9277 + s * 26699) | 1;
         }
     }

@@ -21,8 +21,8 @@ namespace RenderSharp.RayTracing.GPU.Shaders.Materials
         private readonly ReadWriteBuffer<RayCast> rayCastBuffer;
         private readonly ReadWriteTexture2D<int> materialBuffer;
 
-        private readonly ReadWriteTexture2D<float4> attenuationBuffer;
-        private readonly ReadWriteTexture2D<float4> colorBuffer;
+        private readonly ReadWriteTexture2D<Vector4> attenuationBuffer;
+        private readonly ReadWriteTexture2D<Vector4> colorBuffer;
         private readonly ReadWriteTexture2D<uint> randStates;
 
         public void Execute()

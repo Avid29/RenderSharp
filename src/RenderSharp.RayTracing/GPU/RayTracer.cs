@@ -11,6 +11,7 @@ using RenderSharp.RayTracing.Scenes.Materials;
 using RenderSharp.RayTracing.Scenes.Rays;
 using RenderSharp.Render.Tiles;
 using RenderSharp.Utils.Shaders;
+using System.Numerics;
 using CommonScene = RenderSharp.Scenes.Scene;
 
 namespace RenderSharp.RayTracing.GPU
@@ -49,7 +50,7 @@ namespace RenderSharp.RayTracing.GPU
             ReadWriteBuffer<Ray> rayBuffer = GraphicsDevice.Default.AllocateReadWriteBuffer<Ray>(tile.Width * tile.Height);
             ReadWriteBuffer<RayCast> rayCastBuffer = GraphicsDevice.Default.AllocateReadWriteBuffer<RayCast>(tile.Width * tile.Height);
             ReadWriteTexture2D<int> materialBuffer = GraphicsDevice.Default.AllocateReadWriteTexture2D<int>(tile.Width, tile.Height);
-            ReadWriteTexture2D<float4> attenuationBuffer = GraphicsDevice.Default.AllocateReadWriteTexture2D<float4>(tile.Width, tile.Height);
+            ReadWriteTexture2D<Vector4> attenuationBuffer = GraphicsDevice.Default.AllocateReadWriteTexture2D<Vector4>(tile.Width, tile.Height);
             ReadWriteTexture2D<uint> randStates = GraphicsDevice.Default.AllocateReadWriteTexture2D<uint>(tile.Width, tile.Height);
 
             GraphicsDevice.Default.For(tile.Width, tile.Height, new InitalizeShader(_scene, tile.Offset, attenuationBuffer, randStates));
@@ -68,7 +69,7 @@ namespace RenderSharp.RayTracing.GPU
                 GraphicsDevice.Default.For(tile.Width, tile.Height, new DiffuseShader(0, _scene, tile.Offset, diffuse, rayBuffer, rayCastBuffer, materialBuffer, attenuationBuffer, _buffer.Buffer, randStates));
 
                 // Run the Sky shader (will also be checked dynamically)
-                GraphicsDevice.Default.For(tile.Width, tile.Height, new SkyShader(_scene, tile.Offset, new Float4(0.5f, 0.7f, 1f, 1f), rayBuffer, rayCastBuffer, materialBuffer, attenuationBuffer, _buffer.Buffer));
+                GraphicsDevice.Default.For(tile.Width, tile.Height, new SkyShader(_scene, tile.Offset, new Vector4(0.5f, 0.7f, 1f, 1f), rayBuffer, rayCastBuffer, materialBuffer, attenuationBuffer, _buffer.Buffer));
             }
         }
     }

@@ -4,6 +4,7 @@ using RenderSharp.Render.Tiles;
 using RenderSharp.Scenes;
 using RenderSharp.Utils.Shaders;
 using System;
+using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,7 +15,7 @@ namespace RenderSharp.Render
     {
         private TileManager _tileManager;
         private RenderAnalyzer _analyzer;
-        private ReadWriteTexture2D<Float4> _output;
+        private ReadWriteTexture2D<Vector4> _output;
 
         /// <remarks>
         /// Use property, field may be inaccurate.
@@ -54,7 +55,7 @@ namespace RenderSharp.Render
                 return; // TODO: Throw
             }
 
-            _output = GraphicsDevice.Default.AllocateReadWriteTexture2D<Float4>(width, height);
+            _output = GraphicsDevice.Default.AllocateReadWriteTexture2D<Vector4>(width, height);
 
             _state = RenderState.Starting;
             _analyzer.Begin();
@@ -123,7 +124,7 @@ namespace RenderSharp.Render
             return isReady;
         }
 
-        public void WriteProgress(IReadWriteTexture2D<Float4> image)
+        public void WriteProgress(IReadWriteTexture2D<float4> image)
         {
             if (_output == null)
                 return;

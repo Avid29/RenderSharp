@@ -13,6 +13,7 @@ using RenderSharp.RayTracing.Scenes.Materials;
 using RenderSharp.RayTracing.Scenes.Rays;
 using RenderSharp.Render.Tiles;
 using System;
+using System.Numerics;
 using CommonScene = RenderSharp.Scenes.Scene;
 
 namespace RenderSharp.RayTracing.CPU
@@ -51,18 +52,19 @@ namespace RenderSharp.RayTracing.CPU
             Span<Ray> rayBuffer = new Ray[tile.Width * tile.Height];
             Span<RayCast> rayCastBuffer = new RayCast[tile.Width * tile.Height];
             Span2D<int> materialBuffer = new int[tile.Width, tile.Height];
-            Span2D<float4> atteniationBuffer = new float4[tile.Width, tile.Height];
+            Span2D<Vector4> atteniationBuffer = new Vector4[tile.Width, tile.Height];
             Span2D<uint> randStates = new uint[tile.Width, tile.Height];
 
             new InitializeMockShader(_scene, tile.Offset, atteniationBuffer, randStates).Execute();
             new CameraCastMockShader(_scene, _camera, tile.Offset, _fullSize, rayBuffer, randStates).Execute(tile.Width, tile.Height);
 
-            DiffuseMaterial diffuse = DiffuseMaterial.Create(float4.One * .8f, .5f);
+            DiffuseMaterial diffuse = DiffuseMaterial.Create(Vector4.One * .8f, .5f);
 
             for (int i = 0; i < _scene.config.maxBounces; i++)
             {
                 new CollisionMockShader(_scene, _geometryBuffer, _bvhBuffer, bvhStack, rayBuffer, rayCastBuffer, materialBuffer).Execute(tile.Width, tile.Height);
                 new DiffuseMockShader(0, _scene, tile.Offset, tile.Size, diffuse, rayBuffer, rayCastBuffer, materialBuffer, atteniationBuffer, _buffer.AsSpan(), randStates).Execute(tile.Width, tile.Height);
+                new SkyMockShader(_scene, tile.Offset, tile.Size, new Vector4(0.5f, 0.7f, 1f, 1f), rayBuffer, rayCastBuffer, materialBuffer, atteniationBuffer, _buffer.AsSpan()).Execute(tile.Width, tile.Height);
             }
         }
     }

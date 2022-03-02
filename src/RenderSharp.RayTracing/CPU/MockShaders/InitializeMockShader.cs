@@ -1,6 +1,7 @@
 ﻿using ComputeSharp;
 using Microsoft.Toolkit.HighPerformance;
 using RenderSharp.RayTracing.Scenes;
+using System.Numerics;
 
 namespace RenderSharp.RayTracing.CPU.MockShaders
 {
@@ -10,12 +11,12 @@ namespace RenderSharp.RayTracing.CPU.MockShaders
         private readonly Scene _scene;
         private readonly int2 _offset;
 
-        private readonly Span2D<float4> _attenuationBuffer;
+        private readonly Span2D<Vector4> _attenuationBuffer;
         private readonly Span2D<uint> _randStates;
 
         public void Execute()
         {
-            _attenuationBuffer.Fill(float4.One);
+            _attenuationBuffer.Fill(Vector4.One);
             int s = _scene.config.samples;
 
             for (int row = 0; row < _randStates.Height; row++)

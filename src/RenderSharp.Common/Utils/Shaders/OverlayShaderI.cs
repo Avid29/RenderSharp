@@ -1,4 +1,5 @@
 ﻿using ComputeSharp;
+using System.Numerics;
 
 namespace RenderSharp.Utils.Shaders
 {
@@ -7,7 +8,7 @@ namespace RenderSharp.Utils.Shaders
     public partial struct OverlayShaderI : IPixelShader<float4>
     {
         int2 offset;
-        ReadWriteTexture2D<float4> overlay;
+        ReadWriteTexture2D<Vector4> overlay;
         IReadWriteTexture2D<float4> fallback;
 
         private bool IsWithin(int2 pos, int2 offset, int2 bottomRight)

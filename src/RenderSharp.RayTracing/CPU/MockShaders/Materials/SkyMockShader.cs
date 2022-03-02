@@ -1,23 +1,20 @@
 ﻿using ComputeSharp;
 using Microsoft.Toolkit.HighPerformance;
 using RenderSharp.RayTracing.Scenes;
-using RenderSharp.RayTracing.Scenes.Materials;
 using RenderSharp.RayTracing.Scenes.Rays;
-using RenderSharp.RayTracing.Utils;
 using System;
+using System.Diagnostics;
 using System.Numerics;
 
 namespace RenderSharp.RayTracing.CPU.MockShaders.Materials
 {
     [AutoConstructor]
-    public ref partial struct DiffuseMockShader
+    public ref partial struct SkyMockShader
     {
-        private readonly int _matId;
-
         private readonly Scene _scene;
         private readonly int2 _offset;
         private readonly int2 _tileSize;
-        private readonly DiffuseMaterial _material;
+        private readonly Vector4 _albedo;
 
         private readonly Span<Ray> _rayBuffer;
         private readonly Span<RayCast> _rayCastBuffer;
@@ -25,7 +22,6 @@ namespace RenderSharp.RayTracing.CPU.MockShaders.Materials
 
         private readonly Span2D<Vector4> _attenuationBuffer;
         private readonly Span2D<Vector4> _colorBuffer;
-        private readonly Span2D<uint> _randStates;
 
         public void Execute(int width, int height)
         {
@@ -33,19 +29,20 @@ namespace RenderSharp.RayTracing.CPU.MockShaders.Materials
             {
                 for (int y = 0; y < height; y++)
                 {
-                    if (_materialBuffer[x, y] != _matId) continue;
-                    int bPos = y * _tileSize.X + x;
-                    uint randState = _randStates[x, y];
+                    if (_materialBuffer[x, y] != -1) continue;
 
+                    int bPos = x * _tileSize.Y + y;
+
+                    Ray ray = _rayBuffer[bPos];
                     RayCast cast = _rayCastBuffer[bPos];
 
-                    Vector3 target = cast.origin + cast.normal;
-                    target += _material.roughness * RandUtils.RandomInUnitSphere(ref randState);
-                    Ray scatter = Ray.Create(cast.origin, target - cast.origin);
+                    Vector3 unitDirection = Vector3.Normalize(ray.direction);
+                    float t = 0.5f * (unitDirection.Y + 1);
+                    Vector4 rawColor = (1f - t) * Vector4.One + t * _albedo;
 
-                    _rayBuffer[bPos] = scatter;
-                    _attenuationBuffer[x, y] *= _material.albedo;
-                    _randStates[x, y] = randState;
+                    Vector4 attenuation = _attenuationBuffer[x, y];
+                    _colorBuffer[y + _offset.Y, x + _offset.X] = attenuation * rawColor;
+                    _materialBuffer[x, y] = -2;
                 }
             }
         }

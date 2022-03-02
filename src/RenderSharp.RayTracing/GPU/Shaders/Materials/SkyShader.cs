@@ -11,14 +11,14 @@ namespace RenderSharp.RayTracing.GPU.Shaders.Materials
     {
         private readonly Scene scene;
         private readonly int2 offset;
-        private readonly float4 albedo;
+        private readonly Vector4 albedo;
 
         private readonly ReadWriteBuffer<Ray> rayBuffer;
         private readonly ReadWriteBuffer<RayCast> rayCastBuffer;
         private readonly ReadWriteTexture2D<int> materialBuffer;
 
-        private readonly ReadWriteTexture2D<float4> attenuationBuffer;
-        private readonly ReadWriteTexture2D<float4> colorBuffer;
+        private readonly ReadWriteTexture2D<Vector4> attenuationBuffer;
+        private readonly ReadWriteTexture2D<Vector4> colorBuffer;
 
         public void Execute()
         {
@@ -33,9 +33,9 @@ namespace RenderSharp.RayTracing.GPU.Shaders.Materials
 
             Vector3 unitDirection = Vector3.Normalize(ray.direction);
             float t = 0.5f * (unitDirection.Y + 1);
-            float4 rawColor = (1f - t) * float4.One + t * albedo;
+            Vector4 rawColor = (1f - t) * Vector4.One + t * albedo;
 
-            float4 attenuation = attenuationBuffer[pos];
+            Vector4 attenuation = attenuationBuffer[pos];
             colorBuffer[pos + offset] += attenuation * rawColor;
             materialBuffer[pos] = -2;
         }

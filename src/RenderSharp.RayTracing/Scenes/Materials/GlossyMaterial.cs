@@ -1,11 +1,13 @@
-﻿namespace RenderSharp.RayTracing.Scenes.Materials
+﻿using System.Numerics;
+
+namespace RenderSharp.RayTracing.Scenes.Materials
 {
     public struct GlossyMaterial
     {
-        public float4 albedo;
+        public Vector4 albedo;
         public float roughness;
 
-        public static GlossyMaterial Create(float4 albedo, float roughness)
+        public static GlossyMaterial Create(Vector4 albedo, float roughness)
         {
             GlossyMaterial material;
             material.albedo = albedo;
