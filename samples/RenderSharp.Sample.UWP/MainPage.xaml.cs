@@ -30,7 +30,8 @@ namespace RenderSharp.Sample.UWP
             mesh.Faces.Add(face);
             Shader.Scene = Scene.CreateMeshScene(mesh);
         }
-        //public RenderViewer<HlslRayTraceRenderer> Shader = new RenderViewer<HlslRayTraceRenderer>(new HlslRayTraceRenderer());
-        public RenderViewer<CPURayTraceRenderer> Shader = new RenderViewer<CPURayTraceRenderer>(new CPURayTraceRenderer());
+
+        public RenderViewer<HlslRayTraceRenderer> Shader = new RenderViewer<HlslRayTraceRenderer>(new HlslRayTraceRenderer());
+        //public RenderViewer<CPURayTraceRenderer> Shader = new RenderViewer<CPURayTraceRenderer>(new CPURayTraceRenderer());
     }
 }
