@@ -34,6 +34,8 @@ namespace RenderSharp.RayTracing.Scenes.Geometry
             cast.origin = Vector3.Zero;
             cast.normal = Vector3.Zero;
 
+            // Find the direction normal to the triangle
+            // (normal)
             Vector3 normal = Vector3.Cross(tri.b - tri.a, tri.c - tri.a);
             if (FloatUtils.LengthSquared(normal) < 0)
             {
@@ -41,12 +43,14 @@ namespace RenderSharp.RayTracing.Scenes.Geometry
             }
 
             // Find the ray's distance from the triangle's plane
+            // (coefficient)
             float d = Vector3.Dot(normal, tri.a);
             float t = (d - Vector3.Dot(normal, ray.origin)) / Vector3.Dot(normal, ray.direction);
 
             if (t < 0.0001f || t > maxClip) return false;
 
             // Find the collision point to the plane
+            // (origin)
             Vector3 q = Ray.PointAt(ray, t);
 
             // Ensure the collision point is in the bounds of the face

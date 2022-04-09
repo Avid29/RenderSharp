@@ -12,6 +12,7 @@ using RenderSharp.RayTracing.Scenes.Rays;
 using RenderSharp.Render.Tiles;
 using RenderSharp.Utils.Shaders;
 using System.Numerics;
+using RenderSharp.RayTracing.GPU.Shaders.Debugging;
 using CommonScene = RenderSharp.Scenes.Scene;
 
 namespace RenderSharp.RayTracing.GPU
@@ -57,14 +58,14 @@ namespace RenderSharp.RayTracing.GPU
             GraphicsDevice.Default.For(tile.Width, tile.Height, new CameraCastShader(_scene, _camera, tile.Offset, _fullSize, rayBuffer, randStates));
 
             // Render each object with this diffuse material.
-            DiffuseMaterial diffuse = DiffuseMaterial.Create(float4.One * .8f, .5f);
+            DiffuseMaterial diffuse = DiffuseMaterial.Create(Vector4.One * 0.8f, .5f);
 
             for (int i = 0; i < _scene.config.maxBounces; i++)
             {
                 // Find collisions from the ray buffer and write the cast information to the cast buffer
                 GraphicsDevice.Default.For(tile.Width, tile.Height, new CollisionShader(_scene, _geometryBuffer, _bvhBuffer, bvhStack, rayBuffer, rayCastBuffer, materialBuffer));
 
-                // TODO: Check which materials were hit and dyanmically select the shader(s) to run
+                // TODO: Check which materials were hit and dynamically select the shader(s) to run
                 // These shaders also scatter the ray, overwriting the ray in the ray buffer
                 GraphicsDevice.Default.For(tile.Width, tile.Height, new DiffuseShader(0, _scene, tile.Offset, diffuse, rayBuffer, rayCastBuffer, materialBuffer, attenuationBuffer, _buffer.Buffer, randStates));
 
