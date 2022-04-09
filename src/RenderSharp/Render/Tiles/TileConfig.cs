@@ -10,7 +10,7 @@
         }
 
         public int TileWidth { get; }
-        
+
         public int TileHeight { get; }
 
         public TileOrder Order { get; }

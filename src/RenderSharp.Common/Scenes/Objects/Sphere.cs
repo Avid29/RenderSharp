@@ -1,18 +1,18 @@
-﻿using ComputeSharp;
-using RenderSharp.Common.Scenes.Materials;
+﻿using RenderSharp.Scenes.Materials;
+using System.Numerics;
 
-namespace RenderSharp.Common.Scenes.Objects
+namespace RenderSharp.Scenes.Objects
 {
     public class Sphere : IObject
     {
-        public Sphere(Float3 center, float radius, IMaterial material)
+        public Sphere(Vector3 center, float radius, IMaterial material)
         {
             Center = center;
             Radius = radius;
             Material = material;
         }
 
-        public Float3 Center { get; }
+        public Vector3 Center { get; }
 
         public float Radius { get; }
 

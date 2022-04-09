@@ -1,15 +1,17 @@
 ﻿using ComputeSharp;
+using System.Numerics;
 
-namespace RenderSharp.WinUI.Renderer
+namespace RenderSharp.Utils.Shaders
 {
     [AutoConstructor]
+    [EmbeddedBytecode(DispatchAxis.XY)]
     public partial struct OverlayShader : IComputeShader
     {
-        Int2 offset;
-        ReadWriteTexture2D<Float4> overlay;
-        ReadWriteTexture2D<Float4> baseTexture;
+        int2 offset;
+        ReadWriteTexture2D<Vector4> overlay;
+        ReadWriteTexture2D<Vector4> baseTexture;
 
-        private bool IsWithin(Int2 pos, Int2 offset, Int2 bottomRight)
+        private bool IsWithin(int2 pos, int2 offset, int2 bottomRight)
         {
             if (pos.X < offset.X || pos.X > bottomRight.X)
             {
@@ -24,10 +26,10 @@ namespace RenderSharp.WinUI.Renderer
 
         public void Execute()
         {
-            Int2 size = new Int2(overlay.Width, overlay.Height);
-            Int2 buttomRight = size + offset;
+            int2 size = new int2(overlay.Width, overlay.Height);
+            int2 buttomRight = size + offset;
 
-            Int2 pos = ThreadIds.XY;
+            int2 pos = ThreadIds.XY;
             if (IsWithin(pos, offset, buttomRight))
             {
                 baseTexture[pos] = overlay[pos - offset];

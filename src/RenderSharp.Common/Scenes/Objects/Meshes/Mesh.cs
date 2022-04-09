@@ -1,8 +1,8 @@
-﻿using RenderSharp.Common.Scenes.Materials;
+﻿using RenderSharp.Scenes.Materials;
 using System.Collections.Generic;
 using System.Numerics;
 
-namespace RenderSharp.Common.Scenes.Objects.Meshes
+namespace RenderSharp.Scenes.Objects.Meshes
 {
     public class Mesh : IObject
     {

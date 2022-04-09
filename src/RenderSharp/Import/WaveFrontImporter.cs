@@ -1,5 +1,4 @@
-﻿using RenderSharp.Common.Scenes.Objects.Meshes;
-using System;
+﻿using RenderSharp.Scenes.Objects.Meshes;
 using System.IO;
 using System.Numerics;
 
@@ -24,7 +23,7 @@ namespace RenderSharp.Import
 
         private static void ParseStreamLine(string line, Mesh mesh)
         {
-            string[] parts = line.Split(' ', System.StringSplitOptions.RemoveEmptyEntries);
+            string[] parts = line.Split(' ');
             if (parts.Length > 0)
             {
                 switch (parts[0])
@@ -59,7 +58,7 @@ namespace RenderSharp.Import
             {
                 int vIndex;
                 int.TryParse(parts[i], out vIndex);
-                face.Verticies.Add(mesh.Verticies[vIndex-1]);
+                face.Verticies.Add(mesh.Verticies[vIndex - 1]);
             }
 
             return face;

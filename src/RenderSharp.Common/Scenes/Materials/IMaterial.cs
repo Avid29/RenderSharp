@@ -1,4 +1,4 @@
-﻿namespace RenderSharp.Common.Scenes.Materials
+﻿namespace RenderSharp.Scenes.Materials
 {
     public interface IMaterial
     {

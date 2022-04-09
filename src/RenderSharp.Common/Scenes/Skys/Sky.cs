@@ -1,14 +1,14 @@
-﻿using ComputeSharp;
+﻿using System.Numerics;
 
-namespace RenderSharp.Common.Scenes.Skys
+namespace RenderSharp.Scenes.Skys
 {
     public class Sky
     {
-        public Sky(Float4 color)
+        public Sky(Vector4 albedo)
         {
-            Color = color;
+            Albedo = albedo;
         }
 
-        public Float4 Color { get; }
+        public Vector4 Albedo { get; }
     }
 }

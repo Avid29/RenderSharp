@@ -1,11 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+	<TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
+	<RootNamespace>RenderSharp</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ComputeSharp" Version="2.0.0-alpha.6" />
+    <PackageReference Include="ComputeSharp" Version="2.0.0-alpha.12" />
+    <PackageReference Include="Microsoft.Toolkit.HighPerformance" Version="7.1.2" />
   </ItemGroup>
 
 </Project>

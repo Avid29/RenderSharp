@@ -1,7 +1,8 @@
-﻿using RenderSharp.Common.Render.Tiles;
-using RenderSharp.Render.Tiles;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace RenderSharp.Render
+namespace RenderSharp.Render.Tiles
 {
     public class TileManager
     {

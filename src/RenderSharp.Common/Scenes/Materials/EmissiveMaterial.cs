@@ -1,16 +1,16 @@
-﻿using ComputeSharp;
+﻿using System.Numerics;
 
-namespace RenderSharp.Common.Scenes.Materials
+namespace RenderSharp.Scenes.Materials
 {
     public class EmissiveMaterial : IMaterial
     {
-        public EmissiveMaterial(Float4 emission, float strength = 1)
+        public EmissiveMaterial(Vector4 emission, float strength = 1)
         {
             Emission = emission;
             Strength = strength;
         }
 
-        public Float4 Emission { get; }
+        public Vector4 Emission { get; }
 
         public float Strength { get; }
     }
