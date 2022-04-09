@@ -10,6 +10,7 @@ namespace RenderSharp.RayTracing.GPU.Shaders
     {
         private readonly Scene scene;
         private readonly int2 offset;
+        private readonly int sample;
 
         private readonly ReadWriteTexture2D<Vector4> attenuationBuffer;
         private readonly ReadWriteTexture2D<uint> randStates;
@@ -19,7 +20,7 @@ namespace RenderSharp.RayTracing.GPU.Shaders
             int2 pos = ThreadIds.XY;
             int x = offset.X + ThreadIds.X;
             int y = offset.Y + ThreadIds.Y;
-            int s = scene.config.samples;
+            int s = sample;
 
             attenuationBuffer[pos] = Vector4.One;
             randStates[pos] = (uint)(x * 1973 + y * 9277 + s * 26699) | 1;

@@ -44,33 +44,38 @@ namespace RenderSharp.RayTracing.GPU
 
         public void RenderTile(Tile tile)
         {
-            // TODO: Multiple samples
-
             // Allocate buffers
             ReadWriteTexture3D<int> bvhStack = GraphicsDevice.Default.AllocateReadWriteTexture3D<int>(tile.Width, tile.Height, _bvhDepth + 1);
             ReadWriteBuffer<Ray> rayBuffer = GraphicsDevice.Default.AllocateReadWriteBuffer<Ray>(tile.Width * tile.Height);
             ReadWriteBuffer<RayCast> rayCastBuffer = GraphicsDevice.Default.AllocateReadWriteBuffer<RayCast>(tile.Width * tile.Height);
             ReadWriteTexture2D<int> materialBuffer = GraphicsDevice.Default.AllocateReadWriteTexture2D<int>(tile.Width, tile.Height);
             ReadWriteTexture2D<Vector4> attenuationBuffer = GraphicsDevice.Default.AllocateReadWriteTexture2D<Vector4>(tile.Width, tile.Height);
+            ReadWriteTexture2D<Vector4> colorBuffer = GraphicsDevice.Default.AllocateReadWriteTexture2D<Vector4>(tile.Width, tile.Height);
             ReadWriteTexture2D<uint> randStates = GraphicsDevice.Default.AllocateReadWriteTexture2D<uint>(tile.Width, tile.Height);
 
-            GraphicsDevice.Default.For(tile.Width, tile.Height, new InitalizeShader(_scene, tile.Offset, attenuationBuffer, randStates));
-            GraphicsDevice.Default.For(tile.Width, tile.Height, new CameraCastShader(_scene, _camera, tile.Offset, _fullSize, rayBuffer, randStates));
-
-            // Render each object with this diffuse material.
-            DiffuseMaterial diffuse = DiffuseMaterial.Create(Vector4.One * 0.8f, .5f);
-
-            for (int i = 0; i < _scene.config.maxBounces; i++)
+            for (int s = 0; s < _scene.config.samples; s++)
             {
-                // Find collisions from the ray buffer and write the cast information to the cast buffer
-                GraphicsDevice.Default.For(tile.Width, tile.Height, new CollisionShader(_scene, _geometryBuffer, _bvhBuffer, bvhStack, rayBuffer, rayCastBuffer, materialBuffer));
+                // Reuse the same buffers and reset the data for earch sample
+                GraphicsDevice.Default.For(tile.Width, tile.Height, new InitalizeShader(_scene, tile.Offset, s, attenuationBuffer, randStates));
+                GraphicsDevice.Default.For(tile.Width, tile.Height, new CameraCastShader(_scene, _camera, tile.Offset, _fullSize, rayBuffer, randStates));
 
-                // TODO: Check which materials were hit and dynamically select the shader(s) to run
-                // These shaders also scatter the ray, overwriting the ray in the ray buffer
-                GraphicsDevice.Default.For(tile.Width, tile.Height, new DiffuseShader(0, _scene, tile.Offset, diffuse, rayBuffer, rayCastBuffer, materialBuffer, attenuationBuffer, _buffer.Buffer, randStates));
+                // Render each object with this diffuse material.
+                DiffuseMaterial diffuse = DiffuseMaterial.Create(Vector4.One * 0.8f, .5f);
 
-                // Run the Sky shader (will also be checked dynamically)
-                GraphicsDevice.Default.For(tile.Width, tile.Height, new SkyShader(_scene, tile.Offset, new Vector4(0.5f, 0.7f, 1f, 1f), rayBuffer, rayCastBuffer, materialBuffer, attenuationBuffer, _buffer.Buffer));
+                for (int i = 0; i < _scene.config.maxBounces; i++)
+                {
+                    // Find collisions from the ray buffer and write the cast information to the cast buffer
+                    GraphicsDevice.Default.For(tile.Width, tile.Height, new CollisionShader(_scene, _geometryBuffer, _bvhBuffer, bvhStack, rayBuffer, rayCastBuffer, materialBuffer));
+
+                    // TODO: Check which materials were hit and dynamically select the shader(s) to run
+                    // These shaders also scatter the ray, overwriting the ray in the ray buffer
+                    GraphicsDevice.Default.For(tile.Width, tile.Height, new DiffuseShader(0, _scene, tile.Offset, diffuse, rayBuffer, rayCastBuffer, materialBuffer, attenuationBuffer, colorBuffer, randStates));
+
+                    // Run the Sky shader (will also be checked dynamically)
+                    GraphicsDevice.Default.For(tile.Width, tile.Height, new SkyShader(_scene, tile.Offset, new Vector4(0.5f, 0.7f, 1f, 1f), rayBuffer, rayCastBuffer, materialBuffer, attenuationBuffer, colorBuffer));
+                }
+
+                GraphicsDevice.Default.For(tile.Width, tile.Height, new SampleCopyShader(_scene, tile.Offset, colorBuffer, _buffer.Buffer));
             }
         }
     }

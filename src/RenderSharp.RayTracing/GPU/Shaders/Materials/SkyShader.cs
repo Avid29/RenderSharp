@@ -36,7 +36,7 @@ namespace RenderSharp.RayTracing.GPU.Shaders.Materials
             Vector4 rawColor = (1f - t) * Vector4.One + t * albedo;
 
             Vector4 attenuation = attenuationBuffer[pos];
-            colorBuffer[pos + offset] += attenuation * rawColor;
+            colorBuffer[pos] += attenuation * rawColor;
             materialBuffer[pos] = -2;
         }
     }
