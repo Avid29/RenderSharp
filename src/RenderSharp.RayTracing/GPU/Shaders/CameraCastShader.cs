@@ -7,7 +7,7 @@ using RenderSharp.RayTracing.Utils;
 namespace RenderSharp.RayTracing.GPU.Shaders
 {
     /// <summary>
-    /// A shader that genereates the intial rays from a Camera for a tile.
+    /// A shader that generates the initial rays from a Camera for a tile.
     /// </summary>
     [AutoConstructor]
     [EmbeddedBytecode(DispatchAxis.XY)]
@@ -24,7 +24,7 @@ namespace RenderSharp.RayTracing.GPU.Shaders
         {
             int2 pos = ThreadIds.XY;
             int2 dis = DispatchSize.XY;
-            int bPos = pos.X * dis.X + pos.Y;
+            int bPos = pos.Y * dis.X + pos.X;
             uint randState = randStates[pos];
 
             int x = offset.X + pos.X;

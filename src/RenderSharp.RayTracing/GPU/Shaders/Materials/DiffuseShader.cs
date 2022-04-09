@@ -33,7 +33,7 @@ namespace RenderSharp.RayTracing.GPU.Shaders.Materials
             if (materialBuffer[pos] != matId) return;
 
             int2 dis = DispatchSize.XY;
-            int bPos = pos.X * dis.X + pos.Y;
+            int bPos = pos.Y * dis.X + pos.X;
             uint randState = randStates[pos];
 
             //Ray ray = rayBuffer[bPos];

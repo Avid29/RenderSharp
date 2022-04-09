@@ -26,7 +26,7 @@ namespace RenderSharp.RayTracing.GPU.Shaders.Materials
             if (materialBuffer[pos] != -1) return;
 
             int2 dis = DispatchSize.XY;
-            int bPos = pos.X * dis.X + pos.Y;
+            int bPos = pos.Y * dis.X + pos.X;
 
             Ray ray = rayBuffer[bPos];
             RayCast cast = rayCastBuffer[bPos];

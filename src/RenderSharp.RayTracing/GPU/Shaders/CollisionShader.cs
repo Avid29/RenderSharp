@@ -23,7 +23,7 @@ namespace RenderSharp.RayTracing.GPU.Shaders
         {
             int2 pos = ThreadIds.XY;
             int2 dis = DispatchSize.XY;
-            int bPos = pos.X * dis.X + pos.Y;
+            int bPos = pos.Y * dis.X + pos.X;
 
             Ray ray = rayBuffer[bPos];
 
