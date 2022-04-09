@@ -21,7 +21,7 @@ namespace RenderSharp.RayTracing.GPU.Shaders.Debugging
             int2 dis = DispatchSize.XY;
             int bPos = pos.Y * dis.X + pos.X;
             Vector3 v3 = (Vector3.Normalize(texture[bPos].normal) / 2) + (Vector3.One * .5f);
-            printTexture[pos + offset] = new Vector4(v3, 1);
+            printTexture[pos] = new Vector4(v3, 1);
         }
     }
 }

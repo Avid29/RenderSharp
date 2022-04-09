@@ -64,7 +64,7 @@ namespace RenderSharp.Render
             await Task.Run(() =>
             {
                 // TODO: Take the config as input
-                TileConfig defaultConfig = new TileConfig(96, 96, TileOrder.TopBottom);
+                TileConfig defaultConfig = new TileConfig(256, 256, TileOrder.TopBottom);
                 _tileManager = new TileManager(_output.Width, _output.Height, defaultConfig);
                 Renderer.Setup(scene, _output.Width, _output.Height);
 

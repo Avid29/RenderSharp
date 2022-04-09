@@ -34,7 +34,7 @@ namespace RenderSharp.RayTracing.Conversion
             output.camera = ConvertCamera(scene.Camera);
             output.world = ConvertWorld(scene.World);
 
-            output.config.samples = 64;
+            output.config.samples = 32;
             output.config.maxBounces = 12;
 
             return output;

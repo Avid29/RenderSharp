@@ -10,9 +10,7 @@ using RenderSharp.RayTracing.Scenes.Geometry;
 using RenderSharp.RayTracing.Scenes.Materials;
 using RenderSharp.RayTracing.Scenes.Rays;
 using RenderSharp.Render.Tiles;
-using RenderSharp.Utils.Shaders;
 using System.Numerics;
-using RenderSharp.RayTracing.GPU.Shaders.Debugging;
 using CommonScene = RenderSharp.Scenes.Scene;
 
 namespace RenderSharp.RayTracing.GPU
@@ -53,14 +51,14 @@ namespace RenderSharp.RayTracing.GPU
             ReadWriteTexture2D<Vector4> colorBuffer = GraphicsDevice.Default.AllocateReadWriteTexture2D<Vector4>(tile.Width, tile.Height);
             ReadWriteTexture2D<uint> randStates = GraphicsDevice.Default.AllocateReadWriteTexture2D<uint>(tile.Width, tile.Height);
 
+            // Render each object with this diffuse material.
+            DiffuseMaterial diffuse = DiffuseMaterial.Create(Vector4.One * 0.5f, .5f);
+
             for (int s = 0; s < _scene.config.samples; s++)
             {
                 // Reuse the same buffers and reset the data for earch sample
-                GraphicsDevice.Default.For(tile.Width, tile.Height, new InitalizeShader(_scene, tile.Offset, s, attenuationBuffer, randStates));
+                GraphicsDevice.Default.For(tile.Width, tile.Height, new InitalizeShader(_scene, tile.Offset, s, materialBuffer, colorBuffer, attenuationBuffer, randStates));
                 GraphicsDevice.Default.For(tile.Width, tile.Height, new CameraCastShader(_scene, _camera, tile.Offset, _fullSize, rayBuffer, randStates));
-
-                // Render each object with this diffuse material.
-                DiffuseMaterial diffuse = DiffuseMaterial.Create(Vector4.One * 0.8f, .5f);
 
                 for (int i = 0; i < _scene.config.maxBounces; i++)
                 {

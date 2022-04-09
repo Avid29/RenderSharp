@@ -17,7 +17,7 @@ namespace RenderSharp.RayTracing.GPU.Shaders.Debugging
         public void Execute()
         {
             int2 pos = ThreadIds.XY;
-            printTexture[pos + offset] = texture[pos];
+            printTexture[pos] = texture[pos];
         }
     }
 }
