@@ -22,7 +22,7 @@ namespace RenderSharp.Sample.WinUI
 
         private void Setup()
         {
-            string path = @"C:\Users\avid2\3D Objects\TriCube.obj";
+            string path = @"C:\Users\avid2\3D Objects\CompanionCube.obj";
             Mesh mesh = WaveFrontImporter.LoadMesh(path);
 
             //Face face = new Face();
