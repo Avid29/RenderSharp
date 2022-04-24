@@ -9,6 +9,7 @@ using RenderSharp.RayTracing.Scenes.Cameras;
 using RenderSharp.RayTracing.Scenes.Geometry;
 using RenderSharp.RayTracing.Scenes.Materials;
 using RenderSharp.RayTracing.Scenes.Rays;
+using RenderSharp.RayTracing.Scenes.ShaderRunners;
 using RenderSharp.Render.Tiles;
 using System.Numerics;
 using CommonScene = RenderSharp.Scenes.Scene;
@@ -24,6 +25,7 @@ namespace RenderSharp.RayTracing.GPU
 
         private ReadOnlyBuffer<Triangle> _geometryBuffer;
         private ReadOnlyBuffer<BVHNode> _bvhBuffer;
+        private IShaderRunner[] _shaders;
         private int _bvhDepth;
 
         public RayTracer(CommonScene scene, int2 fullsize, GPUReadWriteImageBuffer buffer)
@@ -32,6 +34,7 @@ namespace RenderSharp.RayTracing.GPU
             _scene = converter.ConvertScene(scene);
             _geometryBuffer = GraphicsDevice.Default.AllocateReadOnlyBuffer(converter.GeometryBuffer);
             _bvhBuffer = GraphicsDevice.Default.AllocateReadOnlyBuffer(converter.BVHHeap);
+            _shaders = converter.ShaderRunnerBuffer;
 
             _bvhDepth = converter.BVHDepth;
             _fullSize = fullsize;
@@ -51,9 +54,6 @@ namespace RenderSharp.RayTracing.GPU
             ReadWriteTexture2D<Vector4> colorBuffer = GraphicsDevice.Default.AllocateReadWriteTexture2D<Vector4>(tile.Width, tile.Height);
             ReadWriteTexture2D<uint> randStates = GraphicsDevice.Default.AllocateReadWriteTexture2D<uint>(tile.Width, tile.Height);
 
-            // Render each object with this diffuse material.
-            DiffuseMaterial diffuse = DiffuseMaterial.Create(Vector4.One * 0.5f, .5f);
-
             for (int s = 0; s < _scene.config.samples; s++)
             {
                 // Reuse the same buffers and reset the data for earch sample
@@ -65,9 +65,11 @@ namespace RenderSharp.RayTracing.GPU
                     // Find collisions from the ray buffer and write the cast information to the cast buffer
                     GraphicsDevice.Default.For(tile.Width, tile.Height, new CollisionShader(_scene, _geometryBuffer, _bvhBuffer, bvhStack, rayBuffer, rayCastBuffer, materialBuffer));
 
-                    // TODO: Check which materials were hit and dynamically select the shader(s) to run
-                    // These shaders also scatter the ray, overwriting the ray in the ray buffer
-                    GraphicsDevice.Default.For(tile.Width, tile.Height, new DiffuseShader(0, _scene, tile.Offset, diffuse, rayBuffer, rayCastBuffer, materialBuffer, attenuationBuffer, colorBuffer, randStates));
+                    // These shaders adjust the atteniation buffer and also scatter the ray, overwriting the ray in the ray buffer
+                    foreach (var shader in _shaders)
+                    {
+                        shader.Run(tile, _scene, rayBuffer, rayCastBuffer, materialBuffer, attenuationBuffer, colorBuffer, randStates);
+                    }
 
                     // Run the Sky shader (will also be checked dynamically)
                     GraphicsDevice.Default.For(tile.Width, tile.Height, new SkyShader(_scene, tile.Offset, new Vector4(0.5f, 0.7f, 1f, 1f), rayBuffer, rayCastBuffer, materialBuffer, attenuationBuffer, colorBuffer));

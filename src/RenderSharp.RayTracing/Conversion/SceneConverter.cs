@@ -1,4 +1,7 @@
 ﻿using RenderSharp.RayTracing.Scenes.BVH;
+using RenderSharp.RayTracing.Scenes.Geometry;
+using RenderSharp.RayTracing.Scenes.ShaderRunners;
+using RenderSharp.Scenes.Materials;
 using RenderSharp.Scenes.Objects;
 using RenderSharp.Scenes.Objects.Meshes;
 using System;
@@ -11,20 +14,26 @@ namespace RenderSharp.RayTracing.Conversion
 {
     public class SceneConverter
     {
-        private List<RayTrace.Geometry.Triangle> _geometries;
+        private List<Triangle> _geometries;
+        private List<IShaderRunner> _shaderRunners;
         private BVHNode[] _bvhHeap;
-        private RayTrace.Geometry.Triangle[] _geometryBuffer;
+        private Triangle[] _geometryBuffer;
+        private IShaderRunner[] _shaderRunnerBuffer;
         private int _bvhDepth;
         private int _bvhPos;
+        private int _shaderCount;
 
         public SceneConverter()
         {
-            _geometries = new List<RayTrace.Geometry.Triangle>();
+            _geometries = new List<Triangle>();
+            _shaderRunners = new List<IShaderRunner>();
         }
 
         public BVHNode[] BVHHeap => _bvhHeap;
 
-        public RayTrace.Geometry.Triangle[] GeometryBuffer => _geometryBuffer;
+        public Triangle[] GeometryBuffer => _geometryBuffer;
+
+        public IShaderRunner[] ShaderRunnerBuffer => _shaderRunnerBuffer;
 
         public int BVHDepth => _bvhDepth;
 
@@ -72,8 +81,6 @@ namespace RenderSharp.RayTracing.Conversion
 
         private void ConvertObject(IObject @object)
         {
-            // TODO: Materials
-
             switch (@object)
             {
                 case Mesh mesh:
@@ -85,12 +92,33 @@ namespace RenderSharp.RayTracing.Conversion
         private void ConvertMesh(Mesh mesh)
         {
             // TODO: Triangluate faces
+            ConvertMaterial(mesh.Material);
+
             foreach (var face in mesh.Faces)
             {
                 Vector3 a = face.Verticies[0];
                 Vector3 b = face.Verticies[1];
                 Vector3 c = face.Verticies[2];
-                _geometries.Add(RayTrace.Geometry.Triangle.Create(a, b, c, 0)); // TODO: Material Id
+                _geometries.Add(Triangle.Create(a, b, c, 0)); // TODO: Material Id
+            }
+        }
+
+        private void ConvertMaterial(IMaterial material)
+        {
+            switch (material)
+            {
+                case DiffuseMaterial cd:
+                    var rd = RayTrace.Materials.DiffuseMaterial.Create(cd.Albedo, cd.Roughness);
+                    var dRunner = new DiffuseShaderRunner(_shaderCount, rd);
+                    _shaderCount++;
+                    _shaderRunners.Add(dRunner);
+                    break;
+                case GlossyMaterial cg:
+                    var rg = RayTrace.Materials.GlossyMaterial.Create(cg.Albedo, cg.Roughness);
+                    var gRunner = new GlossyShaderRunner(_shaderCount, rg);
+                    _shaderCount++;
+                    _shaderRunners.Add(gRunner);
+                    break;
             }
         }
 
@@ -98,12 +126,13 @@ namespace RenderSharp.RayTracing.Conversion
         {
             _bvhDepth = 0;
             _geometryBuffer = _geometries.ToArray();
+            _shaderRunnerBuffer = _shaderRunners.ToArray();
             _bvhHeap = new BVHNode[(_geometryBuffer.Length * 2) - 1];
             _bvhPos = _bvhHeap.Length - 1;
             BuildBVH(_geometryBuffer, 0, 0);
         }
 
-        private int BuildBVH(Span<RayTrace.Geometry.Triangle> geometries, int index, int depth)
+        private int BuildBVH(Span<Triangle> geometries, int index, int depth)
         {
             int axis = depth;
 
@@ -113,7 +142,7 @@ namespace RenderSharp.RayTracing.Conversion
 
             if (geometries.Length == 1)
             {
-                AABB bounding = RayTrace.Geometry.Triangle.GetBoundingBox(geometries[0]);
+                AABB bounding = Triangle.GetBoundingBox(geometries[0]);
                 node = BVHNode.Create(bounding, index);
             } else
             {
