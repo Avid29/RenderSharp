@@ -50,8 +50,7 @@ namespace RenderSharp.RayTracing.GPU.Shaders
                         if (Triangle.IsHit(triangle, ray, out RayCast newCast))
                         {
                             nearest = newCast.coefficient;
-                            materialBuffer[pos] = 0; // Override for a single material for now
-                            //materialBuffer[pos] = triangle.matId;
+                            materialBuffer[pos] = triangle.matId;
                             rayCastBuffer[bPos] = newCast;
                         }
                     }
