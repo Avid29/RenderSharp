@@ -22,14 +22,14 @@ namespace RenderSharp.RayTracing.CPU
     {
         private Scene _scene;
         private FullCamera _camera;
-        private int2 _fullSize;
+        private Int2 _fullSize;
         private CPUReadWriteImageBuffer _buffer;
 
         private Triangle[] _geometryBuffer;
         private BVHNode[] _bvhBuffer;
         private int _bvhDepth;
         
-        public RayTracer(CommonScene scene, int2 fullsize, CPUReadWriteImageBuffer buffer)
+        public RayTracer(CommonScene scene, Int2 fullsize, CPUReadWriteImageBuffer buffer)
         {
             SceneConverter converter = new SceneConverter();
             _scene = converter.ConvertScene(scene);

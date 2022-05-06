@@ -9,7 +9,7 @@ namespace RenderSharp.RayTracing.GPU.Shaders
     public partial struct InitalizeShader : IComputeShader
     {
         private readonly Scene scene;
-        private readonly int2 offset;
+        private readonly Int2 offset;
         private readonly int sample;
 
         private readonly ReadWriteTexture2D<int> materialBuffer;
@@ -19,7 +19,7 @@ namespace RenderSharp.RayTracing.GPU.Shaders
 
         public void Execute()
         {
-            int2 pos = ThreadIds.XY;
+            Int2 pos = ThreadIds.XY;
             int x = offset.X + ThreadIds.X;
             int y = offset.Y + ThreadIds.Y;
             int s = sample;

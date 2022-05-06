@@ -8,7 +8,6 @@ using ComputeSharp;
 using System;
 using RenderSharp.Render;
 using RenderSharp.Scenes;
-using System.Numerics;
 
 #nullable enable
 
@@ -26,7 +25,7 @@ namespace RenderSharp.Sample.Shared.Renderer
 
         public Scene Scene { get; set; }
 
-        public bool TryExecute(IReadWriteTexture2D<float4> texture, TimeSpan timespan, object? parameter)
+        public bool TryExecute(IReadWriteTexture2D<Float4> texture, TimeSpan timespan, object? parameter)
         {
             // Begin render if not begun
             if (!_renderManager.IsRunning) _renderManager.Render(Scene, texture.Width, texture.Height);

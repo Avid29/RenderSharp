@@ -124,12 +124,12 @@ namespace RenderSharp.Render
             return isReady;
         }
 
-        public void WriteProgress(IReadWriteTexture2D<float4> image)
+        public void WriteProgress(IReadWriteTexture2D<Float4> image)
         {
             if (_output == null)
                 return;
 
-            GraphicsDevice.Default.ForEach(image, new OverlayShaderI(int2.Zero, _output, image));
+            GraphicsDevice.Default.ForEach(image, new OverlayShaderI(Int2.Zero, _output, image));
         }
     }
 }

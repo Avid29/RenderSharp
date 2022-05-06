@@ -14,7 +14,7 @@ namespace RenderSharp.RayTracing.GPU.Shaders.Materials
         private readonly int matId;
 
         private readonly Scene scene;
-        private readonly int2 offset;
+        private readonly Int2 offset;
         private readonly GlossyMaterial material;
 
         private readonly ReadWriteBuffer<Ray> rayBuffer;
@@ -27,12 +27,12 @@ namespace RenderSharp.RayTracing.GPU.Shaders.Materials
 
         public void Execute()
         {
-            int2 pos = ThreadIds.XY;
+            Int2 pos = ThreadIds.XY;
 
             // This ray didn't hit an object with this material
             if (materialBuffer[pos] != matId) return;
 
-            int2 dis = DispatchSize.XY;
+            Int2 dis = DispatchSize.XY;
             int bPos = pos.Y * dis.X + pos.X;
             uint randState = randStates[pos];
 

@@ -7,11 +7,11 @@ namespace RenderSharp.Utils.Shaders
     [EmbeddedBytecode(DispatchAxis.XY)]
     public partial struct OverlayShader : IComputeShader
     {
-        int2 offset;
+        Int2 offset;
         ReadWriteTexture2D<Vector4> overlay;
         ReadWriteTexture2D<Vector4> baseTexture;
 
-        private bool IsWithin(int2 pos, int2 offset, int2 bottomRight)
+        private bool IsWithin(Int2 pos, Int2 offset, Int2 bottomRight)
         {
             if (pos.X < offset.X || pos.X > bottomRight.X)
             {
@@ -26,10 +26,10 @@ namespace RenderSharp.Utils.Shaders
 
         public void Execute()
         {
-            int2 size = new int2(overlay.Width, overlay.Height);
-            int2 buttomRight = size + offset;
+            Int2 size = new Int2(overlay.Width, overlay.Height);
+            Int2 buttomRight = size + offset;
 
-            int2 pos = ThreadIds.XY;
+            Int2 pos = ThreadIds.XY;
             if (IsWithin(pos, offset, buttomRight))
             {
                 baseTexture[pos] = overlay[pos - offset];

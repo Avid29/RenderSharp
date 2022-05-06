@@ -1,4 +1,5 @@
-﻿using RenderSharp.Buffer;
+﻿using ComputeSharp;
+using RenderSharp.Buffer;
 using RenderSharp.Render;
 using RenderSharp.Render.Tiles;
 using RenderSharp.Scenes;
@@ -23,7 +24,7 @@ namespace RenderSharp.RayTracing.CPU
         {
             _buffer = new CPUReadWriteImageBuffer(imageWidth, imageHeight);
 
-            _rayTracer = new RayTracer(scene, new int2(imageWidth, imageHeight), _buffer);
+            _rayTracer = new RayTracer(scene, new Int2(imageWidth, imageHeight), _buffer);
         }
     }
 }

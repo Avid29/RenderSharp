@@ -1,7 +1,9 @@
-﻿namespace RenderSharp.RayTracing.Scenes.Skys
+﻿using ComputeSharp;
+
+namespace RenderSharp.RayTracing.Scenes.Skys
 {
     public struct Sky
     {
-        public float4 albedo;
+        public Float4 albedo;
     }
 }

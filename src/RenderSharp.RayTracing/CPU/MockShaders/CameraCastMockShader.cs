@@ -13,8 +13,8 @@ namespace RenderSharp.RayTracing.CPU.MockShaders
     {
         private readonly Scene _scene;
         private readonly FullCamera _camera;
-        private readonly int2 _offset;
-        private readonly int2 _fullsize;
+        private readonly Int2 _offset;
+        private readonly Int2 _fullsize;
         private readonly Span<Ray> _rayBuffer;
         private readonly Span2D<uint> _randStates;
 

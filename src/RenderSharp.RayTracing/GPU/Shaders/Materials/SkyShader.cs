@@ -10,7 +10,7 @@ namespace RenderSharp.RayTracing.GPU.Shaders.Materials
     public partial struct SkyShader : IComputeShader
     {
         private readonly Scene scene;
-        private readonly int2 offset;
+        private readonly Int2 offset;
         private readonly Vector4 albedo;
 
         private readonly ReadWriteBuffer<Ray> rayBuffer;
@@ -22,10 +22,10 @@ namespace RenderSharp.RayTracing.GPU.Shaders.Materials
 
         public void Execute()
         {
-            int2 pos = ThreadIds.XY;
+            Int2 pos = ThreadIds.XY;
             if (materialBuffer[pos] != -1) return;
 
-            int2 dis = DispatchSize.XY;
+            Int2 dis = DispatchSize.XY;
             int bPos = pos.Y * dis.X + pos.X;
 
             Ray ray = rayBuffer[bPos];

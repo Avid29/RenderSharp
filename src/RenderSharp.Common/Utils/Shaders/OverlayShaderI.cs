@@ -5,13 +5,13 @@ namespace RenderSharp.Utils.Shaders
 {
     [AutoConstructor]
     [EmbeddedBytecode(DispatchAxis.XY)]
-    public partial struct OverlayShaderI : IPixelShader<float4>
+    public partial struct OverlayShaderI : IPixelShader<Float4>
     {
-        int2 offset;
+        Int2 offset;
         ReadWriteTexture2D<Vector4> overlay;
-        IReadWriteTexture2D<float4> fallback;
+        IReadWriteTexture2D<Float4> fallback;
 
-        private bool IsWithin(int2 pos, int2 offset, int2 bottomRight)
+        private bool IsWithin(Int2 pos, Int2 offset, Int2 bottomRight)
         {
             if (pos.X < offset.X || pos.X > bottomRight.X)
             {
@@ -24,12 +24,12 @@ namespace RenderSharp.Utils.Shaders
             return true;
         }
 
-        public float4 Execute()
+        public Float4 Execute()
         {
-            int2 size = new int2(overlay.Width, overlay.Height);
-            int2 buttomRight = size + offset;
+            Int2 size = new Int2(overlay.Width, overlay.Height);
+            Int2 buttomRight = size + offset;
 
-            int2 pos = ThreadIds.XY;
+            Int2 pos = ThreadIds.XY;
             if (IsWithin(pos, offset, buttomRight))
             {
                 return overlay[pos - offset];

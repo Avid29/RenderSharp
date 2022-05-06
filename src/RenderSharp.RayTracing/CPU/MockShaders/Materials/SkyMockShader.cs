@@ -12,8 +12,8 @@ namespace RenderSharp.RayTracing.CPU.MockShaders.Materials
     public ref partial struct SkyMockShader
     {
         private readonly Scene _scene;
-        private readonly int2 _offset;
-        private readonly int2 _tileSize;
+        private readonly Int2 _offset;
+        private readonly Int2 _tileSize;
         private readonly Vector4 _albedo;
 
         private readonly Span<Ray> _rayBuffer;

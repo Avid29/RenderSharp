@@ -15,15 +15,15 @@ namespace RenderSharp.RayTracing.GPU.Shaders
     {
         private readonly Scene scene;
         private readonly FullCamera camera;
-        private readonly int2 offset;
-        private readonly int2 fullSize;
+        private readonly Int2 offset;
+        private readonly Int2 fullSize;
         private readonly ReadWriteBuffer<Ray> rayBuffer;
         private readonly ReadWriteTexture2D<uint> randStates;
 
         public void Execute()
         {
-            int2 pos = ThreadIds.XY;
-            int2 dis = DispatchSize.XY;
+            Int2 pos = ThreadIds.XY;
+            Int2 dis = DispatchSize.XY;
             int bPos = pos.Y * dis.X + pos.X;
             uint randState = randStates[pos];
 

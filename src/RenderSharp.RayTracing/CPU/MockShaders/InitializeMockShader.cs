@@ -9,7 +9,7 @@ namespace RenderSharp.RayTracing.CPU.MockShaders
     public ref partial struct InitializeMockShader
     {
         private readonly Scene _scene;
-        private readonly int2 _offset;
+        private readonly Int2 _offset;
 
         private readonly Span2D<Vector4> _attenuationBuffer;
         private readonly Span2D<uint> _randStates;

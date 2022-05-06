@@ -1,11 +1,12 @@
-﻿using System;
+﻿using ComputeSharp;
+using System;
 using System.Numerics;
 
 namespace RenderSharp.RayTracing.Utils
 {
     public static class FloatUtils
     {
-        public static float LengthSquared(float2 v2)
+        public static float LengthSquared(Float2 v2)
         {
             return v2.X * v2.X + v2.Y * v2.Y;
         }

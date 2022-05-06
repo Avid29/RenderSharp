@@ -6,16 +6,16 @@ namespace RenderSharp.RayTracing.GPU.Shaders
     [EmbeddedBytecode(DispatchAxis.XY)]
     public partial struct TestShader : IComputeShader
     {
-        private readonly int2 offset;
-        private readonly int2 fullsize;
-        private readonly ReadWriteTexture2D<float4> texture;
+        private readonly Int2 offset;
+        private readonly Int2 fullsize;
+        private readonly ReadWriteTexture2D<Float4> texture;
 
         public void Execute()
         {
-            int2 pos = ThreadIds.XY + offset;
-            float2 uv = new float2(pos.X, pos.Y) / fullsize;
+            Int2 pos = ThreadIds.XY + offset;
+            Float2 uv = new Float2(pos.X, pos.Y) / fullsize;
 
-            texture[pos] = new float4(uv, 0, 1);
+            texture[pos] = new Float4(uv, 0, 1);
         }
     }
 }

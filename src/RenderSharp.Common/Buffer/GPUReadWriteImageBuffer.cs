@@ -29,7 +29,7 @@ namespace RenderSharp.Buffer
 
         public void CopyToGPU(ReadWriteTexture2D<Vector4> output)
         {
-            GraphicsDevice.Default.For(output.Width, output.Height, new OverlayShader(int2.Zero, _buffer, output));
+            GraphicsDevice.Default.For(output.Width, output.Height, new OverlayShader(Int2.Zero, _buffer, output));
         }
     }
 }

@@ -15,8 +15,8 @@ namespace RenderSharp.RayTracing.CPU.MockShaders.Materials
         private readonly int _matId;
 
         private readonly Scene _scene;
-        private readonly int2 _offset;
-        private readonly int2 _tileSize;
+        private readonly Int2 _offset;
+        private readonly Int2 _tileSize;
         private readonly DiffuseMaterial _material;
 
         private readonly Span<Ray> _rayBuffer;

@@ -2,6 +2,7 @@
 using RenderSharp.Scenes.Objects;
 using RenderSharp.Scenes.Objects.Meshes;
 using RenderSharp.Scenes.Skys;
+using System.Collections.Generic;
 using System.Numerics;
 
 namespace RenderSharp.Scenes

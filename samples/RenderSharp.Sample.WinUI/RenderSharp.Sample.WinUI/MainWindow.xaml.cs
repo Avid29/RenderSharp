@@ -4,6 +4,7 @@ using RenderSharp.RayTracing.GPU;
 using RenderSharp.Sample.Shared.Renderer;
 using RenderSharp.Scenes;
 using RenderSharp.Scenes.Objects.Meshes;
+using System.Collections.Generic;
 using System.Numerics;
 
 namespace RenderSharp.Sample.WinUI
@@ -23,7 +24,7 @@ namespace RenderSharp.Sample.WinUI
         private void Setup()
         {
             string path = @"C:\Users\avid2\3D Objects\CompanionCube.obj";
-            Mesh mesh = WaveFrontImporter.LoadMesh(path);
+            List<Mesh> meshes = WaveFrontImporter.Parse(path);
 
             //Face face = new Face();
             //face.Verticies.Add(Vector3.UnitX);
@@ -31,7 +32,7 @@ namespace RenderSharp.Sample.WinUI
             //face.Verticies.Add(Vector3.UnitZ);
             //Mesh mesh = new Mesh();
             //mesh.Faces.Add(face);
-            Shader.Scene = Scene.CreateMeshScene(mesh);
+            Shader.Scene = Scene.CreateMeshScene(meshes[0]);
         }
 
         public RenderViewer<HlslRayTraceRenderer> Shader = new RenderViewer<HlslRayTraceRenderer>(new HlslRayTraceRenderer());

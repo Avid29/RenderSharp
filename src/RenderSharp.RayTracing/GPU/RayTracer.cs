@@ -20,7 +20,7 @@ namespace RenderSharp.RayTracing.GPU
     {
         private Scene _scene;
         private FullCamera _camera;
-        private int2 _fullSize;
+        private Int2 _fullSize;
         private GPUReadWriteImageBuffer _buffer;
 
         private ReadOnlyBuffer<Triangle> _geometryBuffer;
@@ -28,7 +28,7 @@ namespace RenderSharp.RayTracing.GPU
         private IShaderRunner[] _shaders;
         private int _bvhDepth;
 
-        public RayTracer(CommonScene scene, int2 fullsize, GPUReadWriteImageBuffer buffer)
+        public RayTracer(CommonScene scene, Int2 fullsize, GPUReadWriteImageBuffer buffer)
         {
             SceneConverter converter = new SceneConverter();
             _scene = converter.ConvertScene(scene);
