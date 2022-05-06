@@ -22,7 +22,7 @@ namespace RenderSharp.Import
                 if (File.Exists(mtlPath))
                 {
                     _mtlFilePath = mtlPath;
-                    Materials = new Dictionary<string, IMaterial>();
+                    Materials = new Dictionary<string, MaterialBase>();
                 }
             }
 
@@ -32,10 +32,13 @@ namespace RenderSharp.Import
 
         private List<Mesh> Objects { get; }
 
-        private Dictionary<string, IMaterial> Materials { get; }
+        private Dictionary<string, MaterialBase> Materials { get; }
 
         private void Parse()
         {
+            if (_mtlFilePath is not null)
+                ParseMaterials();
+
             ParseObjects();
         }
 

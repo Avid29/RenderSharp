@@ -92,34 +92,47 @@ namespace RenderSharp.RayTracing.Conversion
         private void ConvertMesh(Mesh mesh)
         {
             // TODO: Triangluate faces
-            ConvertMaterial(mesh.Material);
+            int matId = ConvertMaterial(mesh.Material);
 
             foreach (var face in mesh.Faces)
             {
                 Vector3 a = face.Verticies[0];
                 Vector3 b = face.Verticies[1];
                 Vector3 c = face.Verticies[2];
-                _geometries.Add(Triangle.Create(a, b, c, 0)); // TODO: Material Id
+                _geometries.Add(Triangle.Create(a, b, c, matId));
             }
         }
 
-        private void ConvertMaterial(IMaterial material)
+        private int ConvertMaterial(MaterialBase material)
         {
+            // TODO: Improve super material conversion
+            if (material is SuperMaterial sm)
+            {
+                if (sm.Emission != new Vector4(0,0,0,1))
+                {
+                    material = new DiffuseMaterial(sm.Name, sm.Emission, .5f);
+                }
+                else
+                {
+                    material = new DiffuseMaterial(sm.Name, sm.Albedo, sm.Fresnel);
+                }
+            }
+
             switch (material)
             {
                 case DiffuseMaterial cd:
                     var rd = RayTrace.Materials.DiffuseMaterial.Create(cd.Albedo, cd.Roughness);
                     var dRunner = new DiffuseShaderRunner(_shaderCount, rd);
-                    _shaderCount++;
                     _shaderRunners.Add(dRunner);
                     break;
                 case GlossyMaterial cg:
                     var rg = RayTrace.Materials.GlossyMaterial.Create(cg.Albedo, cg.Roughness);
                     var gRunner = new GlossyShaderRunner(_shaderCount, rg);
-                    _shaderCount++;
                     _shaderRunners.Add(gRunner);
                     break;
             }
+
+            return _shaderCount++;
         }
 
         private void BuildBVHTree()

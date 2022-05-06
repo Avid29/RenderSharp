@@ -19,6 +19,6 @@ namespace RenderSharp.Scenes.Objects.Meshes
 
         public List<Face> Faces { get; }
 
-        public IMaterial Material { get; set; }
+        public MaterialBase Material { get; set; }
     }
 }

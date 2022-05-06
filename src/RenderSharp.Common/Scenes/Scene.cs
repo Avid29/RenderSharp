@@ -44,12 +44,21 @@ namespace RenderSharp.Scenes
 
         public static Scene CreateMeshScene(Mesh mesh)
         {
-            DiffuseMaterial diffuse = new DiffuseMaterial(new Vector4(0.5f, 0.5f, 0.5f, 1f), 0.5f);
-            mesh.Material = diffuse;
-
             Scene scene = CreateEmptyScene();
             scene.Camera = new Camera(new Vector3(1.75f, 1.5f, 2f), new Vector3(0f, 0f, 0f), 90f, 0.01f);
             scene.World.Geometry.Add(mesh);
+            return scene;
+        }
+
+        public static Scene CreateScene(List<Mesh> meshes)
+        {
+            Scene scene = CreateEmptyScene();
+            scene.Camera = new Camera(new Vector3(1.75f, 1.5f, 2f), new Vector3(0f, 0f, 0f), 90f, 0.01f);
+            foreach (var mesh in meshes)
+            {
+                scene.World.Geometry.Add(mesh);
+            }
+
             return scene;
         }
     }

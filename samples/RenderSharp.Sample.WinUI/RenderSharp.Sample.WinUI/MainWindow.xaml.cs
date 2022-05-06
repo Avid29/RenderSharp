@@ -5,7 +5,6 @@ using RenderSharp.Sample.Shared.Renderer;
 using RenderSharp.Scenes;
 using RenderSharp.Scenes.Objects.Meshes;
 using System.Collections.Generic;
-using System.Numerics;
 
 namespace RenderSharp.Sample.WinUI
 {
@@ -23,7 +22,7 @@ namespace RenderSharp.Sample.WinUI
 
         private void Setup()
         {
-            string path = @"C:\Users\avid2\3D Objects\CompanionCube.obj";
+            string path = @"C:\Users\avid2\3D Objects\TriCube-NonSpecular.obj";
             List<Mesh> meshes = WaveFrontImporter.Parse(path);
 
             //Face face = new Face();
@@ -32,7 +31,7 @@ namespace RenderSharp.Sample.WinUI
             //face.Verticies.Add(Vector3.UnitZ);
             //Mesh mesh = new Mesh();
             //mesh.Faces.Add(face);
-            Shader.Scene = Scene.CreateMeshScene(meshes[0]);
+            Shader.Scene = Scene.CreateScene(meshes);
         }
 
         public RenderViewer<HlslRayTraceRenderer> Shader = new RenderViewer<HlslRayTraceRenderer>(new HlslRayTraceRenderer());

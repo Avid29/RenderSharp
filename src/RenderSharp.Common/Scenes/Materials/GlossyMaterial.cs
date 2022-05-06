@@ -2,9 +2,17 @@
 
 namespace RenderSharp.Scenes.Materials
 {
-    public class GlossyMaterial : IMaterial
+    public class GlossyMaterial : MaterialBase
     {
-        public GlossyMaterial(Vector4 albedo, float roughness)
+        public GlossyMaterial(Vector4 albedo, float roughness) :
+            this(string.Empty, albedo, roughness)
+        {
+            Albedo = albedo;
+            Roughness = roughness;
+        }
+
+        public GlossyMaterial(string name, Vector4 albedo, float roughness) :
+            base(name)
         {
             Albedo = albedo;
             Roughness = roughness;
