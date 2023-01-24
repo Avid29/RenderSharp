@@ -1,5 +1,4 @@
-﻿using ComputeSharp;
-using RenderSharp.RayTracing.Scenes.Rays;
+﻿using RenderSharp.RayTracing.Scenes.Rays;
 using RenderSharp.RayTracing.Utils;
 using System;
 using System.Numerics;

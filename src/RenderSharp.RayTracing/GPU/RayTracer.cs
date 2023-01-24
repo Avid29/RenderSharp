@@ -56,7 +56,7 @@ namespace RenderSharp.RayTracing.GPU
 
             for (int s = 0; s < _scene.config.samples; s++)
             {
-                // Reuse the same buffers and reset the data for earch sample
+                // Reuse the same buffers and reset the data for each sample
                 GraphicsDevice.Default.For(tile.Width, tile.Height, new InitalizeShader(_scene, tile.Offset, s, materialBuffer, colorBuffer, attenuationBuffer, randStates));
                 GraphicsDevice.Default.For(tile.Width, tile.Height, new CameraCastShader(_scene, _camera, tile.Offset, _fullSize, rayBuffer, randStates));
 
