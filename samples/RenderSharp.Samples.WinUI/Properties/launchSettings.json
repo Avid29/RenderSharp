@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "RenderSharp.Samples.WinUI (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "RenderSharp.Samples.WinUI (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
