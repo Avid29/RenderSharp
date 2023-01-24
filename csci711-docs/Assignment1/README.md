@@ -22,7 +22,7 @@ The spheres are UV spheres ``32`` segments and ``16`` rings
 
 ## Other details
 
-They sky is pure white with a strength of ``0.5``, however the image is rendered with a transparent sky, then the image is overlayed on the color ``#0089BC`` a.k.a. ``rgb(0, 0.25, 0.5)``.
+They sky is pure white with a strength of ``0.5``, however the image is rendered with a transparent sky, then overlayed with Alpha Over compositing on a texture of color ``#0089BC`` a.k.a. ``rgb(0, 0.25, 0.5)``.
 
 The .blend file is available [here](SettingTheScene.blend)
 
