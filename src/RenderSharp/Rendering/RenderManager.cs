@@ -7,20 +7,17 @@ using System.Threading.Tasks;
 
 namespace RenderSharp.Rendering;
 
-public class RenderManager<TRenderer>
-    where TRenderer : IRenderer
+public class RenderManager
 {
-    private readonly IRenderer _renderer;
     private readonly CancellationTokenSource _cancelTokenSource;
     private ReadWriteTexture2D<Rgba32, float4>? _output;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RenderManager{TRenderer}"/> class.
     /// </summary>
-    public RenderManager(TRenderer renderer)
+    public RenderManager()
     {
         State = RenderState.NotReady;
-        _renderer = renderer;
         _cancelTokenSource = new CancellationTokenSource();
     }
 
@@ -47,8 +44,16 @@ public class RenderManager<TRenderer>
     /// <summary>
     /// Gets the <see cref="GraphicsDevice"/> being used by the renderer.
     /// </summary>
-    public GraphicsDevice Device => _renderer.Device;
+    public GraphicsDevice? Device => Renderer?.Device;
 
+    /// <summary>
+    /// Gets the underlying renderer.
+    /// </summary>
+    public IRenderer? Renderer { get; private set; }
+
+    /// <summary>
+    /// Loads the 3D scene to the 
+    /// </summary>
     public void LoadScene()
     {
         State = RenderState.Preparing;
@@ -56,7 +61,12 @@ public class RenderManager<TRenderer>
         State = RenderState.Ready;
     }
 
-    public void Begin(int width, int height)
+    /// <summary>
+    /// Begins rendering an image.
+    /// </summary>
+    /// <param name="width">The width of the image.</param>
+    /// <param name="height">The height of the image.</param>
+    public virtual void Begin(int width, int height)
     {
         if (!IsReady)
         {
@@ -64,18 +74,23 @@ public class RenderManager<TRenderer>
             return;
         }
 
-        _output = Device.AllocateReadWriteTexture2D<Rgba32, float4>(width, height);
-        _renderer.Setup(_output);
+        AllocateBuffer(width, height);
         State = RenderState.Running;
-        _ = Task.Run(() => Render(width, height, _cancelTokenSource.Token));
+        _ = Task.Run(() => Render(_cancelTokenSource.Token));
     }
 
+    /// <summary>
+    /// Resets the render back to before running <see cref="Begin(int, int)"/>.
+    /// </summary>
     public void Reset()
     {
         if (State is not RenderState.NotReady)
             State = RenderState.Ready;
     }
 
+    /// <summary>
+    /// Cancels a render.
+    /// </summary>
     public void Cancel()
     {
         if (!IsRunning)
@@ -85,10 +100,58 @@ public class RenderManager<TRenderer>
         _cancelTokenSource.Cancel();
     }
 
-    protected virtual void Render(int width, int height, CancellationToken token)
+    /// <summary>
+    /// Sets the render, if rendering is not already setup.
+    /// </summary>
+    /// <param name="renderer">The new renderer.</param>
+    public void SetRenderer(IRenderer renderer)
+    {
+        if (State is RenderState.NotReady)
+        {
+            Renderer = renderer;
+        }
+    }
+
+    /// <summary>
+    /// Renders or copies a frame to <paramref name="buffer"/> for display.
+    /// </summary>
+    /// <param name="buffer">The buffer to display.</param>
+    /// <returns>False if the frame should be skipped.</returns>
+    public virtual bool RenderFrame(IReadWriteNormalizedTexture2D<float4> buffer)
     {
         Guard.IsNotNull(_output);
-        _renderer.Render();
+        if (_output.Width != buffer.Width ||
+            _output.Height != buffer.Height)
+            return false;
+
+        buffer.CopyFrom(_output);
+        return true;
+    }
+
+    /// <summary>
+    /// Allocates an additional buffer for non-realtime renders.
+    /// </summary>
+    /// <param name="width">The width of the buffer.</param>
+    /// <param name="height">The height of the buffer.</param>
+    protected virtual void AllocateBuffer(int width, int height)
+    {
+        Guard.IsNotNull(Renderer);
+        Guard.IsNotNull(Device);
+
+        _output = Device.AllocateReadWriteTexture2D<Rgba32, float4>(width, height);
+        Renderer.RenderBuffer = _output;
+    }
+
+    /// <summary>
+    /// Renders an image.
+    /// </summary>
+    /// <param name="token">A cancellation token to cancel the rendering.</param>
+    protected virtual void Render(CancellationToken token)
+    {
+        Guard.IsNotNull(_output);
+        Guard.IsNotNull(Renderer);
+
+        Renderer.Render();
 
         if (token.IsCancellationRequested)
         {
@@ -97,13 +160,5 @@ public class RenderManager<TRenderer>
         }
 
         State = RenderState.Done;
-    }
-
-    public void RenderFrame(IReadWriteNormalizedTexture2D<float4> buffer)
-    {
-        // TODO: Handle realtime rendering
-
-        Guard.IsNotNull(_output);
-        buffer.CopyFrom(_output);
     }
 }

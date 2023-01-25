@@ -1,34 +1,50 @@
 ﻿// Adam Dernis 2023
 
-using System;
+using CommunityToolkit.Diagnostics;
 using ComputeSharp;
 using ComputeSharp.WinUI;
 using RenderSharp.Rendering;
+using System;
 
 namespace RenderSharp.UI.Shared.Rendering;
 
-public class RenderViewer<TRenderer> : IShaderRunner
-    where TRenderer : IRenderer
+public class RenderViewer : IShaderRunner
 {
-    private readonly RenderManager<TRenderer> _renderManager;
+    private RenderManager? _renderManager;
 
-    public RenderViewer(TRenderer renderer)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RenderViewer"/> class.
+    /// </summary>
+    public RenderViewer()
     {
-        _renderManager = new RenderManager<TRenderer>(renderer);
     }
 
-    public void Setup()
+    /// <summary>
+    /// Sets up the <see cref="RenderManager"/>.
+    /// </summary>
+    public void Setup<TManager>(IRenderer renderer)
+        where TManager : RenderManager, new()
     {
+        _renderManager = new TManager();
+        _renderManager.SetRenderer(renderer);
         _renderManager.LoadScene();
     }
 
+    /// <summary>
+    /// Resets the <see cref="RenderManager"/>.
+    /// </summary>
     public void Refresh()
     {
+        Guard.IsNotNull(_renderManager);
+
         _renderManager.Reset();
     }
 
+    /// <inheritdoc/>
     public bool TryExecute(IReadWriteNormalizedTexture2D<float4> texture, TimeSpan timespan, object? parameter)
     {
+        Guard.IsNotNull(_renderManager);
+
         // Start rendering if the renderer is ready
         if (_renderManager.IsReady)
         {
@@ -40,8 +56,6 @@ public class RenderViewer<TRenderer> : IShaderRunner
             return false;
 
         // Render the most current frame
-        _renderManager.RenderFrame(texture);
-        return true;
-
+        return _renderManager.RenderFrame(texture);
     }
 }

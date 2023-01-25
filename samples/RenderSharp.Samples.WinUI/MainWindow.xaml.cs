@@ -1,8 +1,10 @@
+// Adam Dernis 2023
+
 using ComputeSharp;
 using Microsoft.UI.Xaml;
 using RenderSharp.Renderers.Debug;
+using RenderSharp.Rendering;
 using RenderSharp.UI.Shared.Rendering;
-using System.Timers;
 
 namespace RenderSharp.Samples.WinUI;
 
@@ -15,23 +17,23 @@ public sealed partial class MainWindow : Window
     {
         this.InitializeComponent();
 
-        var renderer = new SimpleRenderer(GraphicsDevice.GetDefault());
-        RenderViewer = new RenderViewer<SimpleRenderer>(renderer);
+        RenderViewer = new RenderViewer();
     }
 
-    public RenderViewer<SimpleRenderer> RenderViewer { get; }
+    public RenderViewer RenderViewer { get; }
 
     private void AnimatedComputeShaderPanel_Loaded(object sender, RoutedEventArgs e)
     {
-        RenderViewer.Setup();
+        var renderer = new SimpleRenderer(GraphicsDevice.GetDefault());
+        RenderViewer.Setup<RealtimeRenderManager>(renderer);
     }
 
     private void AnimatedComputeShaderPanel_SizeChanged(object sender, SizeChangedEventArgs e)
     {
+        // Skip refresh if initial size change
         if (e.PreviousSize.Width == 0)
             return;
 
         RenderViewer.Refresh();
-        RenderViewer.Setup();
     }
 }

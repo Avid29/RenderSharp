@@ -9,7 +9,8 @@ namespace RenderSharp.Renderers.Debug.Shaders;
 public readonly partial struct Shader : IComputeShader
 {
     private readonly IReadWriteNormalizedTexture2D<float4> _texture;
-
+    
+    /// <inheritdoc/>
     public void Execute()
     {
         int2 pos = ThreadIds.XY;

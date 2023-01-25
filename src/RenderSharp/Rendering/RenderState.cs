@@ -2,6 +2,9 @@
 
 namespace RenderSharp.Rendering;
 
+/// <summary>
+/// An enum indicating the state of a renderer.
+/// </summary>
 public enum RenderState
 {
     NotReady,
