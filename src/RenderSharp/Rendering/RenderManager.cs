@@ -56,7 +56,7 @@ public class RenderManager<TRenderer>
         State = RenderState.Ready;
     }
 
-    public void BeginRendering(int width, int height)
+    public void Begin(int width, int height)
     {
         if (!IsReady)
         {
@@ -70,7 +70,13 @@ public class RenderManager<TRenderer>
         _ = Task.Run(() => Render(width, height, _cancelTokenSource.Token));
     }
 
-    public void CancelRendering()
+    public void Reset()
+    {
+        if (State is not RenderState.NotReady)
+            State = RenderState.Ready;
+    }
+
+    public void Cancel()
     {
         if (!IsRunning)
             return;

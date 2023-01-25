@@ -24,15 +24,15 @@ public class RenderViewer<TRenderer> : IShaderRunner
 
     public void Refresh()
     {
-        _renderManager.CancelRendering();
+        _renderManager.Reset();
     }
 
     public bool TryExecute(IReadWriteNormalizedTexture2D<float4> texture, TimeSpan timespan, object? parameter)
-    {;
+    {
         // Start rendering if the renderer is ready
         if (_renderManager.IsReady)
         {
-            _renderManager.BeginRendering(texture.Width, texture.Height);
+            _renderManager.Begin(texture.Width, texture.Height);
         }
 
         // If the renderer is neither running nor done, return false
