@@ -10,7 +10,7 @@ This image was rendered in Blender.
 - Glass sphere at ``<0, 2, 1>`` with a radius of ``0.5m`` and a thickness of ``1cm``
 - Glossy sphere at ``<-0.75, 2.5, 0.5>`` with a radius of ``0.4m``
 - Point light at ``<0.5, 0.5, 2.5>`` with a power of ``10w`` and a ``0.25m`` radius
-- Tiled floor centers at ``<-1.25, 4, 0>`` with a width of ``5.5m`` and a depth of ``8m``
+- Tiled floor centered at ``<-1.25, 4, 0>`` with a width of ``5.5m`` and a depth of ``8m``
 
 ## Shaders
 
@@ -18,7 +18,7 @@ This image was rendered in Blender.
 - The glossy shader has a roughness of ``0.25`` and a pure white albedo
 - The tiled floor shader is a pure diffuse with a roughness of ``1`` and a checkered texture for the albedo
 
-The spheres are UV spheres ``32`` segments and ``16`` rings
+The spheres are UV spheres with ``32`` segments and ``16`` rings
 
 ## Other details
 
