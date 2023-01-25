@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderSharp", "src\RenderSh
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderSharp.RayTracing", "src\RenderSharp.RayTracing\RenderSharp.RayTracing.csproj", "{4B6628EC-D0FC-4F39-86AE-D1FFFB0EDCDD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderSharp.Common", "RenderSharp.Common\RenderSharp.Common.csproj", "{15F209DC-4B7E-4B1E-8F59-DBB4AF9E3DED}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Renderers", "Renderers", "{03E42BA3-4954-453D-87F4-02F7F1788370}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderSharp.Renderers.Debug", "src\Renderers\RenderSharp.Renderers.Debug\RenderSharp.Renderers.Debug.csproj", "{C7C134C7-0B15-4248-84D4-ACD7ED28150C}"
@@ -23,6 +21,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderSharp.Samples.WinUI",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{9D8F522A-4AF9-411E-80B5-8E93C6CA9CFE}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		Directory.Build.props = Directory.Build.props
 	EndProjectSection
 EndProject
@@ -70,22 +69,6 @@ Global
 		{4B6628EC-D0FC-4F39-86AE-D1FFFB0EDCDD}.Release|x64.Build.0 = Release|Any CPU
 		{4B6628EC-D0FC-4F39-86AE-D1FFFB0EDCDD}.Release|x86.ActiveCfg = Release|Any CPU
 		{4B6628EC-D0FC-4F39-86AE-D1FFFB0EDCDD}.Release|x86.Build.0 = Release|Any CPU
-		{15F209DC-4B7E-4B1E-8F59-DBB4AF9E3DED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{15F209DC-4B7E-4B1E-8F59-DBB4AF9E3DED}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{15F209DC-4B7E-4B1E-8F59-DBB4AF9E3DED}.Debug|ARM64.ActiveCfg = Debug|Any CPU
-		{15F209DC-4B7E-4B1E-8F59-DBB4AF9E3DED}.Debug|ARM64.Build.0 = Debug|Any CPU
-		{15F209DC-4B7E-4B1E-8F59-DBB4AF9E3DED}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{15F209DC-4B7E-4B1E-8F59-DBB4AF9E3DED}.Debug|x64.Build.0 = Debug|Any CPU
-		{15F209DC-4B7E-4B1E-8F59-DBB4AF9E3DED}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{15F209DC-4B7E-4B1E-8F59-DBB4AF9E3DED}.Debug|x86.Build.0 = Debug|Any CPU
-		{15F209DC-4B7E-4B1E-8F59-DBB4AF9E3DED}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{15F209DC-4B7E-4B1E-8F59-DBB4AF9E3DED}.Release|Any CPU.Build.0 = Release|Any CPU
-		{15F209DC-4B7E-4B1E-8F59-DBB4AF9E3DED}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{15F209DC-4B7E-4B1E-8F59-DBB4AF9E3DED}.Release|ARM64.Build.0 = Release|Any CPU
-		{15F209DC-4B7E-4B1E-8F59-DBB4AF9E3DED}.Release|x64.ActiveCfg = Release|Any CPU
-		{15F209DC-4B7E-4B1E-8F59-DBB4AF9E3DED}.Release|x64.Build.0 = Release|Any CPU
-		{15F209DC-4B7E-4B1E-8F59-DBB4AF9E3DED}.Release|x86.ActiveCfg = Release|Any CPU
-		{15F209DC-4B7E-4B1E-8F59-DBB4AF9E3DED}.Release|x86.Build.0 = Release|Any CPU
 		{C7C134C7-0B15-4248-84D4-ACD7ED28150C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C7C134C7-0B15-4248-84D4-ACD7ED28150C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7C134C7-0B15-4248-84D4-ACD7ED28150C}.Debug|ARM64.ActiveCfg = Debug|Any CPU
@@ -140,6 +123,7 @@ Global
 		SolutionGuid = {47CEC7E8-F913-4C7B-B625-8143BAAD2D51}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		src\UI\RenderSharp.UI.Shared\RenderSharp.UI.Shared.projitems*{28a89032-5d78-4ab7-9d4e-120bda5dc224}*SharedItemsImports = 5
 		src\UI\RenderSharp.UI.Shared\RenderSharp.UI.Shared.projitems*{59b023b7-e178-42c1-bb89-b75d98240045}*SharedItemsImports = 13
 	EndGlobalSection
 EndGlobal

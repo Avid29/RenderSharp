@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
+    <TargetFramework>net7.0-windows10.0.19041.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <RootNamespace>RenderSharp.Samples.WinUI</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -23,7 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221109.1" />
+    <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.1.0" />
+    <PackageReference Include="ComputeSharp.WinUI" Version="2.0.3" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221209.1" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
@@ -34,7 +36,12 @@
     package has not yet been restored.
   -->
   <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
-    <ProjectCapability Include="Msix"/>
+    <ProjectCapability Include="Msix" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Renderers\RenderSharp.Renderers.Debug\RenderSharp.Renderers.Debug.csproj" />
+    <ProjectReference Include="..\..\src\RenderSharp.RayTracing\RenderSharp.RayTracing.csproj" />
+    <ProjectReference Include="..\..\src\RenderSharp\RenderSharp.csproj" />
   </ItemGroup>
 
   <!-- 
@@ -45,4 +52,5 @@
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
   </PropertyGroup>
+  <Import Project="..\..\src\UI\RenderSharp.UI.Shared\RenderSharp.UI.Shared.projitems" Label="Shared" />
 </Project>

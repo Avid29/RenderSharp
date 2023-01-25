@@ -1,8 +1,9 @@
 <Project>
   <PropertyGroup>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	<ImplicitUsings></ImplicitUsings>
     <LangVersion>10.0</LangVersion>
-    <!--<Nullable>enable</Nullable>-->
-    <!--<TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 </Project>

@@ -1,9 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net7.0-windows</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Shaders\g2nqalp3.df5~" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\RenderSharp\RenderSharp.csproj" />
+  </ItemGroup>
 
 </Project>

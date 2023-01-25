@@ -1,10 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net7.0-windows</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="ComputeSharp" Version="2.0.3" />
     <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
   </ItemGroup>
 
