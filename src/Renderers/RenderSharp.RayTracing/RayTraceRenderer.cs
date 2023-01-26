@@ -5,9 +5,9 @@ using ComputeSharp;
 using RenderSharp.RayTracing.Models.Camera;
 using RenderSharp.RayTracing.Models.Geometry;
 using RenderSharp.RayTracing.Models.Rays;
-using RenderSharp.RayTracing.Shaders;
 using RenderSharp.RayTracing.Shaders.Debugging;
 using RenderSharp.RayTracing.Shaders.Debugging.Enums;
+using RenderSharp.RayTracing.Shaders.Rendering;
 using RenderSharp.Rendering;
 using System.Numerics;
 

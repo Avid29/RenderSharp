@@ -4,7 +4,7 @@ using ComputeSharp;
 using RenderSharp.RayTracing.Models.Rays;
 using RenderSharp.RayTracing.Models.Camera;
 
-namespace RenderSharp.RayTracing.Shaders;
+namespace RenderSharp.RayTracing.Shaders.Rendering;
 
 [AutoConstructor]
 [EmbeddedBytecode(DispatchAxis.XY)]
