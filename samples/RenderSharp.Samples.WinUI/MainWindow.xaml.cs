@@ -2,6 +2,7 @@
 
 using ComputeSharp;
 using Microsoft.UI.Xaml;
+using RenderSharp.RayTracing;
 using RenderSharp.Renderers.Debug;
 using RenderSharp.Rendering;
 using RenderSharp.UI.Shared.Rendering;
@@ -24,7 +25,7 @@ public sealed partial class MainWindow : Window
 
     private void AnimatedComputeShaderPanel_Loaded(object sender, RoutedEventArgs e)
     {
-        var renderer = new SimpleRenderer(GraphicsDevice.GetDefault());
+        var renderer = new RayTracingRenderer(GraphicsDevice.GetDefault());
         RenderViewer.Setup<RealtimeRenderManager>(renderer);
     }
 
