@@ -49,7 +49,7 @@ public class RayTracingRenderer : IRenderer
         Device.For(width, height, new CameraCastShader(size, camera, rayBuffer));
 
         // Dump the ray's directions to the render buffer (for debugging)
-        Device.For(width, height, new RayBufferDumpShader(rayBuffer, RenderBuffer, true));
+        Device.For(width, height, new RayBufferDumpShader(rayBuffer, RenderBuffer, 1));
     }
 
     /// <inheritdoc/>

@@ -11,7 +11,12 @@ public readonly partial struct RayBufferDumpShader : IComputeShader
 {
     private readonly ReadWriteBuffer<Ray> rayBuffer;
     private readonly IReadWriteNormalizedTexture2D<float4> renderBuffer;
-    private readonly bool dumpDirection;
+
+    /// <remarks>
+    /// TODO: Use enum
+    /// Waiting on https://github.com/Sergio0694/ComputeSharp/issues/248
+    /// </remarks>
+    private readonly int dumpType;
 
     public void Execute()
     {
@@ -20,12 +25,20 @@ public readonly partial struct RayBufferDumpShader : IComputeShader
         int2 index2D = ThreadIds.XY;
         int fIndex = (index2D.Y * DispatchSize.X) + index2D.X;
 
-        // If dumpDirection get the ray direction
-        // If not dumpDirection get the ray origin
         var ray = rayBuffer[fIndex];
-        float3 dumpValue = dumpDirection ? ray.direction : ray.origin;
+        
+        // Get the appropriate dump value
+        float4 value; 
+        switch (dumpType)
+        {
+            case 0:
+                value = new float4(ray.origin, 1);
+                break;
+            default:
+                value = new float4(ray.direction, 1);
+                break;
+        };
 
-        // Dump the origin or direction with a full alpha channel
-        renderBuffer[index2D] = new float4(dumpValue, 1);
+        renderBuffer[index2D] = value;
     }
 }
