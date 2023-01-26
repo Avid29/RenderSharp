@@ -56,8 +56,13 @@ public class RenderManager
     /// </summary>
     public void LoadScene()
     {
+        Guard.IsNotNull(Renderer);
+
         State = RenderState.Preparing;
         // TODO: Load a scene into the renderer.
+
+        Renderer.SetupScene();
+
         State = RenderState.Ready;
     }
 

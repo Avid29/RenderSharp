@@ -20,7 +20,7 @@ public struct Camera
     /// This constructor is designed to be called from the CPU unlike
     /// many of the models which are designed exclusively for shader execution.
     /// </remarks>
-    public Camera(Vector3 origin, Vector3 lookAt, float fov, float focalLength, float aspectRatio)
+    public Camera(Vector3 origin, Vector3 lookAt, float fov, float aspectRatio)
     {
         float theta = FloatUtils.DegreesToRadians(fov);
         float h = MathF.Tan(theta / 2);
@@ -38,13 +38,13 @@ public struct Camera
         this.horizontal = width * this.u;
         this.vertical = height * this.v;
 
-        var depth = this.n * focalLength;
+        var depth = this.n * Vector3.Distance(origin, lookAt);
         this.corner = this.origin - (this.horizontal / 2) - (this.vertical / 2) - depth;
     }
 
     /// <remarks>
-    /// This should be a instance method. My disappoinment is immeasureable.
-    /// TODO:https://github.com/Sergio0694/ComputeSharp/issues/479
+    /// TODO: Convert to an instance method.
+    /// Waiting on https://github.com/Sergio0694/ComputeSharp/issues/479
     /// </remarks>
     public static Ray CreateRay(Camera c, float u, float v)
     {
