@@ -41,10 +41,31 @@ public class RayTracingRenderer : IRenderer
         var v6 = v1 + v3;
         var v7 = Vector3.One;
 
-        // TODO: Place proper vertices
         var triangles = new Triangle[]
         {
-            new(v1, v2, v3),
+            // Face 0
+            new(v0, v1, v2),
+            new(v4, v1, v2),
+            
+            // Face 1
+            new(v0, v1, v3),
+            new(v6, v1, v3),
+            
+            // Face 2
+            new(v0, v2, v5),
+            new(v0, v3, v5),
+            
+            // Face 3
+            new(v2, v4, v7),
+            new(v2, v5, v7),
+            
+            // Face 4
+            new(v4, v1, v6),
+            new(v4, v7, v6),
+            
+            // Face 5
+            new(v3, v5, v6),
+            new(v7, v5, v6),
         };
 
         _geometryBuffer = Device.AllocateReadOnlyBuffer(triangles);
@@ -63,7 +84,7 @@ public class RayTracingRenderer : IRenderer
         int pixelCount = width * height;
 
         // (Debug) Create camera
-        var camera = new Camera(Vector3.UnitZ * 2, Vector3.UnitY * 0.5f, 90f, ratio);
+        var camera = new Camera(new Vector3(5, 2, 8), Vector3.UnitY * 0.5f, 90f, ratio);
 
         // Allocate buffers
         ReadWriteBuffer<Ray> rayBuffer = Device.AllocateReadWriteBuffer<Ray>(pixelCount);
@@ -76,7 +97,7 @@ public class RayTracingRenderer : IRenderer
         Device.For(width, height, new GeometryCollisionShader(_geometryBuffer, rayBuffer, rayCastBuffer));
 
         // Dump the ray cast's directions to the render buffer (for debugging)
-        Device.For(width, height, new RayCastBufferDumpShader(rayCastBuffer, RenderBuffer, (int)RayCastDumpValueType.Object, _geometryBuffer.Length));
+        Device.For(width, height, new RayCastBufferDumpShader(rayCastBuffer, RenderBuffer, (int)RayCastDumpValueType.Object, 1));
     }
 
     /// <inheritdoc/>
