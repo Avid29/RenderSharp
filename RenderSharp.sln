@@ -5,11 +5,9 @@ VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderSharp", "src\RenderSharp\RenderSharp.csproj", "{33B32E09-F0E3-478A-82E9-D4F2D82F289D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderSharp.RayTracing", "src\RenderSharp.RayTracing\RenderSharp.RayTracing.csproj", "{4B6628EC-D0FC-4F39-86AE-D1FFFB0EDCDD}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Renderers", "Renderers", "{03E42BA3-4954-453D-87F4-02F7F1788370}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderSharp.Renderers.Debug", "src\Renderers\RenderSharp.Renderers.Debug\RenderSharp.Renderers.Debug.csproj", "{C7C134C7-0B15-4248-84D4-ACD7ED28150C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderSharp.Renderers.Debug", "src\Renderers\RenderSharp.Renderers.Debug\RenderSharp.Renderers.Debug.csproj", "{C7C134C7-0B15-4248-84D4-ACD7ED28150C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{929B4547-2F75-439F-900F-42AAB2F71422}"
 EndProject
@@ -17,13 +15,15 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "RenderSharp.UI.Shared", "sr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{B2F83727-66FB-44DD-BFE5-4BB221F7FDC5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderSharp.Samples.WinUI", "samples\RenderSharp.Samples.WinUI\RenderSharp.Samples.WinUI.csproj", "{28A89032-5D78-4AB7-9D4E-120BDA5DC224}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderSharp.Samples.WinUI", "samples\RenderSharp.Samples.WinUI\RenderSharp.Samples.WinUI.csproj", "{28A89032-5D78-4AB7-9D4E-120BDA5DC224}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{9D8F522A-4AF9-411E-80B5-8E93C6CA9CFE}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		Directory.Build.props = Directory.Build.props
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderSharp.RayTracing", "src\Renderers\RenderSharp.RayTracing\RenderSharp.RayTracing.csproj", "{5C420F37-8672-4B52-A48C-3EC7AD3E9B9D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,22 +53,6 @@ Global
 		{33B32E09-F0E3-478A-82E9-D4F2D82F289D}.Release|x64.Build.0 = Release|Any CPU
 		{33B32E09-F0E3-478A-82E9-D4F2D82F289D}.Release|x86.ActiveCfg = Release|Any CPU
 		{33B32E09-F0E3-478A-82E9-D4F2D82F289D}.Release|x86.Build.0 = Release|Any CPU
-		{4B6628EC-D0FC-4F39-86AE-D1FFFB0EDCDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4B6628EC-D0FC-4F39-86AE-D1FFFB0EDCDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4B6628EC-D0FC-4F39-86AE-D1FFFB0EDCDD}.Debug|ARM64.ActiveCfg = Debug|Any CPU
-		{4B6628EC-D0FC-4F39-86AE-D1FFFB0EDCDD}.Debug|ARM64.Build.0 = Debug|Any CPU
-		{4B6628EC-D0FC-4F39-86AE-D1FFFB0EDCDD}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{4B6628EC-D0FC-4F39-86AE-D1FFFB0EDCDD}.Debug|x64.Build.0 = Debug|Any CPU
-		{4B6628EC-D0FC-4F39-86AE-D1FFFB0EDCDD}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{4B6628EC-D0FC-4F39-86AE-D1FFFB0EDCDD}.Debug|x86.Build.0 = Debug|Any CPU
-		{4B6628EC-D0FC-4F39-86AE-D1FFFB0EDCDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4B6628EC-D0FC-4F39-86AE-D1FFFB0EDCDD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4B6628EC-D0FC-4F39-86AE-D1FFFB0EDCDD}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{4B6628EC-D0FC-4F39-86AE-D1FFFB0EDCDD}.Release|ARM64.Build.0 = Release|Any CPU
-		{4B6628EC-D0FC-4F39-86AE-D1FFFB0EDCDD}.Release|x64.ActiveCfg = Release|Any CPU
-		{4B6628EC-D0FC-4F39-86AE-D1FFFB0EDCDD}.Release|x64.Build.0 = Release|Any CPU
-		{4B6628EC-D0FC-4F39-86AE-D1FFFB0EDCDD}.Release|x86.ActiveCfg = Release|Any CPU
-		{4B6628EC-D0FC-4F39-86AE-D1FFFB0EDCDD}.Release|x86.Build.0 = Release|Any CPU
 		{C7C134C7-0B15-4248-84D4-ACD7ED28150C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C7C134C7-0B15-4248-84D4-ACD7ED28150C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7C134C7-0B15-4248-84D4-ACD7ED28150C}.Debug|ARM64.ActiveCfg = Debug|Any CPU
@@ -109,15 +93,31 @@ Global
 		{28A89032-5D78-4AB7-9D4E-120BDA5DC224}.Release|x86.ActiveCfg = Release|x86
 		{28A89032-5D78-4AB7-9D4E-120BDA5DC224}.Release|x86.Build.0 = Release|x86
 		{28A89032-5D78-4AB7-9D4E-120BDA5DC224}.Release|x86.Deploy.0 = Release|x86
+		{5C420F37-8672-4B52-A48C-3EC7AD3E9B9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C420F37-8672-4B52-A48C-3EC7AD3E9B9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C420F37-8672-4B52-A48C-3EC7AD3E9B9D}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{5C420F37-8672-4B52-A48C-3EC7AD3E9B9D}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{5C420F37-8672-4B52-A48C-3EC7AD3E9B9D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5C420F37-8672-4B52-A48C-3EC7AD3E9B9D}.Debug|x64.Build.0 = Debug|Any CPU
+		{5C420F37-8672-4B52-A48C-3EC7AD3E9B9D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5C420F37-8672-4B52-A48C-3EC7AD3E9B9D}.Debug|x86.Build.0 = Debug|Any CPU
+		{5C420F37-8672-4B52-A48C-3EC7AD3E9B9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C420F37-8672-4B52-A48C-3EC7AD3E9B9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C420F37-8672-4B52-A48C-3EC7AD3E9B9D}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{5C420F37-8672-4B52-A48C-3EC7AD3E9B9D}.Release|ARM64.Build.0 = Release|Any CPU
+		{5C420F37-8672-4B52-A48C-3EC7AD3E9B9D}.Release|x64.ActiveCfg = Release|Any CPU
+		{5C420F37-8672-4B52-A48C-3EC7AD3E9B9D}.Release|x64.Build.0 = Release|Any CPU
+		{5C420F37-8672-4B52-A48C-3EC7AD3E9B9D}.Release|x86.ActiveCfg = Release|Any CPU
+		{5C420F37-8672-4B52-A48C-3EC7AD3E9B9D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{4B6628EC-D0FC-4F39-86AE-D1FFFB0EDCDD} = {03E42BA3-4954-453D-87F4-02F7F1788370}
 		{C7C134C7-0B15-4248-84D4-ACD7ED28150C} = {03E42BA3-4954-453D-87F4-02F7F1788370}
 		{59B023B7-E178-42C1-BB89-B75D98240045} = {929B4547-2F75-439F-900F-42AAB2F71422}
 		{28A89032-5D78-4AB7-9D4E-120BDA5DC224} = {B2F83727-66FB-44DD-BFE5-4BB221F7FDC5}
+		{5C420F37-8672-4B52-A48C-3EC7AD3E9B9D} = {03E42BA3-4954-453D-87F4-02F7F1788370}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {47CEC7E8-F913-4C7B-B625-8143BAAD2D51}
