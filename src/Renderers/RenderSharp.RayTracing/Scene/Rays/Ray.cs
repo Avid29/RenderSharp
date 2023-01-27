@@ -1,6 +1,6 @@
 ﻿// Adam Dernis 2023
 
-namespace RenderSharp.RayTracing.Models.Rays;
+namespace RenderSharp.RayTracing.Scene.Rays;
 
 public struct Ray
 {

@@ -1,9 +1,9 @@
 ﻿// Adam Dernis 2023
 
 using ComputeSharp;
-using RenderSharp.RayTracing.Models.Rays;
+using RenderSharp.RayTracing.Scene.Rays;
 
-namespace RenderSharp.RayTracing.Models.Geometry;
+namespace RenderSharp.RayTracing.Scene.Geometry;
 
 public struct Triangle
 {

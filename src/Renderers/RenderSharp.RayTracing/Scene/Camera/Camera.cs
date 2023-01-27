@@ -1,11 +1,11 @@
 ﻿// Adam Dernis 2023
 
-using RenderSharp.RayTracing.Models.Rays;
+using RenderSharp.RayTracing.Scene.Rays;
 using RenderSharp.RayTracing.Utils;
 using RenderSharp.Scenes.Geometry;
 using System.Numerics;
 
-namespace RenderSharp.RayTracing.Models.Camera;
+namespace RenderSharp.RayTracing.Scene.Camera;
 
 public struct Camera
 {
@@ -29,10 +29,11 @@ public struct Camera
         float height = 2 * h;
         float width = height * aspectRatio;
 
+        // Camera faces negative Z by default
         this.origin = transformation.Translation;
         this.u = Vector3.Transform(Vector3.UnitX, transformation.Rotation);
         this.v = Vector3.Transform(Vector3.UnitY, transformation.Rotation);
-        this.n = Vector3.Transform(Vector3.UnitZ, transformation.Rotation);
+        this.n = Vector3.Transform(-Vector3.UnitZ, transformation.Rotation);
         this.horizontal = width * this.u;
         this.vertical = height * this.v;
 

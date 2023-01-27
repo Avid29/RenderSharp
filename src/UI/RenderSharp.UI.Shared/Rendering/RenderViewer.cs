@@ -6,6 +6,8 @@ using ComputeSharp.WinUI;
 using RenderSharp.Rendering;
 using RenderSharp.Scenes;
 using RenderSharp.Scenes.Cameras;
+using RenderSharp.Scenes.Geometry;
+using RenderSharp.Scenes.Geometry.Tessellation.Shapes;
 using System;
 using System.Numerics;
 
@@ -28,8 +30,11 @@ public class RenderViewer : IShaderRunner
     public void Setup<TManager>(IRenderer renderer)
         where TManager : RenderManager, new()
     {
-        var camera = new Camera(new Vector3(1.8f, 1.2f, 2.2f), new Vector3(-15f, 45f, 0f), 60);
+        var camera = Camera.CreateFromLookAt(new Vector3(1.8f, 1.2f, 2.2f), Vector3.Zero, 90);
         var scene = new Scene(camera);
+
+        var cube = new GeometryObject<TessellatedCube>(new TessellatedCube());
+        scene.Objects.Add(cube);
 
         _renderManager = new TManager();
         _renderManager.SetRenderer(renderer);

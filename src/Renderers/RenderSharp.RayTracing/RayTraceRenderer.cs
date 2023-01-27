@@ -2,18 +2,20 @@
 
 using CommunityToolkit.Diagnostics;
 using ComputeSharp;
-using RenderSharp.RayTracing.Models.Camera;
-using RenderSharp.RayTracing.Models.Geometry;
-using RenderSharp.RayTracing.Models.Rays;
+using RenderSharp.RayTracing.Conversion;
+using RenderSharp.RayTracing.Scene.Camera;
+using RenderSharp.RayTracing.Scene.Geometry;
+using RenderSharp.RayTracing.Scene.Rays;
 using RenderSharp.RayTracing.Shaders.Debugging;
 using RenderSharp.RayTracing.Shaders.Debugging.Enums;
 using RenderSharp.RayTracing.Shaders.Rendering;
 using RenderSharp.Rendering;
-using RenderSharp.Scenes;
+using RenderSharp.Scenes.Geometry;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 
 using CommonCamera = RenderSharp.Scenes.Cameras.Camera;
+using CommonScene = RenderSharp.Scenes.Scene;
 
 namespace RenderSharp.RayTracing;
 
@@ -32,48 +34,19 @@ public class RayTracingRenderer : IRenderer
     public IReadWriteNormalizedTexture2D<float4>? RenderBuffer { get; set; }
 
     /// <inheritdoc/>
-    public void SetupScene(Scene scene)
+    public void SetupScene(CommonScene scene)
     {
         _camera = scene.ActiveCamera;
 
-        // Tessellate Cube
-        var v0 = Vector3.Zero;
-        var v1 = Vector3.UnitX;
-        var v2 = Vector3.UnitY;
-        var v3 = Vector3.UnitZ;
-        var v4 = v1 + v2;
-        var v5 = v2 + v3;
-        var v6 = v1 + v3;
-        var v7 = Vector3.One;
+        // Load geometry objects to the geometry buffer
+        var loader = new ObjectLoader(Device);
+        var geometryObjects = scene.Objects
+            .Where(x => x is GeometryObject)
+            .Select(x => (GeometryObject)x).ToList();
 
-        var triangles = new Triangle[]
-        {
-            // Bottom
-            new(v0, v1, v2),
-            new(v4, v1, v2),
-            
-            // Face 1
-            new(v0, v1, v3),
-            new(v6, v1, v3),
-            
-            // Face 2
-            new(v0, v2, v5),
-            new(v0, v3, v5),
-            
-            // Face 3
-            new(v2, v4, v7),
-            new(v2, v5, v7),
-            
-            // Face 4
-            new(v4, v1, v6),
-            new(v4, v7, v6),
-            
-            // Face 5
-            new(v3, v5, v6),
-            new(v7, v5, v6),
-        };
+        loader.LoadObjects(geometryObjects);
 
-        _geometryBuffer = Device.AllocateReadOnlyBuffer(triangles);
+        _geometryBuffer = loader.GeometryBuffer;
     }
 
     /// <inheritdoc/>
