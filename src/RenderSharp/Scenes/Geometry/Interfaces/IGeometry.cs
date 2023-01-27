@@ -7,4 +7,6 @@ namespace RenderSharp.Scenes.Geometry.Interfaces;
 public interface IGeometry
 {
     Mesh ConvertToMesh();
+
+    void ApplyTransformation(Transformation transformation);
 }
