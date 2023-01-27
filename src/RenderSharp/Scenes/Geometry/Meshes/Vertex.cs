@@ -2,7 +2,7 @@
 
 using System.Numerics;
 
-namespace RenderSharp.Scenes.Meshes;
+namespace RenderSharp.Scenes.Geometry.Meshes;
 
 public class Vertex
 {

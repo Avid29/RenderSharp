@@ -2,14 +2,21 @@
 
 using System.Numerics;
 
-namespace RenderSharp.Scenes;
+namespace RenderSharp.Scenes.Geometry;
 
 public struct Transformation
 {
+    public Transformation()
+    {
+        Translation = Vector3.Zero;
+        Rotation = Quaternion.Identity;
+        Scale = Vector3.One;
+    }
+
     public Vector3 Translation { get; set; }
 
     public Quaternion Rotation { get; set; }
-    
+
     public Vector3 Scale { get; set; }
 
     public Matrix4x4 ToTransformationMatrix()
