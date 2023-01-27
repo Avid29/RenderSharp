@@ -2,6 +2,7 @@
 
 using CommunityToolkit.Diagnostics;
 using ComputeSharp;
+using RenderSharp.Scenes;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -52,16 +53,16 @@ public class RenderManager
     public IRenderer? Renderer { get; private set; }
 
     /// <summary>
-    /// Loads the 3D scene to the 
+    /// Loads the 3D scene to the renderer.
     /// </summary>
-    public void LoadScene()
+    public void LoadScene(Scene scene)
     {
         Guard.IsNotNull(Renderer);
 
         State = RenderState.Preparing;
-        // TODO: Load a scene into the renderer.
 
-        Renderer.SetupScene();
+        // TODO: Asynchronous
+        Renderer.SetupScene(scene);
 
         State = RenderState.Ready;
     }

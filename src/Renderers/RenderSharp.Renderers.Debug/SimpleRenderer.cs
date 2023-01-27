@@ -4,6 +4,7 @@ using CommunityToolkit.Diagnostics;
 using ComputeSharp;
 using RenderSharp.Renderers.Debug.Shaders;
 using RenderSharp.Rendering;
+using RenderSharp.Scenes;
 
 namespace RenderSharp.Renderers.Debug;
 
@@ -19,7 +20,7 @@ public class SimpleRenderer : IRenderer
     public IReadWriteNormalizedTexture2D<float4>? RenderBuffer { get; set; }
     
     /// <inheritdoc/>
-    public void SetupScene()
+    public void SetupScene(Scene scene)
     {
         // TODO: Load 3D scene
     }

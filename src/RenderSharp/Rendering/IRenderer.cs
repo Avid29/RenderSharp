@@ -1,6 +1,7 @@
 ﻿// Adam Dernis 2023
 
 using ComputeSharp;
+using RenderSharp.Scenes;
 
 namespace RenderSharp.Rendering;
 
@@ -19,7 +20,8 @@ public interface IRenderer
     /// <summary>
     /// Loads the 3D scene to the renderer.
     /// </summary>
-    void SetupScene();
+    /// <param name="scene">The common RenderSharp scene to load.</param>
+    void SetupScene(Scene scene);
 
     /// <summary>
     /// Renders the full image to the buffer.

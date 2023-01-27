@@ -4,7 +4,10 @@ using CommunityToolkit.Diagnostics;
 using ComputeSharp;
 using ComputeSharp.WinUI;
 using RenderSharp.Rendering;
+using RenderSharp.Scenes;
+using RenderSharp.Scenes.Cameras;
 using System;
+using System.Numerics;
 
 namespace RenderSharp.UI.Shared.Rendering;
 
@@ -25,9 +28,12 @@ public class RenderViewer : IShaderRunner
     public void Setup<TManager>(IRenderer renderer)
         where TManager : RenderManager, new()
     {
+        var camera = new Camera(new Vector3(1.8f, 1.2f, 2.2f), new Vector3(-15f, 45f, 0f), 60);
+        var scene = new Scene(camera);
+
         _renderManager = new TManager();
         _renderManager.SetRenderer(renderer);
-        _renderManager.LoadScene();
+        _renderManager.LoadScene(scene);
     }
 
     /// <summary>

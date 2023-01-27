@@ -3,7 +3,6 @@
 using ComputeSharp;
 using Microsoft.UI.Xaml;
 using RenderSharp.RayTracing;
-using RenderSharp.Renderers.Debug;
 using RenderSharp.Rendering;
 using RenderSharp.UI.Shared.Rendering;
 

@@ -9,12 +9,17 @@ using RenderSharp.RayTracing.Shaders.Debugging;
 using RenderSharp.RayTracing.Shaders.Debugging.Enums;
 using RenderSharp.RayTracing.Shaders.Rendering;
 using RenderSharp.Rendering;
+using RenderSharp.Scenes;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
+
+using CommonCamera = RenderSharp.Scenes.Cameras.Camera;
 
 namespace RenderSharp.RayTracing;
 
 public class RayTracingRenderer : IRenderer
 {
+    private CommonCamera? _camera;
     private ReadOnlyBuffer<Triangle>? _geometryBuffer;
 
     public RayTracingRenderer(GraphicsDevice device)
@@ -27,9 +32,9 @@ public class RayTracingRenderer : IRenderer
     public IReadWriteNormalizedTexture2D<float4>? RenderBuffer { get; set; }
 
     /// <inheritdoc/>
-    public void SetupScene()
+    public void SetupScene(Scene scene)
     {
-        // TODO: Load 3D scene from RenderSharp common scene data
+        _camera = scene.ActiveCamera;
 
         // Tessellate Cube
         var v0 = Vector3.Zero;
@@ -43,7 +48,7 @@ public class RayTracingRenderer : IRenderer
 
         var triangles = new Triangle[]
         {
-            // Face 0
+            // Bottom
             new(v0, v1, v2),
             new(v4, v1, v2),
             
@@ -74,8 +79,7 @@ public class RayTracingRenderer : IRenderer
     /// <inheritdoc/>
     public void Render()
     {
-        Guard.IsNotNull(RenderBuffer);
-        Guard.IsNotNull(_geometryBuffer);
+        GuardReady();
 
         int width = RenderBuffer.Width;
         int height = RenderBuffer.Height;
@@ -83,8 +87,8 @@ public class RayTracingRenderer : IRenderer
         int2 size = new(width, height);
         int pixelCount = width * height;
 
-        // (Debug) Create camera
-        var camera = new Camera(new Vector3(5, 2, 8), Vector3.UnitY * 0.5f, 90f, ratio);
+        // Prepare camera with aspect ratio
+        var camera = new Camera(_camera.Transformation, _camera.Fov, ratio);
 
         // Allocate buffers
         ReadWriteBuffer<Ray> rayBuffer = Device.AllocateReadWriteBuffer<Ray>(pixelCount);
@@ -106,5 +110,16 @@ public class RayTracingRenderer : IRenderer
         Guard.IsNotNull(RenderBuffer);
 
         throw new NotImplementedException();
+    }
+
+    [MemberNotNull(
+        nameof(RenderBuffer),
+        nameof(_geometryBuffer),
+        nameof(_camera))]
+    private void GuardReady()
+    {
+        Guard.IsNotNull(_camera);
+        Guard.IsNotNull(RenderBuffer);
+        Guard.IsNotNull(_geometryBuffer);
     }
 }

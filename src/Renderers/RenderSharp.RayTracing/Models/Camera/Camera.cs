@@ -2,6 +2,7 @@
 
 using RenderSharp.RayTracing.Models.Rays;
 using RenderSharp.RayTracing.Utils;
+using RenderSharp.Scenes.Geometry;
 using System.Numerics;
 
 namespace RenderSharp.RayTracing.Models.Camera;
@@ -20,7 +21,7 @@ public struct Camera
     /// This constructor is designed to be called from the CPU unlike
     /// many of the models which are designed exclusively for shader execution.
     /// </remarks>
-    public Camera(Vector3 origin, Vector3 lookAt, float fov, float aspectRatio)
+    public Camera(Transformation transformation, float fov, float aspectRatio)
     {
         float theta = FloatUtils.DegreesToRadians(fov);
         float h = MathF.Tan(theta / 2);
@@ -28,17 +29,15 @@ public struct Camera
         float height = 2 * h;
         float width = height * aspectRatio;
 
-        // TODO: Dutch angle support
-        Vector3 cameraUp = Vector3.UnitY;
-
-        this.origin = origin;
-        this.n = Vector3.Normalize(origin - lookAt);
-        this.u = Vector3.Normalize(Vector3.Cross(cameraUp, this.n));
-        this.v = Vector3.Cross(this.n, this.u); // Implicitly normalized
+        this.origin = transformation.Translation;
+        this.u = Vector3.Transform(Vector3.UnitX, transformation.Rotation);
+        this.v = Vector3.Transform(Vector3.UnitY, transformation.Rotation);
+        this.n = Vector3.Transform(Vector3.UnitZ, transformation.Rotation);
         this.horizontal = width * this.u;
         this.vertical = height * this.v;
 
-        var depth = this.n * Vector3.Distance(origin, lookAt);
+        // TODO: Focal length
+        var depth = this.n;
         this.corner = this.origin - (this.horizontal / 2) - (this.vertical / 2) - depth;
     }
 
