@@ -22,6 +22,7 @@ public class RayTracingRenderer : IRenderer
 {
     private CommonCamera? _camera;
     private ReadOnlyBuffer<Triangle>? _geometryBuffer;
+    private int _objectCount;
 
     public RayTracingRenderer(GraphicsDevice device)
     {
@@ -45,6 +46,7 @@ public class RayTracingRenderer : IRenderer
         loader.LoadObjects(geometryObjects);
 
         _geometryBuffer = loader.GeometryBuffer;
+        _objectCount = loader.ObjectCount;
     }
 
     /// <inheritdoc/>
@@ -72,7 +74,7 @@ public class RayTracingRenderer : IRenderer
         Device.For(width, height, new GeometryCollisionShader(_geometryBuffer, rayBuffer, rayCastBuffer));
 
         // Dump the ray cast's directions to the render buffer (for debugging)
-        Device.For(width, height, new RayCastBufferDumpShader(rayCastBuffer, _geometryBuffer, RenderBuffer, (int)RayCastDumpValueType.Object));
+        Device.For(width, height, new RayCastBufferDumpShader(rayCastBuffer, _geometryBuffer, RenderBuffer, _objectCount, (int)RayCastDumpValueType.Object));
     }
 
     /// <inheritdoc/>

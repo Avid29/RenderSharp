@@ -7,5 +7,6 @@ public enum RayCastDumpValueType : int
     Position,
     Normal,
     Distance,
+    Triangle,
     Object,
 }
