@@ -1,7 +1,9 @@
 ﻿// Adam Dernis 2023
 
 using ComputeSharp;
+using RenderSharp.RayTracing.Scene.Geometry;
 using RenderSharp.RayTracing.Scene.Rays;
+using RenderSharp.RayTracing.Utils;
 
 namespace RenderSharp.RayTracing.Shaders.Debugging;
 
@@ -10,6 +12,7 @@ namespace RenderSharp.RayTracing.Shaders.Debugging;
 public readonly partial struct RayCastBufferDumpShader : IComputeShader
 {
     private readonly ReadWriteBuffer<RayCast> rayCastBuffer;
+    private readonly ReadOnlyBuffer<Triangle> geometryBuffer;
     private readonly IReadWriteNormalizedTexture2D<float4> renderBuffer;
 
     /// <remarks>
@@ -17,7 +20,6 @@ public readonly partial struct RayCastBufferDumpShader : IComputeShader
     /// Waiting on https://github.com/Sergio0694/ComputeSharp/issues/248
     /// </remarks>
     private readonly int dumpType;
-    private readonly int objectCount;
 
     public void Execute()
     {
@@ -32,7 +34,7 @@ public readonly partial struct RayCastBufferDumpShader : IComputeShader
         float4 value; 
         switch (dumpType)
         {
-            case 0:
+            default:
                 value = new float4(rayCast.position, 1);
                 break;
             case 1:
@@ -41,9 +43,10 @@ public readonly partial struct RayCastBufferDumpShader : IComputeShader
             case 2:
                 value = new float4(rayCast.distance, 0, 0, 1);
                 break;
-            default:
-                var i = (float)(rayCast.objId + 1) / objectCount;
-                value = new float4((float3)i, 1);
+            case 3:
+                var hue = (rayCast.objId * 360f) / (geometryBuffer.Length * 1.05f);
+                var hsv = new float3(hue, 1f, rayCast.objId == -1 ? 0 : 1);
+                value = new float4(VectorUtils.HSVtoRGB(hsv), 1);
                 break;
         };
 
