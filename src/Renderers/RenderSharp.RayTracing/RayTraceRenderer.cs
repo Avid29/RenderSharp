@@ -67,14 +67,18 @@ public class RayTracingRenderer : IRenderer
         ReadWriteBuffer<Ray> rayBuffer = Device.AllocateReadWriteBuffer<Ray>(pixelCount);
         ReadWriteBuffer<RayCast> rayCastBuffer = Device.AllocateReadWriteBuffer<RayCast>(pixelCount);
 
-        // Create the rays from the camera
-        Device.For(width, height, new CameraCastShader(size, camera, rayBuffer));
+        using var context = Device.CreateComputeContext();
 
+        // Create the rays from the camera
+        context.For(width, height, new CameraCastShader(size, camera, rayBuffer));
+        context.Barrier(rayBuffer);
+            
         // Find object collision and cache the resulting ray cast 
-        Device.For(width, height, new GeometryCollisionShader(_geometryBuffer, rayBuffer, rayCastBuffer));
+        context.For(width, height, new GeometryCollisionShader(_geometryBuffer, rayBuffer, rayCastBuffer));
+        context.Barrier(rayCastBuffer);
 
         // Dump the ray cast's directions to the render buffer (for debugging)
-        Device.For(width, height, new RayCastBufferDumpShader(rayCastBuffer, _geometryBuffer, RenderBuffer, _objectCount, (int)RayCastDumpValueType.Object));
+        context.For(width, height, new RayCastBufferDumpShader(rayCastBuffer, _geometryBuffer, RenderBuffer, _objectCount, (int)RayCastDumpValueType.Object));
     }
 
     /// <inheritdoc/>
