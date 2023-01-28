@@ -11,19 +11,11 @@ public class Cube : TessellatedShape
 {
     public Cube()
     {
-        Center = Vector3.Zero;
         Size = 2;
     }
 
     public override Mesh ConvertToMesh()
     {
-        // Divide scale by 2 because the vertex vectors define a cube of size 2
-        var transform = new Transformation()
-        {
-            Translation = Center,
-            Scale = new Vector3(Size / 2),
-        };
-
         // Define vertex vectors
         Span<Vector3> vvs = stackalloc[]
         {
@@ -42,7 +34,7 @@ public class Cube : TessellatedShape
         for (int i = 0; i < vvs.Length; i++)
         {
             ref var vertex = ref vvs[i];
-            vertex = Vector3.Transform(vertex, (Matrix4x4)transform);
+            vertex *= Size / 2;
 
             // TODO: Vertex normals
             vs[i] = new Vertex(vertex);
@@ -82,8 +74,6 @@ public class Cube : TessellatedShape
             Faces = faces.ToList(),
         };
     }
-
-    public Vector3 Center { get; set; }
 
     public float Size { get; set; }
 }
