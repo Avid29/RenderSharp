@@ -9,6 +9,8 @@
     mc:Ignorable="d">
 
     <Grid>
-        <computesharp:AnimatedComputeShaderPanel ShaderRunner="{x:Bind RenderViewer, Mode=OneWay}" Loaded="AnimatedComputeShaderPanel_Loaded" SizeChanged="AnimatedComputeShaderPanel_SizeChanged"/>
+        <computesharp:AnimatedComputeShaderPanel
+            ShaderRunner="{x:Bind RenderViewer, Mode=OneWay}" IsDynamicResolutionEnabled="False"
+            Loaded="AnimatedComputeShaderPanel_Loaded" SizeChanged="AnimatedComputeShaderPanel_SizeChanged"/>
     </Grid>
 </Window>
