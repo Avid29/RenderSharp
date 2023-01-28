@@ -8,24 +8,45 @@ using System.Numerics;
 
 namespace RenderSharp.RayTracing.Conversion;
 
+/// <summary>
+/// A class for converting common RenderSharp objects into <see cref="RenderSharp.RayTracing"/> objects.
+/// </summary>
 public class ObjectLoader
 {
-    private List<Triangle> _triangles;
+    private readonly List<Triangle> _triangles;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ObjectLoader"/> class.
+    /// </summary>
+    /// <param name="device"></param>
     public ObjectLoader(GraphicsDevice device)
     {
         Device = device;
         _triangles = new List<Triangle>();
     }
 
-    public GraphicsDevice Device { get; set; }
+    /// <summary>
+    /// Gets the device for buffer allocation.
+    /// </summary>
+    public GraphicsDevice Device { get; }
 
+    /// <summary>
+    /// Gets the generated geometry buffer.
+    /// </summary>
     public ReadOnlyBuffer<Triangle>? GeometryBuffer { get; private set; }
 
-    public int ObjectCount { get; set; }
+    /// <summary>
+    /// Gets the number of objects converted.
+    /// </summary>
+    public int ObjectCount { get; private set; }
 
+    /// <summary>
+    /// Loads a list of geometry objects in the geometry buffer.
+    /// </summary>
+    /// <param name="objects">The list of objects to load.</param>
     public void LoadObjects(List<GeometryObject> objects)
     {
+        // Convert each object to a mesh and load the mesh with applied transformations.
         foreach (var obj in objects)
         {
             var mesh = obj.ConvertToMesh();
@@ -36,10 +57,13 @@ public class ObjectLoader
         AllocateBuffers();
     }
 
-    public void LoadMesh(Mesh mesh, Transformation transformation)
+    private void LoadMesh(Mesh mesh, Transformation transformation)
     {
+        // Load each face as a triangle
         foreach (var tri in mesh.Faces)
         {
+            // TODO: Polygon triangulation
+
             var a = tri.A.Position;
             var b = tri.B.Position;
             var c = tri.C.Position;
@@ -48,7 +72,9 @@ public class ObjectLoader
             b = Vector3.Transform(b, (Matrix4x4)transformation);
             c = Vector3.Transform(c, (Matrix4x4)transformation);
 
-            var triangle = new Triangle(a, b, c, ObjectCount);
+            // Track which the triangle's object id.
+            int objectId = ObjectCount;
+            var triangle = new Triangle(a, b, c, objectId);
             _triangles.Add(triangle);
         }
     }

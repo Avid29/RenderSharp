@@ -10,6 +10,8 @@ namespace RenderSharp.RayTracing.Scene.Geometry;
 /// </summary>
 public struct Triangle
 {
+    // TODO: Vertex Normals
+
     public float3 a, b, c;
     public int objId;
     
