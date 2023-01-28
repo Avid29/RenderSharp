@@ -18,6 +18,7 @@ public class Camera : Object
 
         Fov = fov;
     }
+
     public static Camera CreateFromEuler(Vector3 origin, Vector3 eulerXYZ, float fov)
     {
         var rotation = Quaternion.CreateFromYawPitchRoll(eulerXYZ.Y.ToRadians(), eulerXYZ.X.ToRadians(), eulerXYZ.Z.ToRadians());
@@ -26,6 +27,7 @@ public class Camera : Object
 
     public static Camera CreateFromLookAt(Vector3 origin, Vector3 lookAt, float fov)
     {
+        // TODO: Specify camera up
         var direction = Vector3.Normalize(lookAt - origin);
         var axis = Vector3.Normalize(Vector3.Cross(Vector3.UnitZ, direction));
         var angle = MathF.Acos(Vector3.Dot(Vector3.UnitZ, direction));

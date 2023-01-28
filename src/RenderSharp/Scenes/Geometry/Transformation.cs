@@ -13,6 +13,11 @@ public struct Transformation
         Scale = Vector3.One;
     }
 
+    public static Transformation CreateFromTranslation(Vector3 translation)
+    {
+        return new Transformation { Translation = translation };
+    }
+
     public Vector3 Translation { get; set; }
 
     public Quaternion Rotation { get; set; }
