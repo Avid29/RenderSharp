@@ -4,6 +4,7 @@ using ComputeSharp;
 using RenderSharp.RayTracing.Scene.Geometry;
 using RenderSharp.Scenes.Geometry;
 using RenderSharp.Scenes.Geometry.Meshes;
+using System.Numerics;
 
 namespace RenderSharp.RayTracing.Conversion;
 
@@ -26,17 +27,25 @@ public class ObjectLoader
         foreach (var obj in objects)
         {
             var mesh = obj.ConvertToMesh();
-            LoadMesh(mesh);
+            LoadMesh(mesh, obj.Transformation);
         }
 
         AllocateBuffers();
     }
 
-    public void LoadMesh(Mesh mesh)
+    public void LoadMesh(Mesh mesh, Transformation transformation)
     {
         foreach (var tri in mesh.Faces)
         {
-            var triangle = new Triangle(tri.A.Position, tri.B.Position, tri.C.Position);
+            var a = tri.A.Position;
+            var b = tri.B.Position;
+            var c = tri.C.Position;
+
+            a = Vector3.Transform(a, (Matrix4x4)transformation);
+            b = Vector3.Transform(b, (Matrix4x4)transformation);
+            c = Vector3.Transform(c, (Matrix4x4)transformation);
+
+            var triangle = new Triangle(a, b, c);
             _triangles.Add(triangle);
         }
     }
