@@ -12,7 +12,6 @@ using RenderSharp.RayTracing.Shaders.Rendering;
 using RenderSharp.Rendering;
 using RenderSharp.Scenes.Geometry;
 using System.Diagnostics.CodeAnalysis;
-using System.Numerics;
 
 using CommonCamera = RenderSharp.Scenes.Cameras.Camera;
 using CommonScene = RenderSharp.Scenes.Scene;
@@ -41,8 +40,7 @@ public class RayTracingRenderer : IRenderer
         // Load geometry objects to the geometry buffer
         var loader = new ObjectLoader(Device);
         var geometryObjects = scene.Objects
-            .Where(x => x is GeometryObject)
-            .Select(x => (GeometryObject)x).ToList();
+            .OfType<GeometryObject>().ToList();
 
         loader.LoadObjects(geometryObjects);
 

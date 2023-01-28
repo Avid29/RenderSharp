@@ -1,29 +1,31 @@
 ﻿// Adam Dernis 2023
 
 using RenderSharp.Scenes.Geometry.Meshes;
+using System;
 using System.Linq;
 using System.Numerics;
 
 namespace RenderSharp.Scenes.Geometry.Tessellation.Shapes;
 
-public class TessellatedCube : TessellatedShape
+public class Cube : TessellatedShape
 {
-    public TessellatedCube()
+    public Cube()
     {
         Center = Vector3.Zero;
-        Scale = Vector3.One;
+        Size = 2;
     }
 
     public override Mesh ConvertToMesh()
     {
-        Transformation transform = new Transformation()
+        // Divide scale by 2 because the vertex vectors define a cube of size 2
+        var transform = new Transformation()
         {
             Translation = Center,
-            Scale = Scale,
+            Scale = new Vector3(Size / 2),
         };
 
         // Define vertex vectors
-        var vvs = new[]
+        Span<Vector3> vvs = stackalloc[]
         {
             new Vector3(-1, -1, -1),
             new Vector3(1, -1, -1),
@@ -41,10 +43,12 @@ public class TessellatedCube : TessellatedShape
         {
             ref var vertex = ref vvs[i];
             vertex = Vector3.Transform(vertex, (Matrix4x4)transform);
+
+            // TODO: Vertex normals
             vs[i] = new Vertex(vertex);
         }
 
-        // Make faces with verticies
+        // Make faces with vertices
         var faces = new Face[]
         {
             // Back
@@ -72,7 +76,7 @@ public class TessellatedCube : TessellatedShape
             new(vs[7], vs[5], vs[6]),
         };
 
-        return new Mesh()
+        return new Mesh
         {
             Vertices = vs.ToList(),
             Faces = faces.ToList(),
@@ -81,5 +85,5 @@ public class TessellatedCube : TessellatedShape
 
     public Vector3 Center { get; set; }
 
-    public Vector3 Scale { get; set; }
+    public float Size { get; set; }
 }

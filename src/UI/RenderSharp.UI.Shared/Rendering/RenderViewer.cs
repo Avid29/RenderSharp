@@ -30,10 +30,10 @@ public class RenderViewer : IShaderRunner
     public void Setup<TManager>(IRenderer renderer)
         where TManager : RenderManager, new()
     {
-        var camera = Camera.CreateFromLookAt(new Vector3(1.8f, 1.2f, 2.2f), Vector3.Zero, 90);
+        var camera = Camera.CreateFromLookAt(new Vector3(5f, 5f, 5f), Vector3.Zero, 90);
         var scene = new Scene(camera);
 
-        var cube = new GeometryObject<TessellatedCube>(new TessellatedCube());
+        var cube = new GeometryObject<UVSphere>(new UVSphere());
         scene.Objects.Add(cube);
 
         _renderManager = new TManager();
