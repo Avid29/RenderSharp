@@ -7,6 +7,9 @@ using RenderSharp.RayTracing.Utils;
 
 namespace RenderSharp.RayTracing.Shaders.Debugging;
 
+/// <summary>
+/// An <see cref="IComputeShader"/> that dumps a property from the <see cref="RayCast"/> buffer as a color.
+/// </summary>
 [AutoConstructor]
 [EmbeddedBytecode(DispatchAxis.XY)]
 public readonly partial struct RayCastBufferDumpShader : IComputeShader
@@ -21,7 +24,8 @@ public readonly partial struct RayCastBufferDumpShader : IComputeShader
     /// Waiting on https://github.com/Sergio0694/ComputeSharp/issues/248
     /// </remarks>
     private readonly int dumpType;
-
+    
+    /// <inheritdoc/>
     public void Execute()
     {
         // Get the index of resources managed by the current thread
@@ -49,6 +53,7 @@ public readonly partial struct RayCastBufferDumpShader : IComputeShader
                 int id = rayCast.triId;
                 int count = geometryBuffer.Length;
 
+                // Override the ID and count to the object id and count if dumping object data
                 if (dumpType == 4)
                 {
                     id = geometryBuffer[rayCast.triId].objId;

@@ -2,6 +2,9 @@
 
 namespace RenderSharp.RayTracing.Scene.Rays;
 
+/// <summary>
+/// Primary ray collision information tracked for shading.
+/// </summary>
 public struct RayCast
 {
     public float3 position;

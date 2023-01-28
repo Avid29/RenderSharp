@@ -7,6 +7,9 @@ using System.Numerics;
 
 namespace RenderSharp.RayTracing.Scene.Camera;
 
+/// <summary>
+/// A camera for creating rays.
+/// </summary>
 public struct Camera
 {
     public Vector3 origin;
@@ -29,7 +32,7 @@ public struct Camera
         float height = 2 * h;
         float width = height * aspectRatio;
 
-        // Camera faces negative Z by default
+        // Camera faces negative -Vector3.UnitZ by default
         this.origin = transformation.Translation;
         this.u = Vector3.Transform(Vector3.UnitX, transformation.Rotation);
         this.v = Vector3.Transform(Vector3.UnitY, transformation.Rotation);
@@ -42,6 +45,9 @@ public struct Camera
         this.corner = this.origin - (this.horizontal / 2) - (this.vertical / 2) - depth;
     }
 
+    /// <summary>
+    /// Creates a ray from the camera going from the origin through the uv coordinate on the camera projected view.
+    /// </summary>
     /// <remarks>
     /// TODO: Convert to an instance method.
     /// Waiting on https://github.com/Sergio0694/ComputeSharp/issues/479

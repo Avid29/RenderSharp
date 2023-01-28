@@ -6,6 +6,9 @@ using RenderSharp.RayTracing.Scene.Rays;
 
 namespace RenderSharp.RayTracing.Shaders.Rendering;
 
+/// <summary>
+/// An <see cref="IComputeShader"/> that creates detects geometry collisions.
+/// </summary>
 [AutoConstructor]
 [EmbeddedBytecode(DispatchAxis.XY)]
 public readonly partial struct GeometryCollisionShader : IComputeShader
@@ -24,11 +27,14 @@ public readonly partial struct GeometryCollisionShader : IComputeShader
         Ray ray = rayBuffer[fIndex];
         var rayCast = RayCast.Create(0, 0, 0);
 
+        // Track the nearest scene collision
         float distance = float.MaxValue;
 
+        // Check for collision with every triangle in the geometry buffer
         // TODO: Use bounding volume hierarchy (BVH tree) to decrease collision search time
         for (int i = 0; i < geometryBuffer.Length; i++)
         {
+            // Check for a closer collision, and log its ray cast when any exist.
             var tri = geometryBuffer[i];
             if (Triangle.IsHit(tri, ray, distance, out var cast))
             {
@@ -38,6 +44,7 @@ public readonly partial struct GeometryCollisionShader : IComputeShader
             }
         }
 
+        // Store the ray cast in the ray cast buffer
         rayCastBuffer[fIndex] = rayCast;
     }
 }

@@ -4,6 +4,17 @@ namespace RenderSharp.RayTracing.Utils;
 
 internal class VectorUtils
 {
+    /// <summary>
+    /// Converts an HSV <see cref="float3"/> into an RGB <see cref="float3"/>.
+    /// </summary>
+    /// <remarks>
+    /// HSV <see cref="float3"/> where:<br/>
+    /// X is a hue between 0 and 360.<br/>
+    /// Y is a saturation between 0 and 1.<br/>
+    /// Z is a value between 0 and 1.<br/>
+    /// </remarks>
+    /// <param name="hsv">The HSV <see cref="float3"/>.</param>
+    /// <returns>The RGB <see cref="float3"/>.</returns>
     public static float3 HSVtoRGB(float3 hsv)
     {
         float hf = hsv.X / 60;

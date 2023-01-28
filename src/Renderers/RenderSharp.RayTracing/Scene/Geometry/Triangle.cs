@@ -5,6 +5,9 @@ using RenderSharp.RayTracing.Scene.Rays;
 
 namespace RenderSharp.RayTracing.Scene.Geometry;
 
+/// <summary>
+/// A single triangle for geometry collision.
+/// </summary>
 public struct Triangle
 {
     public float3 a, b, c;

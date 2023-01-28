@@ -18,6 +18,7 @@ public readonly partial struct RayBufferDumpShader : IComputeShader
     /// </remarks>
     private readonly int dumpType;
 
+    /// <inheritdoc/>
     public void Execute()
     {
         // Get the index of resources managed by the current thread

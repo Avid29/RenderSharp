@@ -18,19 +18,27 @@ using CommonScene = RenderSharp.Scenes.Scene;
 
 namespace RenderSharp.RayTracing;
 
+/// <summary>
+/// An <see cref="IRenderer"/> implementation that uses ray tracing to render the scene.
+/// </summary>
 public class RayTracingRenderer : IRenderer
 {
     private CommonCamera? _camera;
     private ReadOnlyBuffer<Triangle>? _geometryBuffer;
     private int _objectCount;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RayTracingRenderer"/> class.
+    /// </summary>
     public RayTracingRenderer(GraphicsDevice device)
     {
         Device = device;
     }
-
+    
+    /// <inheritdoc/>
     public GraphicsDevice Device { get; }
-
+    
+    /// <inheritdoc/>
     public IReadWriteNormalizedTexture2D<float4>? RenderBuffer { get; set; }
 
     /// <inheritdoc/>
@@ -42,7 +50,6 @@ public class RayTracingRenderer : IRenderer
         var loader = new ObjectLoader(Device);
         var geometryObjects = scene.Objects
             .OfType<GeometryObject>().ToList();
-
         loader.LoadObjects(geometryObjects);
 
         _geometryBuffer = loader.GeometryBuffer;
@@ -78,13 +85,15 @@ public class RayTracingRenderer : IRenderer
         context.Barrier(rayCastBuffer);
 
         // Dump the ray cast's directions to the render buffer (for debugging)
-        context.For(width, height, new RayCastBufferDumpShader(rayCastBuffer, _geometryBuffer, RenderBuffer, _objectCount, (int)RayCastDumpValueType.Object));
+        context.For(width, height, new RayCastBufferDumpShader(rayCastBuffer, _geometryBuffer, RenderBuffer, _objectCount, (int)RayCastDumpValueType.Distance));
     }
 
     /// <inheritdoc/>
     public void RenderSegment(int2 offset, int2 size)
     {
         Guard.IsNotNull(RenderBuffer);
+
+        // TODO: Support rendering the scene segments at a time.
 
         throw new NotImplementedException();
     }

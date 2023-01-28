@@ -2,6 +2,9 @@
 
 namespace RenderSharp.RayTracing.Scene.Rays;
 
+/// <summary>
+/// A ray with an origin and a direction.
+/// </summary>
 public struct Ray
 {
     public float3 origin;
