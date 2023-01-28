@@ -39,6 +39,7 @@ public class UVSphere : TessellatedShape
         Dictionary<Vector3, Vertex> vertices = new();
         List<Face> faces = new();
 
+        int ring;
         float longitudinalStep = (360f / Rings).ToRadians();
         float latitudinalStep = (float)4 / Segments;
 
@@ -81,8 +82,14 @@ public class UVSphere : TessellatedShape
                     vs[i] = vertex;
                 }
 
-                faces.Add(new Face(vs[0], vs[1], vs[3]));
-                faces.Add(new Face(vs[2], vs[0], vs[3]));
+                
+                // If not first
+                if (ring != Rings)
+                    faces.Add(new Face(vs[2], vs[0], vs[3]));
+
+                // If not last
+                if (ring != 1)
+                    faces.Add(new Face(vs[0], vs[1], vs[3]));
                 
                 x0 = x1;
                 y0 = y1;
@@ -90,12 +97,12 @@ public class UVSphere : TessellatedShape
         }
 
         // TODO: Circular ease on ring height
-        float low = -1;
-        for (int ring = 1; ring <= Rings; ring++)
+        float high = 1;
+        for (ring = 1; ring <= Rings; ring++)
         {
-            float high = low + latitudinalStep;
+            float low = high - latitudinalStep;
             CreateRing(high * Radius, low * Radius);
-            low = high;
+            high = low;
         }
 
         return new Mesh
