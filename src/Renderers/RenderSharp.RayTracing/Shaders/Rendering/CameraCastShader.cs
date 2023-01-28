@@ -21,8 +21,10 @@ public readonly partial struct CameraCastShader : IComputeShader
         int2 index2D = ThreadIds.XY;
         int fIndex = (index2D.Y * DispatchSize.X) + index2D.X;
 
-        var uvPos = ThreadIds.Normalized.XY;
-        var ray = Camera.CreateRay(camera, uvPos.X, 1 - uvPos.Y);
+        float u = (index2D.X + 0.5f) / DispatchSize.X;
+        float v = 1 - (index2D.Y + 0.5f) / DispatchSize.Y;
+
+        var ray = Camera.CreateRay(camera, u, v);
         rayBuffer[fIndex] = ray;
     }
 }
