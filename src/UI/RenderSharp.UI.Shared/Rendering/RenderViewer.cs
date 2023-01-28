@@ -40,7 +40,7 @@ public class RenderViewer : IShaderRunner
         {
             new GeometryObject<UVSphere>(new UVSphere { Radius = 0.5f }) { Transformation = Transformation.CreateFromTranslation(new Vector3(0, 1, 2)) },
             new GeometryObject<UVSphere>(new UVSphere { Radius = 0.4f }) { Transformation = Transformation.CreateFromTranslation(new Vector3(0.75f, 0.5f, 2.5f)) },
-            new GeometryObject<Plane>(new Plane { Size = 2 })
+            new GeometryObject<Plane>(new Plane { Size = 1 })
             {
                 Transformation = new Transformation
                 {
