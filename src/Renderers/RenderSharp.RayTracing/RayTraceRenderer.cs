@@ -72,7 +72,7 @@ public class RayTracingRenderer : IRenderer
         Device.For(width, height, new GeometryCollisionShader(_geometryBuffer, rayBuffer, rayCastBuffer));
 
         // Dump the ray cast's directions to the render buffer (for debugging)
-        Device.For(width, height, new RayCastBufferDumpShader(rayCastBuffer, RenderBuffer, (int)RayCastDumpValueType.Object, 1));
+        Device.For(width, height, new RayCastBufferDumpShader(rayCastBuffer, RenderBuffer, (int)RayCastDumpValueType.Position, 1));
     }
 
     /// <inheritdoc/>
