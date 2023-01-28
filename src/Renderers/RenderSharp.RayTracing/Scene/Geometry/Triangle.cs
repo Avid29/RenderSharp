@@ -8,27 +8,30 @@ namespace RenderSharp.RayTracing.Scene.Geometry;
 public struct Triangle
 {
     public float3 a, b, c;
+    public int objId;
     
     /// <summary>
     /// Initializes a new instance of the <see cref="Triangle"/> struct.
     /// </summary>
-    public Triangle(float3 a, float3 b, float3 c)
+    public Triangle(float3 a, float3 b, float3 c, int objId)
     {
         this.a = a;
         this.b = b;
         this.c = c;
+        this.objId = objId;
     }
     
     /// <remarks>
     /// TODO: Replace with constructor
     /// Waiting on https://github.com/Sergio0694/ComputeSharp/issues/481
     /// </remarks>
-    public static Triangle Create(float3 a, float3 b, float3 c)
+    public static Triangle Create(float3 a, float3 b, float3 c, int objId)
     {
         Triangle tri;
         tri.a = a;
         tri.b = b;
         tri.c = c;
+        tri.objId = objId;
         return tri;
     }
 

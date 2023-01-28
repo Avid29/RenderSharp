@@ -44,8 +44,8 @@ public readonly partial struct RayCastBufferDumpShader : IComputeShader
                 value = new float4(rayCast.distance, 0, 0, 1);
                 break;
             case 3:
-                var hue = (rayCast.objId * 360f) / (geometryBuffer.Length * 1.05f);
-                var hsv = new float3(hue, 1f, rayCast.objId == -1 ? 0 : 1);
+                var hue = (rayCast.triId * 360f) / (geometryBuffer.Length * 1.05f);
+                var hsv = new float3(hue, 1f, rayCast.triId == -1 ? 0 : 1);
                 value = new float4(VectorUtils.HSVtoRGB(hsv), 1);
                 break;
         };

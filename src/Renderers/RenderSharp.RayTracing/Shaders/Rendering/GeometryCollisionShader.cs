@@ -33,7 +33,7 @@ public readonly partial struct GeometryCollisionShader : IComputeShader
             if (Triangle.IsHit(tri, ray, distance, out var cast))
             {
                 distance = cast.distance;
-                cast.objId = i;
+                cast.triId = i;
                 rayCast = cast;
             }
         }

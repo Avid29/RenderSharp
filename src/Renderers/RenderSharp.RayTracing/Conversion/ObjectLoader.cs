@@ -22,12 +22,15 @@ public class ObjectLoader
 
     public ReadOnlyBuffer<Triangle>? GeometryBuffer { get; private set; }
 
+    public int ObjectCount { get; set; }
+
     public void LoadObjects(List<GeometryObject> objects)
     {
         foreach (var obj in objects)
         {
             var mesh = obj.ConvertToMesh();
             LoadMesh(mesh, obj.Transformation);
+            ObjectCount++;
         }
 
         AllocateBuffers();
@@ -45,7 +48,7 @@ public class ObjectLoader
             b = Vector3.Transform(b, (Matrix4x4)transformation);
             c = Vector3.Transform(c, (Matrix4x4)transformation);
 
-            var triangle = new Triangle(a, b, c);
+            var triangle = new Triangle(a, b, c, ObjectCount);
             _triangles.Add(triangle);
         }
     }
