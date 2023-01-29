@@ -7,6 +7,7 @@ using RenderSharp.RayTracing.Scene.Camera;
 using RenderSharp.RayTracing.Scene.Geometry;
 using RenderSharp.RayTracing.Scene.Rays;
 using RenderSharp.RayTracing.Shaders.Debugging;
+using RenderSharp.RayTracing.Shaders.Debugging.Enums;
 using RenderSharp.RayTracing.Shaders.Rendering;
 using RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
 using RenderSharp.RayTracing.Shaders.Shading.Stock.SkyShaders;
@@ -85,23 +86,28 @@ public class RayTracingRenderer : IRenderer
         // Create the rays from the camera
         context.For(width, height, new CameraCastShader(size, camera, rayBuffer));
         context.Barrier(rayBuffer);
-            
-        // Find object collision and cache the resulting ray cast 
-        context.For(width, height, new GeometryCollisionShader(_geometryBuffer, rayBuffer, rayCastBuffer));
-        context.Barrier(rayCastBuffer);
 
-        var material = new GlossyMaterial
+        for (int i = 0; i < 4; i++)
         {
-            albedo = 0.9f * Vector4.One,
-            roughness = 0.8f,
-        };
-        context.For(width, height, new GlossyShader(0, material, rayBuffer, rayCastBuffer, attenuationBuffer, RenderBuffer));
-        context.Barrier(attenuationBuffer);
-        context.Barrier(RenderBuffer);
+            // Find object collision and cache the resulting ray cast 
+            context.For(width, height, new GeometryCollisionShader(_geometryBuffer, rayBuffer, rayCastBuffer));
+            context.Barrier(rayCastBuffer);
 
-        // Calculate the color of the sky
-        context.For(width, height, new SolidSkyShader(new float4(0.5f, 0.7f, 1f, 1f), rayCastBuffer, attenuationBuffer, RenderBuffer));
-        context.Barrier(RenderBuffer);
+            var material = new GlossyMaterial
+            {
+                albedo = 0.9f * Vector4.One,
+                roughness = 0.8f,
+            };
+            context.For(width, height, new GlossyShader(0, material, rayBuffer, rayCastBuffer, attenuationBuffer, RenderBuffer));
+            context.Barrier(attenuationBuffer);
+            context.Barrier(RenderBuffer);
+
+            // Calculate the color of the sky
+            context.For(width, height, new SolidSkyShader(new float4(0.5f, 0.7f, 1f, 1f), rayBuffer, rayCastBuffer, attenuationBuffer, RenderBuffer));
+            context.Barrier(RenderBuffer);
+
+            //context.For(width, height, new RayCastBufferDumpShader(rayCastBuffer, _geometryBuffer, RenderBuffer, _objectCount, (int)RayCastDumpValueType.Object));
+        }
 
         // Dump the ray cast's directions to the render buffer (for debugging)
         //context.For(width, height, new RayCastBufferDumpShader(rayCastBuffer, _geometryBuffer, RenderBuffer, _objectCount, (int)RayCastDumpValueType.Distance));

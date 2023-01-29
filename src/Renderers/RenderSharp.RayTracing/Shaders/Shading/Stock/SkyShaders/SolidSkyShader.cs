@@ -13,6 +13,7 @@ namespace RenderSharp.RayTracing.Shaders.Shading.Stock.SkyShaders;
 public partial struct SolidSkyShader : IComputeShader
 {
     private readonly float4 color;
+    private readonly ReadWriteBuffer<Ray> rayBuffer;
     private readonly ReadWriteBuffer<RayCast> rayCastBuffer;
     private readonly IReadWriteNormalizedTexture2D<float4> attenuationBuffer;
     private readonly IReadWriteNormalizedTexture2D<float4> renderBuffer;
@@ -29,6 +30,13 @@ public partial struct SolidSkyShader : IComputeShader
         if (rayCastBuffer[fIndex].triId != -1)
             return;
 
+        // Add to the color buffer
         renderBuffer[index2D] += color * attenuationBuffer[index2D];
+
+        // Clear the ray in the ray buffer
+        rayBuffer[fIndex].origin = 0;
+        rayBuffer[fIndex].direction = 0;
+        rayCastBuffer[fIndex].matId = -2;
+        rayCastBuffer[fIndex].triId = -2;
     }
 }

@@ -29,13 +29,14 @@ public partial struct GlossyShader : IComputeShader
         int fIndex = (index2D.Y * DispatchSize.X) + index2D.X;
 
         var cast = rayCastBuffer[fIndex];
+        var ray = rayBuffer[fIndex];
 
         // If this material was not hit do not execute
         if (cast.matId != matId)
             return;
 
-        float3 target = cast.position + cast.normal;
-        Ray scatter = Ray.Create(cast.position, target- cast.position);
+        float3 target = Hlsl.Reflect(Hlsl.Normalize(ray.direction), cast.normal);
+        Ray scatter = Ray.Create(cast.position, target - cast.position);
 
         rayBuffer[fIndex] = scatter;
         attenuationBuffer[index2D] *= material.albedo;

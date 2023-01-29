@@ -17,6 +17,7 @@ public readonly partial struct GeometryCollisionShader : IComputeShader
     private readonly ReadWriteBuffer<Ray> rayBuffer;
     private readonly ReadWriteBuffer<RayCast> rayCastBuffer;
 
+    /// <inheritdoc/>
     public void Execute()
     {
         // Get the index of resources managed by the current thread
@@ -25,6 +26,9 @@ public readonly partial struct GeometryCollisionShader : IComputeShader
         int fIndex = (index2D.Y * DispatchSize.X) + index2D.X;
 
         Ray ray = rayBuffer[fIndex];
+        if (Hlsl.Length(ray.direction) == 0)
+            return;
+
         var rayCast = RayCast.Create(0, 0, 0);
 
         // Track the nearest scene collision
