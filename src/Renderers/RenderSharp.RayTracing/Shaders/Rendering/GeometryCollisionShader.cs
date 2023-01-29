@@ -40,6 +40,7 @@ public readonly partial struct GeometryCollisionShader : IComputeShader
             {
                 distance = cast.distance;
                 cast.triId = i;
+                cast.matId = tri.matId;
                 rayCast = cast;
             }
         }

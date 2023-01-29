@@ -73,8 +73,9 @@ public class ObjectLoader
             c = Vector3.Transform(c, (Matrix4x4)transformation);
 
             // Track which the triangle's object id.
+            // TODO: Assign Material ID
             int objectId = ObjectCount;
-            var triangle = new Triangle(a, b, c, objectId);
+            var triangle = new Triangle(a, b, c, 0, objectId);
             _triangles.Add(triangle);
         }
     }

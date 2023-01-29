@@ -11,6 +11,7 @@ public struct RayCast
     public float3 normal;
     public float distance;
     public int triId;
+    public int matId;
     
     /// <summary>
     /// Initializes a new instance of the <see cref="RayCast"/> struct.
@@ -21,6 +22,7 @@ public struct RayCast
         this.normal = normal;
         this.distance = distance;
         this.triId = -1;
+        this.matId = -1;
     }
     
     /// <remarks>
@@ -34,6 +36,7 @@ public struct RayCast
         cast.normal = normal;
         cast.distance = distance;
         cast.triId = -1;
+        cast.matId = -1;
         return cast;
     }
 }
