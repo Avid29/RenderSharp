@@ -39,7 +39,7 @@ public class Plane : TessellatedShape
         var faces = new[]
         {
             new Face(vs[0], vs[1], vs[2]),
-            new Face(vs[3], vs[1], vs[2]),
+            new Face(vs[1], vs[3], vs[2]),
         };
 
         return new Mesh

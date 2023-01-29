@@ -85,11 +85,11 @@ public class UVSphere : TessellatedShape
                 
                 // If not first
                 if (ring != Rings)
-                    faces.Add(new Face(vs[2], vs[0], vs[3]));
+                    faces.Add(new Face(vs[0], vs[2], vs[3]));
 
                 // If not last
                 if (ring != 1)
-                    faces.Add(new Face(vs[0], vs[1], vs[3]));
+                    faces.Add(new Face(vs[1], vs[0], vs[3]));
                 
                 x0 = x1;
                 y0 = y1;

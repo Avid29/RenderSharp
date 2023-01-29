@@ -65,14 +65,14 @@ public struct Triangle
         // TODO: Check if squared length can be used instead for greater performance
         // TODO: Replace with back face culling
         if (Hlsl.Length(normal) < 0)
-            normal *= -1;
+            return false;
 
         // Find the length required for the ray to collide with the triangle's plane
         // TODO: Handle perpendicular plane (division by zero?)
         float t = (Hlsl.Dot(normal, tri.a) - Hlsl.Dot(normal, ray.origin)) / Hlsl.Dot(normal, ray.direction);
 
         // Ensure the collision is in the positive direction, and not outside the clipped range
-        if (t < 0 || t > maxClip)
+        if (t < 0.0001f || t > maxClip)
             return false;
 
         // Find the collision point on the plane
