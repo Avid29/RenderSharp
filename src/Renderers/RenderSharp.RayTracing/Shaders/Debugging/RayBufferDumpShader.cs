@@ -5,6 +5,9 @@ using RenderSharp.RayTracing.Scene.Rays;
 
 namespace RenderSharp.RayTracing.Shaders.Debugging;
 
+/// <summary>
+/// An <see cref="IComputeShader"/> that dumps a property from the <see cref="Ray"/> buffer as a color.
+/// </summary>
 [AutoConstructor]
 [EmbeddedBytecode(DispatchAxis.XY)]
 public readonly partial struct RayBufferDumpShader : IComputeShader
