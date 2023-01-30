@@ -6,13 +6,12 @@ using RenderSharp.RayTracing.Conversion;
 using RenderSharp.RayTracing.Scene.Camera;
 using RenderSharp.RayTracing.Scene.Geometry;
 using RenderSharp.RayTracing.Scene.Rays;
-using RenderSharp.RayTracing.Shaders.Debugging;
-using RenderSharp.RayTracing.Shaders.Debugging.Enums;
 using RenderSharp.RayTracing.Shaders.Rendering;
 using RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
 using RenderSharp.RayTracing.Shaders.Shading.Stock.SkyShaders;
-using RenderSharp.Rendering;
+using RenderSharp.Rendering.Interfaces;
 using RenderSharp.Scenes.Geometry;
+using RenderSharp.Utilities.Tiles;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using CommonCamera = RenderSharp.Scenes.Cameras.Camera;
@@ -61,12 +60,22 @@ public class RayTracingRenderer : IRenderer
     /// <inheritdoc/>
     public void Render()
     {
+        Guard.IsNotNull(RenderBuffer);
+
+        var size = new int2(RenderBuffer.Width, RenderBuffer.Height);
+        var tile = new Tile(int2.Zero, size);
+        RenderSegment(tile);
+    }
+
+    /// <inheritdoc/>
+    public void RenderSegment(Tile tile)
+    {
         GuardReady();
 
         int width = RenderBuffer.Width;
         int height = RenderBuffer.Height;
         float ratio = (float)width / height;
-        int2 size = new(width, height);
+        var imageSize = new int2(width, height);
         int pixelCount = width * height;
 
         // Prepare camera with aspect ratio
@@ -84,13 +93,13 @@ public class RayTracingRenderer : IRenderer
         context.Fill(attenuationBuffer, float4.One);
 
         // Create the rays from the camera
-        context.For(width, height, new CameraCastShader(size, camera, rayBuffer));
+        context.For(width, height, new CameraCastShader(tile, imageSize, camera, rayBuffer));
         context.Barrier(rayBuffer);
 
         for (int i = 0; i < 4; i++)
         {
             // Find object collision and cache the resulting ray cast 
-            context.For(width, height, new GeometryCollisionShader(_geometryBuffer, rayBuffer, rayCastBuffer));
+            context.For(width, height, new GeometryCollisionShader(tile, _geometryBuffer, rayBuffer, rayCastBuffer));
             context.Barrier(rayCastBuffer);
 
             var material = new GlossyMaterial
@@ -98,12 +107,12 @@ public class RayTracingRenderer : IRenderer
                 albedo = 0.9f * Vector4.One,
                 roughness = 0.8f,
             };
-            context.For(width, height, new GlossyShader(0, material, rayBuffer, rayCastBuffer, attenuationBuffer, RenderBuffer));
+            context.For(width, height, new GlossyShader(tile, 0, material, rayBuffer, rayCastBuffer, attenuationBuffer, RenderBuffer));
             context.Barrier(attenuationBuffer);
             context.Barrier(RenderBuffer);
 
             // Calculate the color of the sky
-            context.For(width, height, new SolidSkyShader(new float4(0.5f, 0.7f, 1f, 1f), rayBuffer, rayCastBuffer, attenuationBuffer, RenderBuffer));
+            context.For(width, height, new SolidSkyShader(tile, new float4(0.5f, 0.7f, 1f, 1f), rayBuffer, rayCastBuffer, attenuationBuffer, RenderBuffer));
             context.Barrier(RenderBuffer);
 
             //context.For(width, height, new RayCastBufferDumpShader(rayCastBuffer, _geometryBuffer, RenderBuffer, _objectCount, (int)RayCastDumpValueType.Object));
@@ -111,16 +120,6 @@ public class RayTracingRenderer : IRenderer
 
         // Dump the ray cast's directions to the render buffer (for debugging)
         //context.For(width, height, new RayCastBufferDumpShader(rayCastBuffer, _geometryBuffer, RenderBuffer, _objectCount, (int)RayCastDumpValueType.Distance));
-    }
-
-    /// <inheritdoc/>
-    public void RenderSegment(int2 offset, int2 size)
-    {
-        Guard.IsNotNull(RenderBuffer);
-
-        // TODO: Support rendering the scene segments at a time.
-
-        throw new NotImplementedException();
     }
 
     [MemberNotNull(

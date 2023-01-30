@@ -2,16 +2,17 @@
 
 using CommunityToolkit.Diagnostics;
 using ComputeSharp;
+using RenderSharp.Rendering.Enums;
+using RenderSharp.Rendering.Interfaces;
 using RenderSharp.Scenes;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace RenderSharp.Rendering;
+namespace RenderSharp.Rendering.Base;
 
 public class RenderManager
 {
     private readonly CancellationTokenSource _cancelTokenSource;
-    private ReadWriteTexture2D<Rgba32, float4>? _output;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RenderManager{TRenderer}"/> class.
@@ -25,7 +26,12 @@ public class RenderManager
     /// <summary>
     /// Gets the current rendering state.
     /// </summary>
-    public RenderState State { get; private set; }
+    public RenderState State { get; protected set; }
+
+    /// <summary>
+    /// Gets the output buffer being rendered to.
+    /// </summary>
+    public ReadWriteTexture2D<Rgba32, float4>? OutputBuffer { get; protected set; }
 
     /// <summary>
     /// Gets a value indicating if the renderer is ready.
@@ -125,12 +131,12 @@ public class RenderManager
     /// <returns>False if the frame should be skipped.</returns>
     public virtual bool RenderFrame(IReadWriteNormalizedTexture2D<float4> buffer)
     {
-        Guard.IsNotNull(_output);
-        if (_output.Width != buffer.Width ||
-            _output.Height != buffer.Height)
+        Guard.IsNotNull(OutputBuffer);
+        if (OutputBuffer.Width != buffer.Width ||
+            OutputBuffer.Height != buffer.Height)
             return false;
 
-        buffer.CopyFrom(_output);
+        buffer.CopyFrom(OutputBuffer);
         return true;
     }
 
@@ -144,8 +150,8 @@ public class RenderManager
         Guard.IsNotNull(Renderer);
         Guard.IsNotNull(Device);
 
-        _output = Device.AllocateReadWriteTexture2D<Rgba32, float4>(width, height);
-        Renderer.RenderBuffer = _output;
+        OutputBuffer = Device.AllocateReadWriteTexture2D<Rgba32, float4>(width, height);
+        Renderer.RenderBuffer = OutputBuffer;
     }
 
     /// <summary>
@@ -154,7 +160,7 @@ public class RenderManager
     /// <param name="token">A cancellation token to cancel the rendering.</param>
     protected virtual void Render(CancellationToken token)
     {
-        Guard.IsNotNull(_output);
+        Guard.IsNotNull(OutputBuffer);
         Guard.IsNotNull(Renderer);
 
         Renderer.Render();

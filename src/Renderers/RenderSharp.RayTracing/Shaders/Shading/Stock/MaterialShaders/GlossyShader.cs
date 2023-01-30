@@ -2,6 +2,7 @@
 
 using ComputeSharp;
 using RenderSharp.RayTracing.Scene.Rays;
+using RenderSharp.Utilities.Tiles;
 
 namespace RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
 
@@ -12,6 +13,7 @@ namespace RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
 [EmbeddedBytecode(DispatchAxis.XY)]
 public partial struct GlossyShader : IComputeShader
 {
+    private readonly Tile tile;
     private readonly int matId;
     private readonly GlossyMaterial material;
 
@@ -27,6 +29,7 @@ public partial struct GlossyShader : IComputeShader
         // in both 2D textures and flat buffers
         int2 index2D = ThreadIds.XY;
         int fIndex = (index2D.Y * DispatchSize.X) + index2D.X;
+        int2 imageIndex = index2D + tile.offset;
 
         var cast = rayCastBuffer[fIndex];
         var ray = rayBuffer[fIndex];

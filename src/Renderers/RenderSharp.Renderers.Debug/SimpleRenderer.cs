@@ -3,8 +3,9 @@
 using CommunityToolkit.Diagnostics;
 using ComputeSharp;
 using RenderSharp.Renderers.Debug.Shaders;
-using RenderSharp.Rendering;
+using RenderSharp.Rendering.Interfaces;
 using RenderSharp.Scenes;
+using RenderSharp.Utilities.Tiles;
 
 namespace RenderSharp.Renderers.Debug;
 
@@ -34,7 +35,7 @@ public class SimpleRenderer : IRenderer
     }
     
     /// <inheritdoc/>
-    public void RenderSegment(int2 offset, int2 size)
+    public void RenderSegment(Tile tile)
     {
         Guard.IsNotNull(RenderBuffer);
     }

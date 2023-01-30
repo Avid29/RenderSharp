@@ -2,6 +2,7 @@
 
 using CommunityToolkit.Diagnostics;
 using ComputeSharp;
+using RenderSharp.Rendering.Base;
 using System.Threading;
 
 namespace RenderSharp.Rendering;

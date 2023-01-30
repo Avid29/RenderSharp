@@ -25,7 +25,7 @@ public sealed partial class MainWindow : Window
     private void AnimatedComputeShaderPanel_Loaded(object sender, RoutedEventArgs e)
     {
         var renderer = new RayTracingRenderer(GraphicsDevice.GetDefault());
-        RenderViewer.Setup<RealtimeRenderManager>(renderer);
+        RenderViewer.Setup<TiledRenderManager>(renderer);
     }
 
     private void AnimatedComputeShaderPanel_SizeChanged(object sender, SizeChangedEventArgs e)

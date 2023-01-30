@@ -2,8 +2,9 @@
 
 using ComputeSharp;
 using RenderSharp.Scenes;
+using RenderSharp.Utilities.Tiles;
 
-namespace RenderSharp.Rendering;
+namespace RenderSharp.Rendering.Interfaces;
 
 public interface IRenderer
 {
@@ -31,7 +32,6 @@ public interface IRenderer
     /// <summary>
     /// Renders a segment of the image to the buffer.
     /// </summary>
-    /// <param name="offset">The offset of the segment.</param>
-    /// <param name="size">The size of the segment.</param>
-    void RenderSegment(int2 offset, int2 size);
+    /// <param name="tile">The tile of the image to render.</param>
+    void RenderSegment(Tile tile);
 }

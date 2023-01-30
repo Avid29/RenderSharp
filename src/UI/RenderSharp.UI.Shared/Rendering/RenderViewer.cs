@@ -3,7 +3,8 @@
 using CommunityToolkit.Diagnostics;
 using ComputeSharp;
 using ComputeSharp.WinUI;
-using RenderSharp.Rendering;
+using RenderSharp.Rendering.Base;
+using RenderSharp.Rendering.Interfaces;
 using RenderSharp.Scenes;
 using RenderSharp.Scenes.Cameras;
 using RenderSharp.Scenes.Geometry;
