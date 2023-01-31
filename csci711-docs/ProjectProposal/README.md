@@ -4,13 +4,13 @@ Made by Adam Dernis for Global Illuminations at RIT (CSCI-711)
 
 [Project Link](https://github.com/Avid29/RenderSharp)
 
-# Project Objectives
+## Project Objectives
 
-## Basic Objectives
+### Basic Objectives
 
 ##### I would consider these the bare minimum to have completed the project
 
-- RenderSharp will be a rendering API written entirely in C# using the library [ComputeSharp](https://github.com/Sergio0694/ComputeSharp) to construct and run compute shaders
+- RenderSharp will be a rendering library written entirely in C# using the library [ComputeSharp](https://github.com/Sergio0694/ComputeSharp) to construct and run compute shaders
 
 - Compute shaders will be used to run path tracing and material shading on the GPU
 
@@ -27,11 +27,13 @@ Made by Adam Dernis for Global Illuminations at RIT (CSCI-711)
 
     [Classic Ray Tracing Image Blender File](../Assignment1/SettingTheScene.blend)
 
-## Additional Objectives
+### Additional Objectives
 
 ##### If possible I would like to do these
 
-- Ideally, I hope to add aspects of BVH tree construction, linearly interpolated object translation with key frames.
+- BVH tree construction
+
+- Linearly interpolated object transformation between key frames
 
 - Models can be imported from one or more standard format, such as WaveFront OBJ, and material shading parameters can be imported from one or more standard format, such as WaveFront MTL.
 
@@ -43,9 +45,11 @@ Made by Adam Dernis for Global Illuminations at RIT (CSCI-711)
     ![image](ChessFarHigh.png)
     ![image](ChessFarLow.png)
 
+    [High Resolution Alterate Image](https://www.artstation.com/artwork/r912AL)
+
     [Chess Set Blender File](ChessSet.blend)
 
-## Semi-Unrealsitic Objectives
+### Semi-Unrealsitic Objectives
 
 ##### If I have heaps of extra time I'll give these a try
 
@@ -57,9 +61,11 @@ Made by Adam Dernis for Global Illuminations at RIT (CSCI-711)
 
     ![image](Candle.png)
 
+    [High Resolution Alterate Image](https://www.artstation.com/artwork/xzawP4)
+
     [Candle Blender File](Candle.blend)
 
-## Ridiculously Unrealistic Objectives
+### Ridiculously Unrealistic Objectives
 
 ##### With a hope and a prayer?
 
@@ -72,13 +78,15 @@ Made by Adam Dernis for Global Illuminations at RIT (CSCI-711)
 
     ![image](CherryTree.png)
 
+    [High Resolution Image](https://www.artstation.com/artwork/ybaBx8)
+
     [Cherry Tree Blender File](Candle.blend)
 
-# Software
+## Software
 
 - This project will be written in C# with [ComputeSharp](https://github.com/Sergio0694/ComputeSharp), a library which compiles C# code into HLSL compute shaders, then runs them on the GPU with DirectX12.
 
-# Project Components
+## Project Components
 
 - Wrapping Infrastructure
   - Scenes can be built with a more simple object/mesh structure before being deployed to the GPU for rendering.
@@ -127,7 +135,7 @@ Made by Adam Dernis for Global Illuminations at RIT (CSCI-711)
 
 ###### *  Marked components are not a priority and may not be completed
 
-# Timeline
+## Timeline
 
 The project should be minimally complete by simplying implementing the standard ray tracer project requirments with GPU support as the assignments come in.
 
@@ -145,6 +153,23 @@ My expected order is
 - Transformation Linear Interpolation
 - tbd
 
-# Final Presentation
+## Final Presentation
 
 There will be many challenges in parallelizing. These issues and their solutions will be a large part of my presentation.
+
+## High Resolution Image Renderings Embedded
+
+### Chess Set
+
+![image](https://cdnb.artstation.com/p/assets/images/images/052/853/483/large/adam-dernis-render2.jpg?1660827663)
+
+
+### Candle
+
+![image](https://cdna.artstation.com/p/assets/images/images/026/106/358/large/avishai-dernis-img-20200424-163947-030.jpg?1587903231)
+
+![image](https://cdna.artstation.com/p/assets/images/images/050/850/670/large/adam-dernis-candleclose.jpg?1655838432)
+
+### Cherry Tree
+
+![image](https://cdna.artstation.com/p/assets/images/images/026/106/252/large/avishai-dernis-img-20200421-213150-010.jpg?1587903021)
