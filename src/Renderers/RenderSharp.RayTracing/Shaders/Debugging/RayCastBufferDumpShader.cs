@@ -40,10 +40,10 @@ public readonly partial struct RayCastBufferDumpShader : IComputeShader
         switch (dumpType)
         {
             default:
-                value = new float4(rayCast.position, 1);
+                value = new float4(Hlsl.Abs(rayCast.position), 1);
                 break;
             case 1:
-                value = new float4(rayCast.normal, 1);
+                value = new float4(Hlsl.Abs(Hlsl.Normalize(rayCast.normal)), 1);
                 break;
             case 2:
                 value = new float4(rayCast.distance, 0, 0, 1);
