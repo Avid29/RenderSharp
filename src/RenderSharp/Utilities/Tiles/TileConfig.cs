@@ -7,7 +7,7 @@ public struct TileConfig
     public TileConfig(int2 tileSize)
     {
         TileSize = tileSize;
-        Order = TileOrder.TopToBottom;
+        Order = TileOrder.LeftToRight;
     }
 
     public int2 TileSize { get; }

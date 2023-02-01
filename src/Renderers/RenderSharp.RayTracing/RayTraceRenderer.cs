@@ -72,34 +72,34 @@ public class RayTracingRenderer : IRenderer
     {
         GuardReady();
 
-        int width = RenderBuffer.Width;
-        int height = RenderBuffer.Height;
-        float ratio = (float)width / height;
-        var imageSize = new int2(width, height);
-        int pixelCount = width * height;
+        int imageWidth = RenderBuffer.Width;
+        int imageHeight = RenderBuffer.Height;
+        float imageRatio = (float)imageWidth / imageHeight;
+        var imageSize = new int2(imageWidth, imageHeight);
+        int tilePixelCount = tile.Width * tile.Height;
 
         // Prepare camera with aspect ratio
-        var camera = new Camera(_camera.Transformation, _camera.Fov, ratio);
+        var camera = new Camera(_camera.Transformation, _camera.Fov, imageRatio);
 
         // Allocate buffers
-        ReadWriteBuffer<Ray> rayBuffer = Device.AllocateReadWriteBuffer<Ray>(pixelCount);
-        ReadWriteBuffer<RayCast> rayCastBuffer = Device.AllocateReadWriteBuffer<RayCast>(pixelCount);
-        IReadWriteNormalizedTexture2D<float4> attenuationBuffer = Device.AllocateReadWriteTexture2D<Rgba32, float4>(width, height);
+        ReadWriteBuffer<Ray> rayBuffer = Device.AllocateReadWriteBuffer<Ray>(tilePixelCount);
+        ReadWriteBuffer<RayCast> rayCastBuffer = Device.AllocateReadWriteBuffer<RayCast>(tilePixelCount);
+        IReadWriteNormalizedTexture2D<float4> attenuationBuffer = Device.AllocateReadWriteTexture2D<Rgba32, float4>(tile.Width, tile.Height);
 
         using var context = Device.CreateComputeContext();
 
         // Initialize the attenuation buffer
-        context.Fill(RenderBuffer, float4.Zero);
+        //context.Fill(RenderBuffer, float4.Zero);
         context.Fill(attenuationBuffer, float4.One);
 
         // Create the rays from the camera
-        context.For(width, height, new CameraCastShader(tile, imageSize, camera, rayBuffer));
+        context.For(tile.Width, tile.Height, new CameraCastShader(tile, imageSize, camera, rayBuffer));
         context.Barrier(rayBuffer);
 
         for (int i = 0; i < 4; i++)
         {
             // Find object collision and cache the resulting ray cast 
-            context.For(width, height, new GeometryCollisionShader(tile, _geometryBuffer, rayBuffer, rayCastBuffer));
+            context.For(tile.Width, tile.Height, new GeometryCollisionShader(tile, _geometryBuffer, rayBuffer, rayCastBuffer));
             context.Barrier(rayCastBuffer);
 
             var material = new GlossyMaterial
@@ -107,12 +107,12 @@ public class RayTracingRenderer : IRenderer
                 albedo = 0.9f * Vector4.One,
                 roughness = 0.8f,
             };
-            context.For(width, height, new GlossyShader(tile, 0, material, rayBuffer, rayCastBuffer, attenuationBuffer, RenderBuffer));
+            context.For(tile.Width, tile.Height, new GlossyShader(tile, 0, material, rayBuffer, rayCastBuffer, attenuationBuffer, RenderBuffer));
             context.Barrier(attenuationBuffer);
             context.Barrier(RenderBuffer);
 
             // Calculate the color of the sky
-            context.For(width, height, new SolidSkyShader(tile, new float4(0.5f, 0.7f, 1f, 1f), rayBuffer, rayCastBuffer, attenuationBuffer, RenderBuffer));
+            context.For(tile.Width, tile.Height, new SolidSkyShader(tile, new float4(0.5f, 0.7f, 1f, 1f), rayBuffer, rayCastBuffer, attenuationBuffer, RenderBuffer));
             context.Barrier(RenderBuffer);
 
             //context.For(width, height, new RayCastBufferDumpShader(rayCastBuffer, _geometryBuffer, RenderBuffer, _objectCount, (int)RayCastDumpValueType.Object));

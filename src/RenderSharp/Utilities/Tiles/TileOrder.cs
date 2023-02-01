@@ -6,7 +6,7 @@ public enum TileOrder
 {
     LeftToRight,
     //RightToLeft,
-    TopToBottom,
+    //TopToBottom,
     //BottomToTop,
     //CenterOut,
     //BorderIn

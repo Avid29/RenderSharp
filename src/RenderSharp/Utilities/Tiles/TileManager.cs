@@ -55,7 +55,7 @@ public class TileManager
 
         (row, col) = order switch
         {
-            TileOrder.TopToBottom => (col, row),
+            //TileOrder.TopToBottom => (col, row),
             _ or TileOrder.LeftToRight => (row, col),
         };
 
