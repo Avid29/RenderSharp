@@ -69,7 +69,8 @@ public class RenderViewer : IShaderRunner
     /// <inheritdoc/>
     public bool TryExecute(IReadWriteNormalizedTexture2D<float4> texture, TimeSpan timespan, object? parameter)
     {
-        Guard.IsNotNull(_renderManager);
+        if (_renderManager is null)
+            return false;
 
         // Start rendering if the renderer is ready
         if (_renderManager.IsReady)
