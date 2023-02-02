@@ -1,6 +1,6 @@
 ﻿// Adam Dernis 2023
 
-namespace System.Numerics;
+namespace System;
 
 public static class NumberExtensions
 {

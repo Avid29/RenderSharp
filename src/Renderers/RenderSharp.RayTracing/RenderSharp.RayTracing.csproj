@@ -7,7 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\RenderSharp\RenderSharp.csproj" />
+    <ProjectReference Include="..\..\RenderSharp.ComputeSharp\RenderSharp.ComputeSharp.csproj" />
+    <ProjectReference Include="..\..\RenderSharp.Rendering\RenderSharp.Rendering.csproj" />
+    <ProjectReference Include="..\..\RenderSharp.Scenes\RenderSharp.Scenes.csproj" />
   </ItemGroup>
 
 </Project>

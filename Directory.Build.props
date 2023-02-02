@@ -1,10 +1,11 @@
 <Project>
-  <PropertyGroup>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-	<ImplicitUsings></ImplicitUsings>
-    <LangVersion>10.0</LangVersion>
-    <Nullable>enable</Nullable>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-	<Version>2.0.0-alpha</Version>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net7.0-windows</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<LangVersion>11.0</LangVersion>
+		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<Version>2.0.0-alpha</Version>
+	</PropertyGroup>
 </Project>
