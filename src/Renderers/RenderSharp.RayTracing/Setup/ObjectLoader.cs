@@ -61,7 +61,7 @@ public class ObjectLoader
     /// Gets a <see cref="BVHBuilder"/> for the loaded geometry.
     /// </summary>
     public BVHBuilder GetBVHBuilder()
-        => new BVHBuilder(Device, _triangles);
+        => new(Device, _triangles);
 
     private void LoadMesh(Mesh mesh, Transformation transformation)
     {

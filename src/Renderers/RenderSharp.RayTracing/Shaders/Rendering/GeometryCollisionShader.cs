@@ -40,7 +40,6 @@ public readonly partial struct GeometryCollisionShader : IComputeShader
         // TODO: Use bounding volume hierarchy (BVH tree) to decrease collision search time
         for (int i = 0; i < geometryBuffer.Length; i++)
         {
-            // Check for a closer collision, and log its ray cast when any exist.
             var tri = geometryBuffer[i];
             if (Triangle.IsHit(tri, ray, distance, out var cast))
             {

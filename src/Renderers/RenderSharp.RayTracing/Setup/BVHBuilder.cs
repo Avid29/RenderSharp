@@ -7,11 +7,13 @@ using System.Runtime.InteropServices;
 
 namespace RenderSharp.RayTracing.Setup;
 
+/// <summary>
+/// A class for building a BVH Tree.
+/// </summary>
 public class BVHBuilder
 {
     private readonly List<Triangle> _triangles;
     private readonly BVHNode[] _bvhHeap;
-    private int _maxDepth;
     private int _pos;
 
     public BVHBuilder(GraphicsDevice device, List<Triangle> geometries)
@@ -26,19 +28,28 @@ public class BVHBuilder
     /// </summary>
     public GraphicsDevice Device { get; }
 
+    /// <summary>
+    /// Gets the generated BVH Tree buffer.
+    /// </summary>
+    public ReadOnlyBuffer<BVHNode>? BVHBuffer { get; private set; }
+
+    /// <summary>
+    /// Gets the maximum depth of a node on the BVH tree.
+    /// </summary>
+    public int Depth { get; private set; }
+
     public void BuildBVHTree()
     {
-        _maxDepth = 0;
+        Depth = 0;
         _pos = _bvhHeap.Length - 1;
         var geometries = CollectionsMarshal.AsSpan(_triangles);
         BuildBVH(geometries, 0, 0);
+        AllocateBuffers();
     }
 
     private int BuildBVH(Span<Triangle> geometries, int index, int depth)
     {
-        int axis = depth;
-
-        _maxDepth = int.Max(_maxDepth, depth);
+        Depth = int.Max(Depth, depth);
 
         BVHNode node;
 
@@ -50,7 +61,8 @@ public class BVHBuilder
         else
         {
             // TODO: Split on a better basis
-            geometries.Sort((a, b) => Triangle.GetAABB(a).highCorner[axis].CompareTo(Triangle.GetAABB(b).highCorner));
+            int axis = depth % 3;
+            geometries.Sort((a, b) => Triangle.GetAABB(a).highCorner[axis].CompareTo(Triangle.GetAABB(b).highCorner[axis]));
 
             int mid = geometries.Length / 2;
             int rightI = BuildBVH(geometries[mid..], index + mid, depth + 1);
@@ -65,5 +77,10 @@ public class BVHBuilder
 
         _bvhHeap[_pos] = node;
         return _pos--;
+    }
+    
+    private void AllocateBuffers()
+    {
+        BVHBuffer = Device.AllocateReadOnlyBuffer(_bvhHeap.ToArray());
     }
 }

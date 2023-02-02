@@ -9,13 +9,13 @@ public struct AABB
     public Vector3 highCorner;
     public Vector3 lowCorner;
 
-    public bool IsHit(Ray ray, float maxClip, float minClip)
+    public static bool IsHit(AABB box, Ray ray, float maxClip, float minClip)
     {
         for (int axis = 0; axis < 3; axis++)
         {
             float invD = 1f / ray.direction[axis];
-            float t0 = (this.lowCorner[axis] - ray.origin[axis]) * invD;
-            float t1 = (this.highCorner[axis] - ray.origin[axis]) * invD;
+            float t0 = (box.lowCorner[axis] - ray.origin[axis]) * invD;
+            float t1 = (box.highCorner[axis] - ray.origin[axis]) * invD;
 
             if (invD < 0.0f)
             {

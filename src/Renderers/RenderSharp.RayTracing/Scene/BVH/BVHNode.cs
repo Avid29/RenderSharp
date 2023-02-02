@@ -28,5 +28,5 @@ public struct BVHNode
     }
 
     public static bool IsHit(BVHNode node, Ray ray, float maxClip)
-        => node.box.IsHit(ray, maxClip, 0.001f);
+        => AABB.IsHit(node.box, ray, maxClip, 0.001f);
 }
