@@ -2,7 +2,7 @@
 
 using CommunityToolkit.Diagnostics;
 using ComputeSharp;
-using RenderSharp.RayTracing.Conversion;
+using RenderSharp.RayTracing.Setup;
 using RenderSharp.RayTracing.Scene.Camera;
 using RenderSharp.RayTracing.Scene.Geometry;
 using RenderSharp.RayTracing.Scene.Rays;

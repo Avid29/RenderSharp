@@ -15,4 +15,8 @@
 	  <ProjectReference Include="..\RenderSharp\RenderSharp.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Statistics\" />
+	</ItemGroup>
+
 </Project>

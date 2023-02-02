@@ -6,7 +6,7 @@ using RenderSharp.Scenes.Geometry;
 using RenderSharp.Scenes.Geometry.Meshes;
 using System.Numerics;
 
-namespace RenderSharp.RayTracing.Conversion;
+namespace RenderSharp.RayTracing.Setup;
 
 /// <summary>
 /// A class for converting common RenderSharp objects into <see cref="RenderSharp.RayTracing"/> objects.
@@ -56,6 +56,12 @@ public class ObjectLoader
 
         AllocateBuffers();
     }
+
+    /// <summary>
+    /// Gets a <see cref="BVHBuilder"/> for the loaded geometry.
+    /// </summary>
+    public BVHBuilder GetBVHBuilder()
+        => new BVHBuilder(Device, _triangles);
 
     private void LoadMesh(Mesh mesh, Transformation transformation)
     {
