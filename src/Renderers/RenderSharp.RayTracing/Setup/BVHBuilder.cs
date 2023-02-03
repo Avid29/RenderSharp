@@ -68,8 +68,8 @@ public class BVHBuilder
             int rightI = BuildBVH(geometries[mid..], index + mid, depth + 1);
             int leftI = BuildBVH(geometries[..mid], index, depth + 1);
 
-            AABB rightBB = _bvhHeap[rightI].box;
             AABB leftBB = _bvhHeap[leftI].box;
+            AABB rightBB = _bvhHeap[rightI].box;
 
             AABB box = AABB.GetSurroundingBox(leftBB, rightBB);
             node = BVHNode.Create(box, leftI, rightI);

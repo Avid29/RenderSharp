@@ -104,8 +104,8 @@ public struct Triangle
 
         for (int axis = 0; axis < 3; axis++)
         {
-            high[axis] = MathF.Max(MathF.Max(tri.a[axis], tri.b[axis]), tri.c[axis]);
-            low[axis] = MathF.Min(MathF.Min(tri.a[axis], tri.b[axis]), tri.c[axis]);
+            high[axis] = MathF.Max(MathF.Max(((Vector3)tri.a)[axis], ((Vector3)tri.b)[axis]), ((Vector3)tri.c)[axis]);
+            low[axis] = MathF.Min(MathF.Min(((Vector3)tri.a)[axis], ((Vector3)tri.b)[axis]), ((Vector3)tri.c)[axis]);
         }
 
         return AABB.Create(high, low);
