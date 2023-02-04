@@ -11,6 +11,11 @@ public class Vertex
         Position = position;
     }
 
+    public Vertex(Vector3 position, Vector3 normal) : this(position)
+    {
+        Normal = normal;
+    }
+
     public Vector3 Position { get; set; }
 
     public Vector3 Normal { get; set; }

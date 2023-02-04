@@ -5,6 +5,8 @@ using ComputeSharp;
 using RenderSharp.Rendering.Enums;
 using RenderSharp.Rendering.Interfaces;
 using RenderSharp.Scenes;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace RenderSharp.Rendering.Base;
 

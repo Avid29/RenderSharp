@@ -4,6 +4,7 @@ using CommunityToolkit.Diagnostics;
 using RenderSharp.Rendering.Base;
 using RenderSharp.Rendering.Enums;
 using RenderSharp.Utilities.Tiles;
+using System.Threading;
 
 namespace RenderSharp.Rendering;
 

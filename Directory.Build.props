@@ -1,7 +1,7 @@
 <Project>
 	<PropertyGroup>
 		<TargetFramework>net7.0-windows</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
+		<ImplicitUsings>disable</ImplicitUsings>
 		<LangVersion>11.0</LangVersion>
 		<Nullable>enable</Nullable>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>

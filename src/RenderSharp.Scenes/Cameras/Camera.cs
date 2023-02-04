@@ -1,6 +1,7 @@
 ﻿// Adam Dernis 2023
 
 using RenderSharp.Scenes.Geometry;
+using System;
 using System.Numerics;
 
 namespace RenderSharp.Scenes.Cameras;
