@@ -41,6 +41,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Renderers\RenderSharp.Renderers.Debug\RenderSharp.Renderers.Debug.csproj" />
     <ProjectReference Include="..\..\src\Renderers\RenderSharp.RayTracing\RenderSharp.RayTracing.csproj" />
+    <ProjectReference Include="..\..\src\RenderSharp.ImportExport\RenderSharp.ImportExport.csproj" />
   </ItemGroup>
 
   <!-- 

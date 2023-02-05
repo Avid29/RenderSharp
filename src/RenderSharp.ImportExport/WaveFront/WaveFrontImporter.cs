@@ -1,6 +1,7 @@
 ﻿// Adam Dernis 2023
 
 using CommunityToolkit.Diagnostics;
+using RenderSharp.Scenes.Geometry;
 using RenderSharp.Scenes.Geometry.Meshes;
 using System;
 using System.Collections.Generic;
@@ -16,10 +17,10 @@ public partial class WaveFrontImporter
 
     private WaveFrontImporter()
     {
-        _currentMesh = new Mesh();
+        _currentMesh = new GeometryObject<Mesh>(new Mesh());
         _vertices = new List<Vector3>();
         _vertexNormals = new List<Vector3>();
-        _meshes = new List<Mesh>();
+        _meshes = new List<GeometryObject<Mesh>>();
 
         _actionDictionary = new()
         {
@@ -34,14 +35,15 @@ public partial class WaveFrontImporter
         var importer = new WaveFrontImporter();
         importer.ParseFile(objFile);
 
-        if (useMtl)
-        {
-            mtlFile ??= MtlFromObjFile(objFile);
+        // TODO: Use MTL
+        //if (useMtl)
+        //{
+        //    mtlFile ??= MtlFromObjFile(objFile);
 
-            Guard.IsNotNull(mtlFile);
+        //    Guard.IsNotNull(mtlFile);
 
-            importer.ParseFile(mtlFile);
-        }
+        //    importer.ParseFile(mtlFile);
+        //}
 
         return importer.CreateResult();
     }
@@ -77,15 +79,15 @@ public partial class WaveFrontImporter
             if (_actionDictionary.ContainsKey(code))
                 _actionDictionary[code](line);
         }
+
+        FinishObject();
     }
 
     private ImportResult CreateResult()
     {
         var result = new ImportResult();
-        foreach (var mesh in _meshes)
-        {
-            result.Meshes.Add(mesh);
-        }
+        foreach (var obj in _meshes)
+            result.Objects.Add(obj);
 
         return result;
     }
