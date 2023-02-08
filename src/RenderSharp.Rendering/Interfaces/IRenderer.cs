@@ -19,6 +19,11 @@ public interface IRenderer
     IReadWriteNormalizedTexture2D<float4>? RenderBuffer { get; set; }
 
     /// <summary>
+    /// Gets or sets the render analyzer for tracking render progress and time.
+    /// </summary>
+    IRenderAnalyzer? RenderAnalyzer { get; set; }
+
+    /// <summary>
     /// Loads the 3D scene to the renderer.
     /// </summary>
     /// <param name="scene">The common RenderSharp scene to load.</param>

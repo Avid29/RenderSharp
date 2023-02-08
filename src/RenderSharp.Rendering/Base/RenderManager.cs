@@ -21,12 +21,15 @@ public class RenderManager
     {
         State = RenderState.NotReady;
         _cancelTokenSource = new CancellationTokenSource();
+        RenderAnalyzer = new RenderAnalyzer();
     }
 
     /// <summary>
     /// Gets the current rendering state.
     /// </summary>
     public RenderState State { get; protected set; }
+
+    protected RenderAnalyzer RenderAnalyzer { get; }
 
     /// <summary>
     /// Gets the output buffer being rendered to.
@@ -65,6 +68,7 @@ public class RenderManager
     {
         Guard.IsNotNull(Renderer);
 
+        RenderAnalyzer.Begin();
         State = RenderState.Preparing;
 
         // TODO: Asynchronous
@@ -121,6 +125,7 @@ public class RenderManager
         if (State is RenderState.NotReady)
         {
             Renderer = renderer;
+            Renderer.RenderAnalyzer = RenderAnalyzer;
         }
     }
 
@@ -171,6 +176,7 @@ public class RenderManager
             return;
         }
 
+        RenderAnalyzer.Finish();
         State = RenderState.Done;
     }
 }

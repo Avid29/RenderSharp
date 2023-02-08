@@ -7,9 +7,12 @@ using RenderSharp.RayTracing.Scene.Camera;
 using RenderSharp.RayTracing.Scene.Geometry;
 using RenderSharp.RayTracing.Scene.Rays;
 using RenderSharp.RayTracing.Setup;
+using RenderSharp.RayTracing.Shaders.Debugging;
+using RenderSharp.RayTracing.Shaders.Debugging.Enums;
 using RenderSharp.RayTracing.Shaders.Rendering;
 using RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
 using RenderSharp.RayTracing.Shaders.Shading.Stock.SkyShaders;
+using RenderSharp.Rendering.Enums;
 using RenderSharp.Rendering.Interfaces;
 using RenderSharp.Scenes.Geometry;
 using RenderSharp.Utilities.Tiles;
@@ -44,10 +47,15 @@ public class RayTracingRenderer : IRenderer
     
     /// <inheritdoc/>
     public IReadWriteNormalizedTexture2D<float4>? RenderBuffer { get; set; }
+    
+    
+    /// <inheritdoc/>
+    public IRenderAnalyzer? RenderAnalyzer { get; set; }
 
     /// <inheritdoc/>
     public void SetupScene(CommonScene scene)
     {
+        RenderAnalyzer?.LogProcess("Load Objects", ProcessCategory.Setup);
         _camera = scene.ActiveCamera;
 
         // Load geometry objects to the geometry buffer
@@ -61,6 +69,7 @@ public class RayTracingRenderer : IRenderer
         _objectCount = loader.ObjectCount;
 
         // Build a BVH tree for geometry traversal
+        RenderAnalyzer?.LogProcess("Build BVH tree", ProcessCategory.Setup);
         var bvhBuilder = loader.GetBVHBuilder();
         bvhBuilder.BuildBVHTree();
 
@@ -94,6 +103,7 @@ public class RayTracingRenderer : IRenderer
         var camera = new Camera(_camera.Transformation, _camera.Fov, imageRatio);
 
         // Allocate buffers
+        RenderAnalyzer?.LogProcess("Allocate Tile Buffers", ProcessCategory.Rendering);
         ReadWriteTexture3D<int> bvhStack = Device.AllocateReadWriteTexture3D<int>(tile.Width, tile.Height, _bvhDepth + 1);
         ReadWriteBuffer<Ray> rayBuffer = Device.AllocateReadWriteBuffer<Ray>(tilePixelCount);
         ReadWriteBuffer<RayCast> rayCastBuffer = Device.AllocateReadWriteBuffer<RayCast>(tilePixelCount);
@@ -113,8 +123,8 @@ public class RayTracingRenderer : IRenderer
         var materialShader = new GlossyShader(tile, 0, material, rayBuffer, rayCastBuffer, attenuationBuffer, RenderBuffer);
         var skyShader = new SolidSkyShader(tile, new float4(0.5f, 0.7f, 1f, 1f), rayBuffer, rayCastBuffer, attenuationBuffer, RenderBuffer);
 
+        RenderAnalyzer?.LogProcess("Render Loop", ProcessCategory.Rendering);
         using var context = Device.CreateComputeContext();
-
         // Initialize the attenuation buffer
         //context.Fill(RenderBuffer, float4.Zero);
         context.Fill(attenuationBuffer, float4.One);
@@ -122,12 +132,19 @@ public class RayTracingRenderer : IRenderer
         // Create the rays from the camera
         context.For(tile.Width, tile.Height, cameraShader);
         context.Barrier(rayBuffer);
+        
+#pragma warning disable
 
         for (int i = 0; i < 4; i++)
         {
             // Find object collision and cache the resulting ray cast 
             context.For(tile.Width, tile.Height, collisionShader);
             context.Barrier(rayCastBuffer);
+
+            context.For(tile.Width, tile.Height, new RayCastBufferDumpShader(tile, rayCastBuffer, _geometryBuffer, RenderBuffer, _objectCount, (int)RayCastDumpValueType.Normal));
+
+            return;
+
 
             context.For(tile.Width, tile.Height, materialShader);
             context.Barrier(attenuationBuffer);

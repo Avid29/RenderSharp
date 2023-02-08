@@ -19,7 +19,9 @@ public class SimpleRenderer : IRenderer
     public GraphicsDevice Device { get; set; }
     
     public IReadWriteNormalizedTexture2D<float4>? RenderBuffer { get; set; }
-    
+
+    public IRenderAnalyzer? RenderAnalyzer { get; set; }
+
     /// <inheritdoc/>
     public void SetupScene(Scene scene)
     {

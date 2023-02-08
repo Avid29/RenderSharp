@@ -3,6 +3,7 @@
 using CommunityToolkit.Diagnostics;
 using RenderSharp.Rendering.Base;
 using RenderSharp.Rendering.Enums;
+using RenderSharp.Rendering.Interfaces;
 using RenderSharp.Utilities.Tiles;
 using System.Threading;
 
@@ -42,6 +43,7 @@ public class TiledRenderManager : RenderManager
             RenderTile(tile);
         }
 
+        RenderAnalyzer.Finish();
         State = RenderState.Done;
     }
 

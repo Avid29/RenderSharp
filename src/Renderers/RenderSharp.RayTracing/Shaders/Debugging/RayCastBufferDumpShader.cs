@@ -4,6 +4,7 @@ using ComputeSharp;
 using RenderSharp.RayTracing.Scene.Geometry;
 using RenderSharp.RayTracing.Scene.Rays;
 using RenderSharp.RayTracing.Utils;
+using RenderSharp.Utilities.Tiles;
 
 namespace RenderSharp.RayTracing.Shaders.Debugging;
 
@@ -14,6 +15,7 @@ namespace RenderSharp.RayTracing.Shaders.Debugging;
 [EmbeddedBytecode(DispatchAxis.XY)]
 public readonly partial struct RayCastBufferDumpShader : IComputeShader
 {
+    private readonly Tile tile;
     private readonly ReadWriteBuffer<RayCast> rayCastBuffer;
     private readonly ReadOnlyBuffer<Triangle> geometryBuffer;
     private readonly IReadWriteNormalizedTexture2D<float4> renderBuffer;
@@ -32,6 +34,7 @@ public readonly partial struct RayCastBufferDumpShader : IComputeShader
         // in both 2D textures and flat buffers
         int2 index2D = ThreadIds.XY;
         int fIndex = (index2D.Y * DispatchSize.X) + index2D.X;
+        int2 imageIndex = index2D + tile.offset;
 
         var rayCast = rayCastBuffer[fIndex];
         
@@ -66,6 +69,6 @@ public readonly partial struct RayCastBufferDumpShader : IComputeShader
                 break;
         };
 
-        renderBuffer[index2D] = value;
+        renderBuffer[imageIndex] = value;
     }
 }
