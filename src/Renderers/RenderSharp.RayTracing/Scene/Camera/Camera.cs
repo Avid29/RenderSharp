@@ -36,7 +36,7 @@ public struct Camera
         this.origin = transformation.Translation;
         this.u = Vector3.Transform(Vector3.UnitX, transformation.Rotation);
         this.v = Vector3.Transform(Vector3.UnitY, transformation.Rotation);
-        this.n = Vector3.Transform(-Vector3.UnitZ, transformation.Rotation);
+        this.n = Vector3.Transform(Vector3.UnitZ, transformation.Rotation);
         this.horizontal = width * this.u;
         this.vertical = height * this.v;
 

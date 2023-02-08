@@ -37,7 +37,7 @@ public class RenderViewer : IShaderRunner
         //var import = WaveFrontImporter.Parse(@"C:\Users\avid2\source\repos\Personal\RenderSharp\samples\RenderSharp.Samples.WinUI\Assets\test.obj");
 
         //var camera = Camera.CreateFromLookAt(new Vector3(0f, 5f, 0f), new Vector3(0, 0f, 0f), 75);
-        var camera = Camera.CreateFromEuler(new Vector3(0f, 1f, 0f), new Vector3(0f, 0f, 0f), 75);
+        var camera = Camera.CreateFromEuler(new Vector3(0f, 1f, 0f), new Vector3(0f, 180f, 0f), 75);
         var scene = new Scene(camera);
 
         //scene.Objects.AddRange(import.Objects);
@@ -45,12 +45,12 @@ public class RenderViewer : IShaderRunner
         scene.Objects.AddRange(new GeometryObject[]
         {
             new GeometryObject<UVSphere>(new UVSphere { Radius = 0.5f }) { Transformation = Transformation.CreateFromTranslation(new Vector3(0, 1, 2)) },
-            new GeometryObject<UVSphere>(new UVSphere { Radius = 0.4f }) { Transformation = Transformation.CreateFromTranslation(new Vector3(0.75f, 0.5f, 2.5f)) },
+            new GeometryObject<UVSphere>(new UVSphere { Radius = 0.4f }) { Transformation = Transformation.CreateFromTranslation(new Vector3(-0.75f, 0.5f, 2.5f)) },
             new GeometryObject<Plane>(new Plane { Size = 1 })
             {
                 Transformation = new Transformation
                 {
-                    Translation = new Vector3(1.25f, 0, 4),
+                    Translation = new Vector3(-1.25f, 0, 4),
                     Scale = new Vector3(5.5f, 1, 8),
                 }
             },
