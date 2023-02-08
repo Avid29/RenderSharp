@@ -17,15 +17,15 @@ public struct AABB
             float t0 = (box.lowCorner[axis] - ray.origin[axis]) * invD;
             float t1 = (box.highCorner[axis] - ray.origin[axis]) * invD;
 
-            if (invD < 0.0f)
+            if (invD < 0f)
             {
                 float swap = t0;
                 t0 = t1;
                 t1 = swap;
             }
 
-            minClip = t0 > minClip ? t0 : minClip;
-            maxClip = t1 < maxClip ? t1 : maxClip;
+            minClip = MathF.Max(t0, minClip);
+            maxClip = MathF.Min(t1, maxClip);
 
             if (maxClip < minClip)
                 return false;

@@ -27,6 +27,9 @@ public struct BVHNode
         return node;
     }
 
+    public static bool IsHit(BVHNode node, Ray ray)
+        => IsHit(node, ray, float.MaxValue);
+
     public static bool IsHit(BVHNode node, Ray ray, float maxClip)
-        => AABB.IsHit(node.box, ray, maxClip, 0.001f);
+        => AABB.IsHit(node.box, ray, maxClip, float.Epsilon);
 }

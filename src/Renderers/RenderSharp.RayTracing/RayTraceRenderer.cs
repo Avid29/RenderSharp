@@ -7,6 +7,8 @@ using RenderSharp.RayTracing.Scene.Camera;
 using RenderSharp.RayTracing.Scene.Geometry;
 using RenderSharp.RayTracing.Scene.Rays;
 using RenderSharp.RayTracing.Setup;
+using RenderSharp.RayTracing.Shaders.Debugging;
+using RenderSharp.RayTracing.Shaders.Debugging.Enums;
 using RenderSharp.RayTracing.Shaders.Rendering;
 using RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
 using RenderSharp.RayTracing.Shaders.Shading.Stock.SkyShaders;
@@ -114,7 +116,6 @@ public class RayTracingRenderer : IRenderer
         var skyShader = new SolidSkyShader(tile, new float4(0.5f, 0.7f, 1f, 1f), rayBuffer, rayCastBuffer, attenuationBuffer, RenderBuffer);
 
         using var context = Device.CreateComputeContext();
-
         // Initialize the attenuation buffer
         //context.Fill(RenderBuffer, float4.Zero);
         context.Fill(attenuationBuffer, float4.One);
@@ -122,12 +123,19 @@ public class RayTracingRenderer : IRenderer
         // Create the rays from the camera
         context.For(tile.Width, tile.Height, cameraShader);
         context.Barrier(rayBuffer);
+        
+#pragma warning disable
 
         for (int i = 0; i < 4; i++)
         {
             // Find object collision and cache the resulting ray cast 
             context.For(tile.Width, tile.Height, collisionShader);
             context.Barrier(rayCastBuffer);
+
+            context.For(tile.Width, tile.Height, new RayCastBufferDumpShader(tile, rayCastBuffer, _geometryBuffer, RenderBuffer, _objectCount, (int)RayCastDumpValueType.Normal));
+
+            return;
+
 
             context.For(tile.Width, tile.Height, materialShader);
             context.Barrier(attenuationBuffer);
