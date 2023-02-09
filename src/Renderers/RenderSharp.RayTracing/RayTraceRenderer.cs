@@ -103,7 +103,7 @@ public class RayTracingRenderer : IRenderer
         var camera = new Camera(_camera.Transformation, _camera.Fov, imageRatio);
 
         // Allocate buffers
-        RenderAnalyzer?.LogProcess("Allocate Tile Buffers", ProcessCategory.Rendering);
+        RenderAnalyzer?.LogProcess("Allocate Buffers", ProcessCategory.Rendering);
         ReadWriteTexture3D<int> bvhStack = Device.AllocateReadWriteTexture3D<int>(tile.Width, tile.Height, _bvhDepth + 1);
         ReadWriteBuffer<Ray> rayBuffer = Device.AllocateReadWriteBuffer<Ray>(tilePixelCount);
         ReadWriteBuffer<RayCast> rayCastBuffer = Device.AllocateReadWriteBuffer<RayCast>(tilePixelCount);
@@ -141,7 +141,8 @@ public class RayTracingRenderer : IRenderer
             context.For(tile.Width, tile.Height, collisionShader);
             context.Barrier(rayCastBuffer);
 
-            context.For(tile.Width, tile.Height, new RayCastBufferDumpShader(tile, rayCastBuffer, _geometryBuffer, RenderBuffer, _objectCount, (int)RayCastDumpValueType.Normal));
+            //context.For(tile.Width, tile.Height, new RayCastBufferDumpShader(tile, rayCastBuffer, _geometryBuffer, RenderBuffer, _objectCount, (int)RayCastDumpValueType.Normal));
+            context.For(tile.Width, tile.Height, new RayBufferDumpShader(tile, rayBuffer, RenderBuffer, (int)RayDumpValueType.Direction));
 
             return;
 
