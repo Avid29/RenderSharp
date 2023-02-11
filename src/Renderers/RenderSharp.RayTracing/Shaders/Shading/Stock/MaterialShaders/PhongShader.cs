@@ -1,27 +1,24 @@
 ﻿// Adam Dernis 2023
 
 using ComputeSharp;
+using RenderSharp.RayTracing.Scene.Materials;
 using RenderSharp.RayTracing.Scene.Rays;
 using RenderSharp.Utilities.Tiles;
 
 namespace RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
 
-/// <summary>
-/// A solid color glossy material shader.
-/// </summary>
 [AutoConstructor]
 [EmbeddedBytecode(DispatchAxis.XY)]
-public partial struct GlossyShader : IComputeShader
+public partial struct PhongShader : IComputeShader
 {
     private readonly Tile tile;
     private readonly int matId;
-    private readonly GlossyMaterial material;
+    private readonly PhongMaterial material;
 
     private readonly ReadWriteBuffer<Ray> rayBuffer;
     private readonly ReadWriteBuffer<RayCast> rayCastBuffer;
-    private readonly IReadWriteNormalizedTexture2D<float4> attenuationBuffer;
     private readonly IReadWriteNormalizedTexture2D<float4> renderBuffer;
-
+    
     /// <inheritdoc/>
     public void Execute()
     {
@@ -30,7 +27,7 @@ public partial struct GlossyShader : IComputeShader
         int2 index2D = ThreadIds.XY;
         int fIndex = (index2D.Y * DispatchSize.X) + index2D.X;
         int2 imageIndex = index2D + tile.offset;
-
+        
         var cast = rayCastBuffer[fIndex];
         var ray = rayBuffer[fIndex];
 
@@ -38,10 +35,7 @@ public partial struct GlossyShader : IComputeShader
         if (cast.matId != matId)
             return;
 
-        float3 target = Hlsl.Reflect(Hlsl.Normalize(ray.direction), cast.normal);
-        Ray scatter = Ray.Create(cast.position, target - cast.position);
-
-        rayBuffer[fIndex] = scatter;
-        attenuationBuffer[index2D] *= material.albedo;
+        // Ambient
+        renderBuffer[imageIndex] += new float4(material.ambient, 1);
     }
 }
