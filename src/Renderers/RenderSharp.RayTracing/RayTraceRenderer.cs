@@ -150,8 +150,8 @@ public class RayTracingRenderer : IRenderer
             //return;
 
             // Detect shadow ray collisions
-            //context.For(tile.Width, tile.Height, _lightsBuffer.Length, shadowIntersectShader);
-            //context.Barrier(shadowRayBuffer);
+            context.For(tile.Width, tile.Height, _lightsBuffer.Length, shadowIntersectShader);
+            context.Barrier(shadowRayBuffer);
 
             // Apply object materials
             context.For(tile.Width, tile.Height, materialShader);

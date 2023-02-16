@@ -50,7 +50,14 @@ public class RenderViewer : IShaderRunner
                 Color = Vector3.One,
                 Power = 0.5f,
                 Radius = 0.25f,
-                Transformation = Transformation.CreateFromTranslation(new Vector3(0.5f, 2.5f, 0.5f)),
+                Transformation = Transformation.CreateFromTranslation(new Vector3(0.5f, 3.5f, 0.5f)),
+            },
+            new PointLight
+            {
+                Color = Vector3.One,
+                Power = 0.5f,
+                Radius = 0.25f,
+                Transformation = Transformation.CreateFromTranslation(new Vector3(-1.5f, 0.5f, 1f)),
             },
         });
 
