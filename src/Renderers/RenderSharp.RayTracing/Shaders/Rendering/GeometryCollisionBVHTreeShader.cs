@@ -20,7 +20,7 @@ public readonly partial struct GeometryCollisionBVHTreeShader : IComputeShader
     private readonly ReadOnlyBuffer<BVHNode> bvhTreeBuffer;
     private readonly ReadOnlyBuffer<Triangle> geometryBuffer;
     private readonly ReadWriteBuffer<Ray> rayBuffer;
-    private readonly ReadWriteBuffer<RayCast> rayCastBuffer;
+    private readonly ReadWriteBuffer<GeometryCollision> rayCastBuffer;
 
     /// <inheritdoc/>
     public void Execute()
@@ -34,7 +34,7 @@ public readonly partial struct GeometryCollisionBVHTreeShader : IComputeShader
         if (Hlsl.Length(ray.direction) == 0)
             return;
 
-        var rayCast = RayCast.Create(0, 0, 0);
+        var rayCast = GeometryCollision.Create(0, 0, 0);
 
         // Track the nearest scene collision
         float distance = float.MaxValue;
@@ -56,10 +56,10 @@ public readonly partial struct GeometryCollisionBVHTreeShader : IComputeShader
                 if (node.geoIndex != -1)
                 {
                     Triangle triangle = geometryBuffer[node.geoIndex];
-                    if (Triangle.IsHit(triangle, ray, out RayCast cast))
+                    if (Triangle.IsHit(triangle, ray, out GeometryCollision cast))
                     {
                         distance = cast.distance;
-                        cast.triId = node.geoIndex;
+                        cast.geoId = node.geoIndex;
                         cast.matId = triangle.matId;
                         rayCast = cast;
                     }

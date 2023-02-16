@@ -49,17 +49,17 @@ public struct Triangle
     /// TODO: Convert to an instance method.
     /// Waiting on https://github.com/Sergio0694/ComputeSharp/issues/479
     /// </remarks>
-    public static bool IsHit(Triangle tri, Ray ray, out RayCast cast)
+    public static bool IsHit(Triangle tri, Ray ray, out GeometryCollision cast)
         => IsHit(tri, ray, float.MaxValue, out cast);
 
     /// <remarks>
     /// TODO: Convert to an instance method.
     /// Waiting on https://github.com/Sergio0694/ComputeSharp/issues/479
     /// </remarks>
-    public static bool IsHit(Triangle tri, Ray ray, float maxClip, out RayCast cast)
+    public static bool IsHit(Triangle tri, Ray ray, float maxClip, out GeometryCollision cast)
     {
         // Set default cast values
-        cast = RayCast.Create(float3.Zero, float3.Zero, 0);
+        cast = GeometryCollision.Create(float3.Zero, float3.Zero, 0);
 
         // Find the triangle's normal direction
         var normal = Hlsl.Cross(tri.b - tri.a, tri.c - tri.a);
@@ -89,7 +89,7 @@ public struct Triangle
             return false;
 
 
-        cast = RayCast.Create(q, normal, t);
+        cast = GeometryCollision.Create(q, Hlsl.Normalize(normal), t);
         return true;
     }
 

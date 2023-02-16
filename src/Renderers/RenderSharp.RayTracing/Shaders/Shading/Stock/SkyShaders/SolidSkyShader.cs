@@ -16,7 +16,7 @@ public partial struct SolidSkyShader : IComputeShader
     private readonly Tile tile;
     private readonly float4 color;
     private readonly ReadWriteBuffer<Ray> rayBuffer;
-    private readonly ReadWriteBuffer<RayCast> rayCastBuffer;
+    private readonly ReadWriteBuffer<GeometryCollision> rayCastBuffer;
     private readonly IReadWriteNormalizedTexture2D<float4> attenuationBuffer;
     private readonly IReadWriteNormalizedTexture2D<float4> renderBuffer;
 
@@ -30,7 +30,7 @@ public partial struct SolidSkyShader : IComputeShader
         int2 imageIndex = index2D + tile.offset;
 
         // If the sky was not hit do not execute
-        if (rayCastBuffer[fIndex].triId != -1)
+        if (rayCastBuffer[fIndex].geoId != -1)
             return;
 
         // Add to the color buffer
@@ -40,6 +40,6 @@ public partial struct SolidSkyShader : IComputeShader
         rayBuffer[fIndex].origin = 0;
         rayBuffer[fIndex].direction = 0;
         rayCastBuffer[fIndex].matId = -2;
-        rayCastBuffer[fIndex].triId = -2;
+        rayCastBuffer[fIndex].geoId = -2;
     }
 }

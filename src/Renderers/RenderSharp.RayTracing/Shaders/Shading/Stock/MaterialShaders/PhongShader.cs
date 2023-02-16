@@ -1,9 +1,11 @@
 ﻿// Adam Dernis 2023
 
 using ComputeSharp;
+using RenderSharp.RayTracing.Scene.Lighting;
 using RenderSharp.RayTracing.Scene.Materials;
 using RenderSharp.RayTracing.Scene.Rays;
 using RenderSharp.Utilities.Tiles;
+using System;
 
 namespace RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
 
@@ -15,8 +17,10 @@ public partial struct PhongShader : IComputeShader
     private readonly int matId;
     private readonly PhongMaterial material;
 
+    private readonly ReadOnlyBuffer<Light> lightsBuffer;
     private readonly ReadWriteBuffer<Ray> rayBuffer;
-    private readonly ReadWriteBuffer<RayCast> rayCastBuffer;
+    private readonly ReadWriteBuffer<Ray> shadowCastBuffer;
+    private readonly ReadWriteBuffer<GeometryCollision> rayCastBuffer;
     private readonly IReadWriteNormalizedTexture2D<float4> renderBuffer;
     
     /// <inheritdoc/>
@@ -35,7 +39,20 @@ public partial struct PhongShader : IComputeShader
         if (cast.matId != matId)
             return;
 
-        // Ambient
-        renderBuffer[imageIndex] += new float4(material.ambient, 1);
+        // Calculate diffuse and specular intensity
+        float4 diffuseIntensity = 0;
+        for (int i = 0; i < lightsBuffer.Length; i++)
+        {
+            var fShadowIndex = (i * DispatchSize.X * DispatchSize.Y) + (index2D.Y * DispatchSize.X) + index2D.X; 
+            var dir = shadowCastBuffer[fShadowIndex].direction;
+            if (Hlsl.Length(dir) == 0)
+                break;
+
+            diffuseIntensity += lightsBuffer[i].color * Hlsl.Dot(cast.normal, shadowCastBuffer[fShadowIndex].direction);
+        }
+
+        // Sum ambient, diffuse, and specular components
+        renderBuffer[imageIndex] += material.ambient;
+        renderBuffer[imageIndex] += material.diffuse * diffuseIntensity;
     }
 }

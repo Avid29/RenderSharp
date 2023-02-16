@@ -5,6 +5,7 @@ using ComputeSharp;
 using RenderSharp.RayTracing.Scene.BVH;
 using RenderSharp.RayTracing.Scene.Camera;
 using RenderSharp.RayTracing.Scene.Geometry;
+using RenderSharp.RayTracing.Scene.Lighting;
 using RenderSharp.RayTracing.Scene.Materials;
 using RenderSharp.RayTracing.Scene.Rays;
 using RenderSharp.RayTracing.Setup;
@@ -31,6 +32,7 @@ public class RayTracingRenderer : IRenderer
 {
     private CommonCamera? _camera;
     private ReadOnlyBuffer<Triangle>? _geometryBuffer;
+    private ReadOnlyBuffer<Light>? _lightsBuffer;
     private ReadOnlyBuffer<BVHNode>? _bvhBuffer;
     private int _objectCount;
     private int _bvhDepth;
@@ -61,12 +63,11 @@ public class RayTracingRenderer : IRenderer
 
         // Load geometry objects to the geometry buffer
         var loader = new ObjectLoader(Device);
-        var geometryObjects = scene.Objects
-            .OfType<GeometryObject>().ToList();
-        loader.LoadObjects(geometryObjects);
+        loader.LoadScene(scene);
 
         // Store geometry and object count
         _geometryBuffer = loader.GeometryBuffer;
+        _lightsBuffer = loader.LightsBuffer;
         _objectCount = loader.ObjectCount;
 
         // Build a BVH tree for geometry traversal
@@ -107,16 +108,19 @@ public class RayTracingRenderer : IRenderer
         RenderAnalyzer?.LogProcess("Allocate Buffers", ProcessCategory.Rendering);
         ReadWriteTexture3D<int> bvhStack = Device.AllocateReadWriteTexture3D<int>(tile.Width, tile.Height, _bvhDepth + 1);
         ReadWriteBuffer<Ray> rayBuffer = Device.AllocateReadWriteBuffer<Ray>(tilePixelCount);
-        ReadWriteBuffer<RayCast> rayCastBuffer = Device.AllocateReadWriteBuffer<RayCast>(tilePixelCount);
+        ReadWriteBuffer<Ray> shadowRayBuffer = Device.AllocateReadWriteBuffer<Ray>(tilePixelCount * _lightsBuffer.Length);
+        ReadWriteBuffer<GeometryCollision> rayCastBuffer = Device.AllocateReadWriteBuffer<GeometryCollision>(tilePixelCount);
         IReadWriteNormalizedTexture2D<float4> attenuationBuffer = Device.AllocateReadWriteTexture2D<Rgba32, float4>(tile.Width, tile.Height);
 
-        var material = new PhongMaterial(float3.Zero, float3.Zero, float3.UnitZ, cAmbient: 0.2f);
+        var material = new PhongMaterial(float4.UnitZ, float4.Zero, float4.UnitZ, cAmbient: 0.2f);
 
         // Create shaders
         var cameraShader = new CameraCastShader(tile, imageSize, camera, rayBuffer);
         var collisionShader = new GeometryCollisionShader(tile, _geometryBuffer, rayBuffer, rayCastBuffer);
         //var collisionShader = new GeometryCollisionBVHTreeShader(tile, bvhStack, _bvhBuffer, _geometryBuffer, rayBuffer, rayCastBuffer);
-        var materialShader = new PhongShader(tile, 0, material, rayBuffer, rayCastBuffer, RenderBuffer);
+        var shadowCastShader = new ShadowCastShader(tile, _lightsBuffer, shadowRayBuffer, rayCastBuffer);
+        var shadowIntersectShader = new ShadowIntersectionShader(tile, _geometryBuffer, shadowRayBuffer);
+        var materialShader = new PhongShader(tile, 0, material, _lightsBuffer, rayBuffer, shadowRayBuffer, rayCastBuffer, RenderBuffer);
         var skyShader = new SolidSkyShader(tile, new float4(0.25f, 0.35f, 0.5f, 1f), rayBuffer, rayCastBuffer, attenuationBuffer, RenderBuffer);
 
         RenderAnalyzer?.LogProcess("Render Loop", ProcessCategory.Rendering);
@@ -129,17 +133,32 @@ public class RayTracingRenderer : IRenderer
         context.For(tile.Width, tile.Height, cameraShader);
         context.Barrier(rayBuffer);
         
+
+        #pragma warning disable
+
         for (int i = 0; i < 1; i++)
         {
             // Find object collision and cache the resulting ray cast 
             context.For(tile.Width, tile.Height, collisionShader);
             context.Barrier(rayCastBuffer);
 
+            // Create shadow ray casts
+            context.For(tile.Width, tile.Height, _lightsBuffer.Length, shadowCastShader);
+            context.Barrier(shadowRayBuffer);
+
+            //context.For(tile.Width, tile.Height, new RayBufferDumpShader(tile, shadowRayBuffer, RenderBuffer, (int)RayDumpValueType.Direction));
+            //return;
+
+            // Detect shadow ray collisions
+            //context.For(tile.Width, tile.Height, _lightsBuffer.Length, shadowIntersectShader);
+            //context.Barrier(shadowRayBuffer);
+
+            // Apply object materials
             context.For(tile.Width, tile.Height, materialShader);
             context.Barrier(attenuationBuffer);
             context.Barrier(RenderBuffer);
 
-            // Calculate the color of the sky
+            // Apply sky material
             context.For(tile.Width, tile.Height, skyShader);
             context.Barrier(RenderBuffer);
 
@@ -153,11 +172,13 @@ public class RayTracingRenderer : IRenderer
     [MemberNotNull(
         nameof(RenderBuffer),
         nameof(_geometryBuffer),
+        nameof(_lightsBuffer),
         nameof(_camera))]
     private void GuardReady()
     {
         Guard.IsNotNull(_camera);
         Guard.IsNotNull(RenderBuffer);
         Guard.IsNotNull(_geometryBuffer);
+        Guard.IsNotNull(_lightsBuffer);
     }
 }

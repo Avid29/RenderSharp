@@ -9,14 +9,14 @@ using RenderSharp.Utilities.Tiles;
 namespace RenderSharp.RayTracing.Shaders.Debugging;
 
 /// <summary>
-/// An <see cref="IComputeShader"/> that dumps a property from the <see cref="RayCast"/> buffer as a color.
+/// An <see cref="IComputeShader"/> that dumps a property from the <see cref="GeometryCollision"/> buffer as a color.
 /// </summary>
 [AutoConstructor]
 [EmbeddedBytecode(DispatchAxis.XY)]
 public readonly partial struct RayCastBufferDumpShader : IComputeShader
 {
     private readonly Tile tile;
-    private readonly ReadWriteBuffer<RayCast> rayCastBuffer;
+    private readonly ReadWriteBuffer<GeometryCollision> rayCastBuffer;
     private readonly ReadOnlyBuffer<Triangle> geometryBuffer;
     private readonly IReadWriteNormalizedTexture2D<float4> renderBuffer;
     private readonly int objectCount;
@@ -53,18 +53,18 @@ public readonly partial struct RayCastBufferDumpShader : IComputeShader
                 break;
             case 3:
             case 4:
-                int id = rayCast.triId;
+                int id = rayCast.geoId;
                 int count = geometryBuffer.Length;
 
                 // Override the ID and count to the object id and count if dumping object data
                 if (dumpType == 4)
                 {
-                    id = geometryBuffer[rayCast.triId].objId;
+                    id = geometryBuffer[rayCast.geoId].objId;
                     count = objectCount;
                 }
 
                 float hue = (id * 360f) / (count * 1.05f);
-                var hsv = new float3(hue, 1f, rayCast.triId == -1 ? 0 : 1);
+                var hsv = new float3(hue, 1f, rayCast.geoId == -1 ? 0 : 1);
                 value = new float4(VectorUtils.HSVtoRGB(hsv), 1);
                 break;
         };

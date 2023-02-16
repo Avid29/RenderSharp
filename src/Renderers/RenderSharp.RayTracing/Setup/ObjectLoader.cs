@@ -2,9 +2,12 @@
 
 using ComputeSharp;
 using RenderSharp.RayTracing.Scene.Geometry;
+using RenderSharp.RayTracing.Scene.Lighting;
 using RenderSharp.Scenes.Geometry;
 using RenderSharp.Scenes.Geometry.Meshes;
+using RenderSharp.Scenes.Lights;
 using System.Numerics;
+using CommonScene = RenderSharp.Scenes.Scene;
 
 namespace RenderSharp.RayTracing.Setup;
 
@@ -14,6 +17,7 @@ namespace RenderSharp.RayTracing.Setup;
 public class ObjectLoader
 {
     private readonly List<Triangle> _triangles;
+    private readonly List<Light> _lights;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ObjectLoader"/> class.
@@ -23,6 +27,7 @@ public class ObjectLoader
     {
         Device = device;
         _triangles = new List<Triangle>();
+        _lights = new List<Light>();
     }
 
     /// <summary>
@@ -35,16 +40,25 @@ public class ObjectLoader
     /// </summary>
     public ReadOnlyBuffer<Triangle>? GeometryBuffer { get; private set; }
 
+    public ReadOnlyBuffer<Light>? LightsBuffer { get; private set; }
+
     /// <summary>
     /// Gets the number of objects converted.
     /// </summary>
     public int ObjectCount { get; private set; }
-
+    
     /// <summary>
-    /// Loads a list of geometry objects in the geometry buffer.
+    /// Loads a scene into the appropriate buffers.
     /// </summary>
-    /// <param name="objects">The list of objects to load.</param>
-    public void LoadObjects(List<GeometryObject> objects)
+    public void LoadScene(CommonScene scene)
+    {
+        LoadObjects(scene.Geometry);
+        LoadLights(scene.Lights);
+
+        AllocateBuffers();
+    }
+
+    private void LoadObjects(List<GeometryObject> objects)
     {
         // Convert each object to a mesh and load the mesh with applied transformations.
         foreach (var obj in objects)
@@ -53,8 +67,24 @@ public class ObjectLoader
             LoadMesh(mesh, obj.Transformation);
             ObjectCount++;
         }
+    }
 
-        AllocateBuffers();
+    private void LoadLights(List<LightSource> lightSources)
+    {
+        // TODO: Handle non-point light sources
+        foreach (var lightSource in lightSources)
+        {
+            var position = lightSource.Transformation.Translation;
+            var color = lightSource.Color;
+            var power = lightSource.Power;
+            
+            if (lightSource is PointLight pointLight)
+            {
+                var radius = pointLight.Radius;
+                var light = new Light(position, color, power, radius);
+                _lights.Add(light);
+            }
+        }
     }
 
     /// <summary>
@@ -89,5 +119,6 @@ public class ObjectLoader
     private void AllocateBuffers()
     {
         GeometryBuffer = Device.AllocateReadOnlyBuffer(_triangles.ToArray());
+        LightsBuffer = Device.AllocateReadOnlyBuffer(_lights.ToArray());
     }
 }

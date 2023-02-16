@@ -10,6 +10,7 @@ using RenderSharp.Scenes;
 using RenderSharp.Scenes.Cameras;
 using RenderSharp.Scenes.Geometry;
 using RenderSharp.Scenes.Geometry.Tessellation.Shapes;
+using RenderSharp.Scenes.Lights;
 using System;
 using System.Numerics;
 
@@ -41,8 +42,19 @@ public class RenderViewer : IShaderRunner
         var scene = new Scene(camera);
 
         //scene.Objects.AddRange(import.Objects);
+        
+        scene.Lights.AddRange(new LightSource[]
+        {
+            new PointLight
+            {
+                Color = Vector3.One,
+                Power = 0.5f,
+                Radius = 0.25f,
+                Transformation = Transformation.CreateFromTranslation(new Vector3(0.5f, 2.5f, 0.5f)),
+            },
+        });
 
-        scene.Objects.AddRange(new GeometryObject[]
+        scene.Geometry.AddRange(new GeometryObject[]
         {
             new GeometryObject<UVSphere>(new UVSphere { Radius = 0.5f }) { Transformation = Transformation.CreateFromTranslation(new Vector3(0, 1, 2)) },
             new GeometryObject<UVSphere>(new UVSphere { Radius = 0.4f }) { Transformation = Transformation.CreateFromTranslation(new Vector3(-0.75f, 0.5f, 2.5f)) },

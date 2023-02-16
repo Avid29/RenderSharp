@@ -3,13 +3,14 @@
 using System.Numerics;
 
 namespace RenderSharp.RayTracing.Scene.Materials;
+
 public struct PhongMaterial
 {
-    public float3 diffuse;
-    public float3 specular;
-    public float3 ambient;
+    public float4 diffuse;
+    public float4 specular;
+    public float4 ambient;
 
-    public PhongMaterial(Vector3 diffuse, Vector3 specular, Vector3 ambient,
+    public PhongMaterial(Vector4 diffuse, Vector4 specular, Vector4 ambient,
         float cDiffuse = 1, float cSpecular = 1, float cAmbient = 1)
     {
         this.diffuse = diffuse * cDiffuse;
