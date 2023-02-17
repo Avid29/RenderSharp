@@ -101,7 +101,7 @@ public class RayTracingRenderer : IRenderer
         float imageRatio = (float)imageWidth / imageHeight;
         var imageSize = new int2(imageWidth, imageHeight);
         int tilePixelCount = tile.Width * tile.Height;
-        int samples = 4;
+        int samples = 16;
 
         // Prepare camera with aspect ratio
         var camera = new Camera(_camera.Transformation, _camera.Fov, imageRatio);

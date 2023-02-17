@@ -36,7 +36,7 @@ public partial struct ScatteredCameraCastShader : IComputeShader
         float v = 1 - (imageIndex.Y + vOffset) / imageSize.Y;
 
         // Create a ray from the camera and store it in the ray buffer.
-        var ray = Camera.CreateRay(camera, u, v, ref rand);
+        var ray = Camera.CreateRay(camera, u, v);
         randBuffer[fIndex] = rand;
         rayBuffer[fIndex] = ray;
     }
