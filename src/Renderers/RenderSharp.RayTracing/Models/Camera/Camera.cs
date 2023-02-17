@@ -1,11 +1,11 @@
 ﻿// Adam Dernis 2023
 
-using RenderSharp.RayTracing.Scene.Rays;
+using RenderSharp.RayTracing.Models.Rays;
 using RenderSharp.RayTracing.Utils;
 using RenderSharp.Scenes.Geometry;
 using System.Numerics;
 
-namespace RenderSharp.RayTracing.Scene.Camera;
+namespace RenderSharp.RayTracing.Models.Camera;
 
 /// <summary>
 /// A camera for creating rays.
@@ -16,6 +16,7 @@ public struct Camera
     public Vector3 u, v, n;
     public Vector3 horizontal, vertical;
     public Vector3 corner;
+    public float lensRadius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Camera"/> struct.
@@ -43,6 +44,9 @@ public struct Camera
         // TODO: Focal length
         var depth = this.n;
         this.corner = this.origin - (this.horizontal / 2) - (this.vertical / 2) - depth;
+
+        // TODO: Aperture
+        lensRadius = 0.01f;
     }
 
     /// <summary>
@@ -56,6 +60,23 @@ public struct Camera
     {
         var origin = c.origin;
         var direction = c.corner + (u * c.horizontal) + (v * c.vertical) - origin;
+        return Ray.Create(origin, direction);
+    }
+
+    /// <summary>
+    /// Creates a ray from the camera going from the origin through the uv coordinate on the camera projected view.
+    /// </summary>
+    /// <remarks>
+    /// TODO: Convert to an instance method.
+    /// Waiting on https://github.com/Sergio0694/ComputeSharp/issues/479
+    /// </remarks>
+    public static Ray CreateRay(Camera c, float u, float v, ref Rand rand)
+    {
+        var rd = c.lensRadius * rand.NextInUnitDisk();
+        var offset = c.u * rd.X + c.v * rd.Y;
+
+        var origin = c.origin + offset;
+        var direction = c.corner + (u * c.horizontal) + (v * c.vertical) - origin - offset;
         return Ray.Create(origin, direction);
     }
 }

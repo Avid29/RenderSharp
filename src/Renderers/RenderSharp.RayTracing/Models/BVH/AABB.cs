@@ -1,9 +1,9 @@
 ﻿// Adam Dernis 2023
 
-using RenderSharp.RayTracing.Scene.Rays;
+using RenderSharp.RayTracing.Models.Rays;
 using System.Numerics;
 
-namespace RenderSharp.RayTracing.Scene.BVH;
+namespace RenderSharp.RayTracing.Models.BVH;
 public struct AABB
 {
     public Vector3 highCorner;

@@ -2,12 +2,13 @@
 
 using CommunityToolkit.Diagnostics;
 using ComputeSharp;
-using RenderSharp.RayTracing.Scene.BVH;
-using RenderSharp.RayTracing.Scene.Camera;
-using RenderSharp.RayTracing.Scene.Geometry;
-using RenderSharp.RayTracing.Scene.Lighting;
-using RenderSharp.RayTracing.Scene.Materials;
-using RenderSharp.RayTracing.Scene.Rays;
+using RenderSharp.RayTracing.Models;
+using RenderSharp.RayTracing.Models.BVH;
+using RenderSharp.RayTracing.Models.Camera;
+using RenderSharp.RayTracing.Models.Geometry;
+using RenderSharp.RayTracing.Models.Lighting;
+using RenderSharp.RayTracing.Models.Materials;
+using RenderSharp.RayTracing.Models.Rays;
 using RenderSharp.RayTracing.Setup;
 using RenderSharp.RayTracing.Shaders.Debugging;
 using RenderSharp.RayTracing.Shaders.Debugging.Enums;
@@ -100,69 +101,79 @@ public class RayTracingRenderer : IRenderer
         float imageRatio = (float)imageWidth / imageHeight;
         var imageSize = new int2(imageWidth, imageHeight);
         int tilePixelCount = tile.Width * tile.Height;
+        int samples = 4;
 
         // Prepare camera with aspect ratio
         var camera = new Camera(_camera.Transformation, _camera.Fov, imageRatio);
 
         // Allocate buffers
         RenderAnalyzer?.LogProcess("Allocate Buffers", ProcessCategory.Rendering);
+        ReadWriteBuffer<Rand> randBuffer = Device.AllocateReadWriteBuffer<Rand>(tilePixelCount);
         ReadWriteTexture3D<int> bvhStack = Device.AllocateReadWriteTexture3D<int>(tile.Width, tile.Height, _bvhDepth + 1);
         ReadWriteBuffer<Ray> rayBuffer = Device.AllocateReadWriteBuffer<Ray>(tilePixelCount);
         ReadWriteBuffer<Ray> shadowRayBuffer = Device.AllocateReadWriteBuffer<Ray>(tilePixelCount * _lightsBuffer.Length);
         ReadWriteBuffer<GeometryCollision> rayCastBuffer = Device.AllocateReadWriteBuffer<GeometryCollision>(tilePixelCount);
+        IReadWriteNormalizedTexture2D<float4> colorBuffer = Device.AllocateReadWriteTexture2D<Rgba32, float4>(tile.Width, tile.Height);
         IReadWriteNormalizedTexture2D<float4> attenuationBuffer = Device.AllocateReadWriteTexture2D<Rgba32, float4>(tile.Width, tile.Height);
 
         var material = new PhongMaterial(float4.UnitZ, float4.Zero, float4.UnitZ, cAmbient: 0.2f);
 
         // Create shaders
-        var cameraShader = new CameraCastShader(tile, imageSize, camera, rayBuffer);
-        var collisionShader = new GeometryCollisionShader(tile, _geometryBuffer, rayBuffer, rayCastBuffer);
+        //var cameraShader = new CameraCastShader(tile, imageSize, camera, rayBuffer);
+        var cameraShader = new ScatteredCameraCastShader(tile, imageSize, camera, rayBuffer, randBuffer);
+        var collisionShader = new GeometryCollisionShader(_geometryBuffer, rayBuffer, rayCastBuffer);
         //var collisionShader = new GeometryCollisionBVHTreeShader(tile, bvhStack, _bvhBuffer, _geometryBuffer, rayBuffer, rayCastBuffer);
-        var shadowCastShader = new ShadowCastShader(tile, _lightsBuffer, shadowRayBuffer, rayCastBuffer);
-        var shadowIntersectShader = new ShadowIntersectionShader(tile, _geometryBuffer, shadowRayBuffer);
-        var materialShader = new PhongShader(tile, 0, material, _lightsBuffer, rayBuffer, shadowRayBuffer, rayCastBuffer, RenderBuffer);
-        var skyShader = new SolidSkyShader(tile, new float4(0.25f, 0.35f, 0.5f, 1f), rayBuffer, rayCastBuffer, attenuationBuffer, RenderBuffer);
+        var shadowCastShader = new ShadowCastShader(_lightsBuffer, shadowRayBuffer, rayCastBuffer);
+        var shadowIntersectShader = new ShadowIntersectionShader(_geometryBuffer, shadowRayBuffer);
+        var materialShader = new PhongShader(0, material, _lightsBuffer, rayBuffer, shadowRayBuffer, rayCastBuffer, colorBuffer);
+        var skyShader = new SolidSkyShader(new float4(0.25f, 0.35f, 0.5f, 1f), rayBuffer, rayCastBuffer, attenuationBuffer, colorBuffer);
+        var sampleCopyShader = new SampleCopyShader(tile, colorBuffer, RenderBuffer, samples);
 
         RenderAnalyzer?.LogProcess("Render Loop", ProcessCategory.Rendering);
         using var context = Device.CreateComputeContext();
-        // Initialize the attenuation buffer
-        //context.Fill(RenderBuffer, float4.Zero);
-        context.Fill(attenuationBuffer, float4.One);
 
-        // Create the rays from the camera
-        context.For(tile.Width, tile.Height, cameraShader);
-        context.Barrier(rayBuffer);
-        
-
-        #pragma warning disable
-
-        for (int i = 0; i < 1; i++)
+        for (int s = 0; s < samples; s++)
         {
-            // Find object collision and cache the resulting ray cast 
-            context.For(tile.Width, tile.Height, collisionShader);
-            context.Barrier(rayCastBuffer);
+            var initShader = new SampleInitializeShader(attenuationBuffer, colorBuffer, randBuffer, s);
 
-            // Create shadow ray casts
-            context.For(tile.Width, tile.Height, _lightsBuffer.Length, shadowCastShader);
-            context.Barrier(shadowRayBuffer);
+            // Initialize the buffers
+            context.For(tile.Width, tile.Height, initShader);
 
-            //context.For(tile.Width, tile.Height, new RayBufferDumpShader(tile, shadowRayBuffer, RenderBuffer, (int)RayDumpValueType.Direction));
-            //return;
+            // Create the rays from the camera
+            context.For(tile.Width, tile.Height, cameraShader);
+            context.Barrier(rayBuffer);
 
-            // Detect shadow ray collisions
-            context.For(tile.Width, tile.Height, _lightsBuffer.Length, shadowIntersectShader);
-            context.Barrier(shadowRayBuffer);
+            // Bounces
+            for (int b = 0; b < 1; b++)
+            {
+                // Find object collision and cache the resulting ray cast 
+                context.For(tile.Width, tile.Height, collisionShader);
+                context.Barrier(rayCastBuffer);
 
-            // Apply object materials
-            context.For(tile.Width, tile.Height, materialShader);
-            context.Barrier(attenuationBuffer);
+                // Create shadow ray casts
+                context.For(tile.Width, tile.Height, _lightsBuffer.Length, shadowCastShader);
+                context.Barrier(shadowRayBuffer);
+
+                // Detect shadow ray collisions
+                context.For(tile.Width, tile.Height, _lightsBuffer.Length, shadowIntersectShader);
+                context.Barrier(shadowRayBuffer);
+
+                // Apply object materials
+                context.For(tile.Width, tile.Height, materialShader);
+                context.Barrier(attenuationBuffer);
+                context.Barrier(colorBuffer);
+
+                // Apply sky material
+                context.For(tile.Width, tile.Height, skyShader);
+                context.Barrier(attenuationBuffer);
+                context.Barrier(colorBuffer);
+
+                //context.For(width, height, new RayCastBufferDumpShader(rayCastBuffer, _geometryBuffer, RenderBuffer, _objectCount, (int)RayCastDumpValueType.Object));
+            }
+
+            // Copy color buffer to RenderBuffer
+            context.For(tile.Width, tile.Height, sampleCopyShader);
             context.Barrier(RenderBuffer);
-
-            // Apply sky material
-            context.For(tile.Width, tile.Height, skyShader);
-            context.Barrier(RenderBuffer);
-
-            //context.For(width, height, new RayCastBufferDumpShader(rayCastBuffer, _geometryBuffer, RenderBuffer, _objectCount, (int)RayCastDumpValueType.Object));
         }
 
         // Dump the ray cast's directions to the render buffer (for debugging)

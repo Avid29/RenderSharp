@@ -2,7 +2,7 @@
 
 using System.Numerics;
 
-namespace RenderSharp.RayTracing.Scene.Materials;
+namespace RenderSharp.RayTracing.Models.Materials;
 
 public struct PhongMaterial
 {

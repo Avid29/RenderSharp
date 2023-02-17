@@ -1,9 +1,9 @@
 ﻿// Adam Dernis 2023
 
 using ComputeSharp;
-using RenderSharp.RayTracing.Scene.Lighting;
-using RenderSharp.RayTracing.Scene.Materials;
-using RenderSharp.RayTracing.Scene.Rays;
+using RenderSharp.RayTracing.Models.Lighting;
+using RenderSharp.RayTracing.Models.Materials;
+using RenderSharp.RayTracing.Models.Rays;
 using RenderSharp.Utilities.Tiles;
 using System;
 
@@ -13,7 +13,6 @@ namespace RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
 [EmbeddedBytecode(DispatchAxis.XY)]
 public partial struct PhongShader : IComputeShader
 {
-    private readonly Tile tile;
     private readonly int matId;
     private readonly PhongMaterial material;
 
@@ -21,7 +20,7 @@ public partial struct PhongShader : IComputeShader
     private readonly ReadWriteBuffer<Ray> rayBuffer;
     private readonly ReadWriteBuffer<Ray> shadowCastBuffer;
     private readonly ReadWriteBuffer<GeometryCollision> rayCastBuffer;
-    private readonly IReadWriteNormalizedTexture2D<float4> renderBuffer;
+    private readonly IReadWriteNormalizedTexture2D<float4> colorBuffer;
     
     /// <inheritdoc/>
     public void Execute()
@@ -30,7 +29,6 @@ public partial struct PhongShader : IComputeShader
         // in both 2D textures and flat buffers
         int2 index2D = ThreadIds.XY;
         int fIndex = (index2D.Y * DispatchSize.X) + index2D.X;
-        int2 imageIndex = index2D + tile.offset;
         
         var cast = rayCastBuffer[fIndex];
         var ray = rayBuffer[fIndex];
@@ -52,7 +50,7 @@ public partial struct PhongShader : IComputeShader
         }
 
         // Sum ambient, diffuse, and specular components
-        renderBuffer[imageIndex] += material.ambient;
-        renderBuffer[imageIndex] += material.diffuse * diffuseIntensity;
+        colorBuffer[index2D] += material.ambient;
+        colorBuffer[index2D] += material.diffuse * diffuseIntensity;
     }
 }

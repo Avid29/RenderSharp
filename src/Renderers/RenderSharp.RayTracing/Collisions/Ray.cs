@@ -1,6 +1,6 @@
 ﻿// Adam Dernis 2023
 
-namespace RenderSharp.RayTracing.Scene.Rays;
+namespace RenderSharp.RayTracing.Models.Rays;
 
 /// <summary>
 /// A ray with an origin and a direction.

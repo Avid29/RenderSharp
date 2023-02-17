@@ -1,6 +1,6 @@
 ﻿// Adam Dernis 2023
 
-namespace RenderSharp.RayTracing.Scene.Rays;
+namespace RenderSharp.RayTracing.Models.Rays;
 
 /// <summary>
 /// Primary ray collision information tracked for shading.

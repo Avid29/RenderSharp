@@ -1,6 +1,6 @@
 ﻿// Adam Dernis 2023
 
-using RenderSharp.RayTracing.Scene.Rays;
+using RenderSharp.RayTracing.Models.Rays;
 
 namespace RenderSharp.RayTracing.Shaders.Debugging.Enums;
 

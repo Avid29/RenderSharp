@@ -1,10 +1,9 @@
 ﻿// Adam Dernis 2023
 
 using ComputeSharp;
-using RenderSharp.RayTracing.Scene.BVH;
-using RenderSharp.RayTracing.Scene.Geometry;
-using RenderSharp.RayTracing.Scene.Rays;
-using RenderSharp.Utilities.Tiles;
+using RenderSharp.RayTracing.Models.BVH;
+using RenderSharp.RayTracing.Models.Geometry;
+using RenderSharp.RayTracing.Models.Rays;
 
 namespace RenderSharp.RayTracing.Shaders.Rendering;
 
@@ -15,7 +14,6 @@ namespace RenderSharp.RayTracing.Shaders.Rendering;
 [EmbeddedBytecode(DispatchAxis.XY)]
 public readonly partial struct GeometryCollisionBVHTreeShader : IComputeShader
 {
-    private readonly Tile tile;
     private readonly ReadWriteTexture3D<int> bvhStackBuffer;
     private readonly ReadOnlyBuffer<BVHNode> bvhTreeBuffer;
     private readonly ReadOnlyBuffer<Triangle> geometryBuffer;

@@ -1,8 +1,8 @@
 ﻿// Adam Dernis 2023
 
 using ComputeSharp;
-using RenderSharp.RayTracing.Scene.Geometry;
-using RenderSharp.RayTracing.Scene.Lighting;
+using RenderSharp.RayTracing.Models.Geometry;
+using RenderSharp.RayTracing.Models.Lighting;
 using RenderSharp.Scenes.Geometry;
 using RenderSharp.Scenes.Geometry.Meshes;
 using RenderSharp.Scenes.Lights;

@@ -2,7 +2,7 @@
 
 using System.Numerics;
 
-namespace RenderSharp.RayTracing.Scene.Lighting;
+namespace RenderSharp.RayTracing.Models.Lighting;
 
 public struct Light
 {

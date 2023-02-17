@@ -1,9 +1,8 @@
 ﻿// Adam Dernis 2023
 
 using ComputeSharp;
-using RenderSharp.RayTracing.Scene.Geometry;
-using RenderSharp.RayTracing.Scene.Rays;
-using RenderSharp.Utilities.Tiles;
+using RenderSharp.RayTracing.Models.Geometry;
+using RenderSharp.RayTracing.Models.Rays;
 
 namespace RenderSharp.RayTracing.Shaders.Rendering;
 
@@ -14,7 +13,6 @@ namespace RenderSharp.RayTracing.Shaders.Rendering;
 [EmbeddedBytecode(DispatchAxis.XYZ)]
 public partial struct ShadowIntersectionShader : IComputeShader
 {
-    private readonly Tile tile;
     private readonly ReadOnlyBuffer<Triangle> geometryBuffer;
     private readonly ReadWriteBuffer<Ray> shadowCastBuffer;
 

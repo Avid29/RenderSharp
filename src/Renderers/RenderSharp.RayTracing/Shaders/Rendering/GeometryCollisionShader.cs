@@ -1,10 +1,8 @@
 ﻿// Adam Dernis 2023
 
 using ComputeSharp;
-using RenderSharp.RayTracing.Scene.Geometry;
-using RenderSharp.RayTracing.Scene.Lighting;
-using RenderSharp.RayTracing.Scene.Rays;
-using RenderSharp.Utilities.Tiles;
+using RenderSharp.RayTracing.Models.Geometry;
+using RenderSharp.RayTracing.Models.Rays;
 
 namespace RenderSharp.RayTracing.Shaders.Rendering;
 
@@ -15,7 +13,6 @@ namespace RenderSharp.RayTracing.Shaders.Rendering;
 [EmbeddedBytecode(DispatchAxis.XY)]
 public readonly partial struct GeometryCollisionShader : IComputeShader
 {
-    private readonly Tile tile;
     private readonly ReadOnlyBuffer<Triangle> geometryBuffer;
     private readonly ReadWriteBuffer<Ray> rayBuffer;
     private readonly ReadWriteBuffer<GeometryCollision> rayCastBuffer;

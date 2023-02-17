@@ -1,8 +1,8 @@
 ﻿// Adam Dernis 2023
 
 using ComputeSharp;
-using RenderSharp.RayTracing.Scene.BVH;
-using RenderSharp.RayTracing.Scene.Geometry;
+using RenderSharp.RayTracing.Models.BVH;
+using RenderSharp.RayTracing.Models.Geometry;
 using System.Runtime.InteropServices;
 
 namespace RenderSharp.RayTracing.Setup;

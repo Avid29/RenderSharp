@@ -1,9 +1,8 @@
 ﻿// Adam Dernis 2023
 
 using ComputeSharp;
-using RenderSharp.RayTracing.Scene.Lighting;
-using RenderSharp.RayTracing.Scene.Rays;
-using RenderSharp.Utilities.Tiles;
+using RenderSharp.RayTracing.Models.Lighting;
+using RenderSharp.RayTracing.Models.Rays;
 
 namespace RenderSharp.RayTracing.Shaders.Rendering;
 
@@ -11,7 +10,6 @@ namespace RenderSharp.RayTracing.Shaders.Rendering;
 [EmbeddedBytecode(DispatchAxis.XYZ)]
 public partial struct ShadowCastShader : IComputeShader
 {
-    private readonly Tile tile;
     private readonly ReadOnlyBuffer<Light> lightsBuffer;
     private readonly ReadWriteBuffer<Ray> shadowCastBuffer;
     private readonly ReadWriteBuffer<GeometryCollision> rayCastBuffer;
