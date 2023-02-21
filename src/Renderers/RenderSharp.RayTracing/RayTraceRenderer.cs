@@ -101,7 +101,7 @@ public class RayTracingRenderer : IRenderer
         float imageRatio = (float)imageWidth / imageHeight;
         var imageSize = new int2(imageWidth, imageHeight);
         int tilePixelCount = tile.Width * tile.Height;
-        int samples = 16;
+        int samples = 1;
 
         // Prepare camera with aspect ratio
         var camera = new Camera(_camera.Transformation, _camera.Fov, imageRatio);
@@ -116,7 +116,8 @@ public class RayTracingRenderer : IRenderer
         IReadWriteNormalizedTexture2D<float4> colorBuffer = Device.AllocateReadWriteTexture2D<Rgba32, float4>(tile.Width, tile.Height);
         IReadWriteNormalizedTexture2D<float4> attenuationBuffer = Device.AllocateReadWriteTexture2D<Rgba32, float4>(tile.Width, tile.Height);
 
-        var material = new PhongMaterial(float4.UnitZ, float4.Zero, float4.UnitZ, cAmbient: 0.2f);
+        var material = new PhongMaterial(Vector3.UnitZ, Vector3.UnitZ, Vector3.UnitZ, 0.9f,
+                            cAmbient: 0.2f);
 
         // Create shaders
         //var cameraShader = new CameraCastShader(tile, imageSize, camera, rayBuffer);

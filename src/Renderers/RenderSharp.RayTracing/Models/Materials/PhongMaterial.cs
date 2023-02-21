@@ -9,12 +9,14 @@ public struct PhongMaterial
     public float4 diffuse;
     public float4 specular;
     public float4 ambient;
+    public float roughness;
 
-    public PhongMaterial(Vector4 diffuse, Vector4 specular, Vector4 ambient,
+    public PhongMaterial(Vector3 diffuse, Vector3 specular, Vector3 ambient, float roughness,
         float cDiffuse = 1, float cSpecular = 1, float cAmbient = 1)
     {
-        this.diffuse = diffuse * cDiffuse;
-        this.specular = specular * cSpecular;
-        this.ambient = ambient * cAmbient;
+        this.diffuse = new float4(diffuse * cDiffuse, 1);
+        this.specular = new float4(specular * cSpecular, 1);
+        this.ambient = new float4(ambient * cAmbient, 1);
+        this.roughness = roughness;
     }
 }
