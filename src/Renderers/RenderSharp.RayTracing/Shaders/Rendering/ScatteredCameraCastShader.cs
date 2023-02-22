@@ -17,6 +17,8 @@ public partial struct ScatteredCameraCastShader : IComputeShader
     private readonly Camera camera;
     private readonly ReadWriteBuffer<Ray> rayBuffer;
     private readonly ReadWriteBuffer<Rand> randBuffer;
+    private int sample;
+    private int samplesSqrt;
 
     public void Execute()
     {
@@ -28,8 +30,12 @@ public partial struct ScatteredCameraCastShader : IComputeShader
 
         Rand rand = randBuffer[fIndex];
 
-        float uOffset = rand.NextFloat();
-        float vOffset = rand.NextFloat();
+        int row = sample % samplesSqrt;
+        int col = sample / samplesSqrt;
+
+        int sSqrt1 = samplesSqrt + 1;
+        float uOffset = (float)row / sSqrt1;
+        float vOffset = (float)col / sSqrt1;
 
         // Calculate the camera u and v normalized pixel coordinates.
         float u = (imageIndex.X + uOffset) / imageSize.X;
