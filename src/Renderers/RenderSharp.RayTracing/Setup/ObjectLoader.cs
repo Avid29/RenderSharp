@@ -115,9 +115,10 @@ public class ObjectLoader
             var c = LoadVertex(tri.C, transformation);
 
             // Track the id of the object the triangle belongs to.
-            // TODO: Assign Material ID
             int objectId = ObjectCount;
-            var triangle = new Triangle(a, b, c, 0, objectId);
+            // TODO: Properly assign Material ID
+            int matId = ObjectCount;
+            var triangle = new Triangle(a, b, c, matId, objectId);
             _triangles.Add(triangle);
         }
     }

@@ -4,14 +4,13 @@ using ComputeSharp;
 using RenderSharp.RayTracing.Models.Lighting;
 using RenderSharp.RayTracing.Models.Materials;
 using RenderSharp.RayTracing.Models.Rays;
-using RenderSharp.Utilities.Tiles;
-using System;
+using RenderSharp.RayTracing.Shaders.Shading.Interfaces;
 
 namespace RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
 
 [AutoConstructor]
 [EmbeddedBytecode(DispatchAxis.XY)]
-public partial struct PhongBlinnShader : IComputeShader
+public partial struct PhongBlinnShader : IMaterialShader
 {
     private readonly int matId;
     private readonly PhongMaterial material;
@@ -43,12 +42,16 @@ public partial struct PhongBlinnShader : IComputeShader
         for (int i = 0; i < lightsBuffer.Length; i++)
         {
             var fShadowIndex = (i * DispatchSize.X * DispatchSize.Y) + (index2D.Y * DispatchSize.X) + index2D.X; 
-            var dir = shadowCastBuffer[fShadowIndex].direction;
-            if (Hlsl.Length(dir) == 0)
+            var l = shadowCastBuffer[fShadowIndex].direction;
+            if (Hlsl.Length(l) == 0)
                 continue;
-            
-            diffuseIntensity += lightsBuffer[i].color * Hlsl.Dot(cast.smoothNormal, shadowCastBuffer[fShadowIndex].direction);
-            specularIntensity += lightsBuffer[i].color * Hlsl.Pow(Hlsl.Dot(cast.smoothNormal, Hlsl.Normalize(dir - ray.direction)), material.roughness);
+
+            var n = cast.smoothNormal;
+            var v = ray.direction;
+            var h = Hlsl.Normalize(l - v);
+
+            diffuseIntensity += lightsBuffer[i].color * Hlsl.Max(Hlsl.Dot(n, l), 0f);
+            specularIntensity += lightsBuffer[i].color * Hlsl.Pow(Hlsl.Dot(n, h), material.roughness);
         }
 
         // Sum ambient, diffuse, and specular components

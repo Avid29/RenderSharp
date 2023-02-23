@@ -2,6 +2,7 @@
 // Adam Dernis 2023
 
 using ComputeSharp;
+using RenderSharp.Utilities.Tiles;
 
 namespace RenderSharp.RayTracing.Shaders.Rendering;
 
@@ -9,13 +10,17 @@ namespace RenderSharp.RayTracing.Shaders.Rendering;
 [EmbeddedBytecode(DispatchAxis.XY)]
 public partial struct SampleCopyShader : IComputeShader
 { 
+    private readonly Tile tile;
     private readonly IReadWriteNormalizedTexture2D<float4> colorBuffer;
-    private readonly IReadWriteNormalizedTexture2D<float4> colorSumBuffer;
+    private readonly IReadWriteNormalizedTexture2D<float4> RenderBuffer;
+    private readonly int samples;
 
     /// <inheritdoc/>
     public void Execute()
     {
-        var index2D = ThreadIds.XY;
-        colorSumBuffer[index2D] += colorBuffer[index2D];
+        var sourceIndex = ThreadIds.XY;
+        var destinationIndex = sourceIndex + tile.offset;
+
+        RenderBuffer[destinationIndex] += colorBuffer[sourceIndex] / samples;
     }
 }
