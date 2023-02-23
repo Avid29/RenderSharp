@@ -12,6 +12,7 @@ using RenderSharp.Scenes.Geometry;
 using RenderSharp.Scenes.Geometry.Tessellation.Shapes;
 using RenderSharp.Scenes.Lights;
 using System;
+using System.Linq;
 using System.Numerics;
 
 using Plane = RenderSharp.Scenes.Geometry.Tessellation.Shapes.Plane;
@@ -35,14 +36,14 @@ public class RenderViewer : IShaderRunner
     public void Setup<TManager>(IRenderer renderer)
         where TManager : RenderManager, new()
     {
-        //var import = WaveFrontImporter.Parse(@"C:\Users\avid2\source\repos\Personal\RenderSharp\samples\RenderSharp.Samples.WinUI\Assets\test.obj");
+        var import = WaveFrontImporter.Parse(@"C:\Users\avid2\source\repos\Personal\RenderSharp\samples\RenderSharp.Samples.WinUI\Assets\Scene.obj");
 
         //var camera = Camera.CreateFromLookAt(new Vector3(0f, 5f, 0f), new Vector3(0, 0f, 0f), 75);
         var camera = Camera.CreateFromEuler(new Vector3(0f, 1f, 0f), new Vector3(0f, 180f, 0f), 75);
         var scene = new Scene(camera);
 
-        //scene.Objects.AddRange(import.Objects);
-        
+        scene.Geometry.AddRange(import.Objects.OfType<GeometryObject>());
+
         scene.Lights.AddRange(new LightSource[]
         {
             new PointLight
@@ -52,27 +53,13 @@ public class RenderViewer : IShaderRunner
                 Radius = 0.25f,
                 Transformation = Transformation.CreateFromTranslation(new Vector3(0.5f, 3.5f, 0.5f)),
             },
-            new PointLight
-            {
-                Color = Vector3.One,
-                Power = 0.5f,
-                Radius = 0.25f,
-                Transformation = Transformation.CreateFromTranslation(new Vector3(-1.5f, 0.5f, 1f)),
-            },
-        });
-
-        scene.Geometry.AddRange(new GeometryObject[]
-        {
-            new GeometryObject<UVSphere>(new UVSphere { Radius = 0.5f }) { Transformation = Transformation.CreateFromTranslation(new Vector3(0, 1, 2)) },
-            new GeometryObject<UVSphere>(new UVSphere { Radius = 0.4f }) { Transformation = Transformation.CreateFromTranslation(new Vector3(-0.75f, 0.5f, 2.5f)) },
-            new GeometryObject<Plane>(new Plane { Size = 1 })
-            {
-                Transformation = new Transformation
-                {
-                    Translation = new Vector3(-1.25f, 0, 4),
-                    Scale = new Vector3(5.5f, 1, 8),
-                }
-            },
+            //new PointLight
+            //{
+            //    Color = Vector3.One,
+            //    Power = 0.5f,
+            //    Radius = 0.25f,
+            //    Transformation = Transformation.CreateFromTranslation(new Vector3(-1.5f, 0.5f, 1f)),
+            //},
         });
 
         _renderManager = new TManager();
