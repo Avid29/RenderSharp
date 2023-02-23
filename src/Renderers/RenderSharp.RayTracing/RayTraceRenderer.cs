@@ -115,11 +115,14 @@ public class RayTracingRenderer : IRenderer
         ReadWriteBuffer<Ray> rayBuffer = Device.AllocateReadWriteBuffer<Ray>(tilePixelCount);
         ReadWriteBuffer<Ray> shadowRayBuffer = Device.AllocateReadWriteBuffer<Ray>(tilePixelCount * _lightsBuffer.Length);
         ReadWriteBuffer<GeometryCollision> rayCastBuffer = Device.AllocateReadWriteBuffer<GeometryCollision>(tilePixelCount);
+        IReadWriteNormalizedTexture2D<float4> colorSumBuffer = Device.AllocateReadWriteTexture2D<Rgba32, float4>(tile.Width, tile.Height);
         IReadWriteNormalizedTexture2D<float4> colorBuffer = Device.AllocateReadWriteTexture2D<Rgba32, float4>(tile.Width, tile.Height);
         IReadWriteNormalizedTexture2D<float4> attenuationBuffer = Device.AllocateReadWriteTexture2D<Rgba32, float4>(tile.Width, tile.Height);
 
-        var material = new PhongMaterial(Vector3.UnitX, Vector3.UnitY, Vector3.UnitZ, 16f,
-                            cDiffuse: 1f, cSpecular: 1f, cAmbient: 1f);
+
+        var color = new Vector3(0.2f, 0.5f, 0.8f);
+        var material = new PhongMaterial(color, Vector3.One, color, 80f,
+                            cDiffuse: 0.8f, cSpecular: 0.9f, cAmbient: 0.2f);
 
         // Create shaders
         var cameraShader = new CameraCastShader(tile, imageSize, camera, rayBuffer);
@@ -127,14 +130,17 @@ public class RayTracingRenderer : IRenderer
         //var collisionShader = new GeometryCollisionBVHTreeShader(tile, bvhStack, _bvhBuffer, _geometryBuffer, rayBuffer, rayCastBuffer);
         var shadowCastShader = new ShadowCastShader(_lightsBuffer, shadowRayBuffer, rayCastBuffer);
         var shadowIntersectShader = new ShadowIntersectionShader(_vertexBuffer, _geometryBuffer, shadowRayBuffer);
-        var materialShader = new PhongBlinnShader(0, material, _lightsBuffer, rayBuffer, shadowRayBuffer, rayCastBuffer, colorBuffer);
+        var materialShader = new PhongShader(0, material, _lightsBuffer, rayBuffer, shadowRayBuffer, rayCastBuffer, colorBuffer);
         var skyShader = new SolidSkyShader(new float4(0.25f, 0.35f, 0.5f, 1f), rayBuffer, rayCastBuffer, attenuationBuffer, colorBuffer);
-        var sampleCopyShader = new SampleCopyShader(tile, colorBuffer, RenderBuffer, samples);
+        var sampleCopyShader = new SampleCopyShader(colorBuffer, colorSumBuffer);
+        var tileCopyShader = new TileCopyShader(tile, colorSumBuffer, RenderBuffer, samples);
 
         RenderAnalyzer?.LogProcess("Render Loop", ProcessCategory.Rendering);
         using var context = Device.CreateComputeContext();
 
         #pragma warning disable
+
+        context.Fill(colorSumBuffer, float4.Zero);
 
         for (int s = 0; s < samples; s++)
         {
@@ -177,10 +183,13 @@ public class RayTracingRenderer : IRenderer
                 context.Barrier(colorBuffer);
             }
 
-            // Copy color buffer to RenderBuffer
+            // Copy color buffer to color sum buffer
             context.For(tile.Width, tile.Height, sampleCopyShader);
-            context.Barrier(RenderBuffer);
+            context.Barrier(colorSumBuffer);
         }
+
+        context.For(tile.Width, tile.Height, tileCopyShader);
+        context.Barrier(RenderBuffer);
 
         // Dump the ray cast's directions to the render buffer (for debugging)
         //context.For(width, height, new RayCastBufferDumpShader(rayCastBuffer, _geometryBuffer, RenderBuffer, _objectCount, (int)RayCastDumpValueType.Distance));
