@@ -61,6 +61,7 @@ public partial class WaveFrontImporter
 
         int v = int.Parse(split[0]);
         var vector = _vertices[v-1];
+        Vector3 vertexNormal = Vector3.Zero;
 
         // TODO: Vertex Textures
         //if (split.Length > 2)
@@ -68,14 +69,13 @@ public partial class WaveFrontImporter
         //    int vt = int.Parse(split[1]);
         //}
 
-        // TODO: Vertex Normals
-        //if (split.Length > 3)
-        //{
-        //    int vn = int.Parse(split[2]);
-        //    var vertexNormal = _vertexNormals[vn-1];
-        //}
+        if (split.Length >= 3)
+        {
+            int vn = int.Parse(split[2]);
+            vertexNormal = _vertexNormals[vn - 1];
+        }
 
-        return new Vertex(vector);
+        return new Vertex(vector, vertexNormal);
     }
 
     public void ParseVertexLine(string line)
@@ -95,6 +95,21 @@ public partial class WaveFrontImporter
 
         var vector = new Vector3(x, y, z);
         _vertices.Add(vector);
+    }
+
+    public void ParseVertexNormalLine(string line)
+    {
+        var split = line.Split(' ');
+
+        if (split.Length is not 4)
+            return;
+        
+        var x = float.Parse(split[1]);
+        var y = float.Parse(split[2]);
+        var z = float.Parse(split[3]);
+
+        var vector = new Vector3(x, y, z);
+        _vertexNormals.Add(vector);
     }
 
     private void FinishObject()

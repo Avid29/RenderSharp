@@ -27,6 +27,7 @@ public partial class WaveFrontImporter
             {"o", ParseObjectLine},
             {"f", ParseFaceLine},
             {"v", ParseVertexLine},
+            {"vn", ParseVertexNormalLine},
         };
     }
 
