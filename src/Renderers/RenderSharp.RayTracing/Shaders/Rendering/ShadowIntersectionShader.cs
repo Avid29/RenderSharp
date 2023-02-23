@@ -13,6 +13,7 @@ namespace RenderSharp.RayTracing.Shaders.Rendering;
 [EmbeddedBytecode(DispatchAxis.XYZ)]
 public partial struct ShadowIntersectionShader : IComputeShader
 {
+    private readonly ReadOnlyBuffer<Vertex> vertexBuffer;
     private readonly ReadOnlyBuffer<Triangle> geometryBuffer;
     private readonly ReadWriteBuffer<Ray> shadowCastBuffer;
 
@@ -36,7 +37,12 @@ public partial struct ShadowIntersectionShader : IComputeShader
         for (int i = 0; i < geometryBuffer.Length; i++)
         {
             var tri = geometryBuffer[i];
-            if (Triangle.IsHit(tri, ray, out var cast))
+            VertexTriangle vTri;
+            vTri.triangle = tri;
+            vTri.a = vertexBuffer[tri.a];
+            vTri.b = vertexBuffer[tri.b];
+            vTri.c = vertexBuffer[tri.c];
+            if (VertexTriangle.IsHit(vTri, ray, out var cast))
             {
                 shadowCastBuffer[fLightIndex].direction = float3.Zero;
                 return;

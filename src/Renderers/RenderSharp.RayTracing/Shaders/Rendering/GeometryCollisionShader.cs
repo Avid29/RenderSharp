@@ -13,6 +13,7 @@ namespace RenderSharp.RayTracing.Shaders.Rendering;
 [EmbeddedBytecode(DispatchAxis.XY)]
 public readonly partial struct GeometryCollisionShader : IComputeShader
 {
+    private readonly ReadOnlyBuffer<Vertex> vertexBuffer;
     private readonly ReadOnlyBuffer<Triangle> geometryBuffer;
     private readonly ReadWriteBuffer<Ray> rayBuffer;
     private readonly ReadWriteBuffer<GeometryCollision> rayCastBuffer;
@@ -29,17 +30,22 @@ public readonly partial struct GeometryCollisionShader : IComputeShader
         if (Hlsl.Length(ray.direction) == 0)
             return;
 
-        var rayCast = GeometryCollision.Create(0, 0, 0);
+        var rayCast = GeometryCollision.Create(0, 0, 0, 0, 0);
 
         // Track the nearest scene collision
         float distance = float.MaxValue;
 
         // Check for collision with every triangle in the geometry buffer
-        // TODO: Use bounding volume hierarchy (BVH tree) to decrease collision search time
         for (int i = 0; i < geometryBuffer.Length; i++)
         {
             var tri = geometryBuffer[i];
-            if (Triangle.IsHit(tri, ray, distance, out var cast))
+            VertexTriangle vTri;
+            vTri.triangle = tri;
+            vTri.a = vertexBuffer[tri.a];
+            vTri.b = vertexBuffer[tri.b];
+            vTri.c = vertexBuffer[tri.c];
+
+            if (VertexTriangle.IsHit(vTri, ray, distance, out var cast))
             {
                 distance = cast.distance;
                 cast.geoId = i;

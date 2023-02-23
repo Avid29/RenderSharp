@@ -12,16 +12,14 @@ namespace RenderSharp.RayTracing.Models.Geometry;
 /// </summary>
 public struct Triangle
 {
-    // TODO: Vertex Normals
-
-    public float3 a, b, c;
+    public int a, b, c;
     public int matId;
     public int objId;
     
     /// <summary>
     /// Initializes a new instance of the <see cref="Triangle"/> struct.
     /// </summary>
-    public Triangle(float3 a, float3 b, float3 c, int matId, int objId)
+    public Triangle(int a, int b, int c, int matId, int objId)
     {
         this.a = a;
         this.b = b;
@@ -34,7 +32,7 @@ public struct Triangle
     /// TODO: Replace with constructor
     /// Waiting on https://github.com/Sergio0694/ComputeSharp/issues/481
     /// </remarks>
-    public static Triangle Create(float3 a, float3 b, float3 c, int matId, int objId)
+    public static Triangle Create(int a, int b, int c, int matId, int objId)
     {
         Triangle tri;
         tri.a = a;
@@ -45,69 +43,23 @@ public struct Triangle
         return tri;
     }
 
-    /// <remarks>
-    /// TODO: Convert to an instance method.
-    /// Waiting on https://github.com/Sergio0694/ComputeSharp/issues/479
-    /// </remarks>
-    public static bool IsHit(Triangle tri, Ray ray, out GeometryCollision cast)
-        => IsHit(tri, ray, float.MaxValue, out cast);
-
-    /// <remarks>
-    /// TODO: Convert to an instance method.
-    /// Waiting on https://github.com/Sergio0694/ComputeSharp/issues/479
-    /// </remarks>
-    public static bool IsHit(Triangle tri, Ray ray, float maxClip, out GeometryCollision cast)
+    public static VertexTriangle LoadVertexTriangle(Triangle triangle, List<Vertex> vertexBuffer)
     {
-        // Set default cast values
-        cast = GeometryCollision.Create(float3.Zero, float3.Zero, 0);
-
-        // Find the triangle's normal direction
-        var normal = Hlsl.Cross(tri.b - tri.a, tri.c - tri.a);
-
-        // TODO: Check if squared length can be used instead for greater performance
-        // TODO: Replace with back face culling
-        if (Hlsl.Length(normal) < 0)
-            return false;
-
-        // Find the length required for the ray to collide with the triangle's plane
-        // TODO: Handle perpendicular plane (division by zero?)
-        float t = (Hlsl.Dot(normal, tri.a) - Hlsl.Dot(normal, ray.origin)) / Hlsl.Dot(normal, ray.direction);
-
-        // Ensure the collision is in the positive direction, and not outside the clipped range
-        if (t < 0.0001f || t > maxClip)
-            return false;
-
-        // Find the collision point on the plane
-        var q = Ray.PointAt(ray, t);
-
-        // Ensure the ray collides with the triangle's plane within the bounds of the triangle's face
-        bool inBounds = Hlsl.Dot(Hlsl.Cross(tri.b - tri.a, q - tri.a), normal) >= 0 &&
-                       Hlsl.Dot(Hlsl.Cross(tri.c - tri.b, q - tri.b), normal) >= 0 &&
-                       Hlsl.Dot(Hlsl.Cross(tri.a - tri.c, q - tri.c), normal) >= 0;
-
-        if (!inBounds)
-            return false;
-
-
-        cast = GeometryCollision.Create(q, Hlsl.Normalize(normal), t);
-        return true;
+        VertexTriangle vTri;
+        vTri.triangle = triangle;
+        vTri.a = vertexBuffer[triangle.a];
+        vTri.b = vertexBuffer[triangle.b];
+        vTri.c = vertexBuffer[triangle.c];
+        return vTri;
     }
 
-    /// <remarks>
-    /// TODO: Convert to an instance method.
-    /// Waiting on https://github.com/Sergio0694/ComputeSharp/issues/479
-    /// </remarks>
-    public static AABB GetAABB(Triangle tri)
+    public static VertexTriangle LoadVertexTriangle(Triangle triangle, ReadOnlyBuffer<Vertex> vertexBuffer)
     {
-        Vector3 high = Vector3.Zero;
-        Vector3 low = Vector3.Zero;
-
-        for (int axis = 0; axis < 3; axis++)
-        {
-            high[axis] = MathF.Max(MathF.Max(((Vector3)tri.a)[axis], ((Vector3)tri.b)[axis]), ((Vector3)tri.c)[axis]);
-            low[axis] = MathF.Min(MathF.Min(((Vector3)tri.a)[axis], ((Vector3)tri.b)[axis]), ((Vector3)tri.c)[axis]);
-        }
-
-        return AABB.Create(high, low);
+        VertexTriangle vTri;
+        vTri.triangle = triangle;
+        vTri.a = vertexBuffer[triangle.a];
+        vTri.b = vertexBuffer[triangle.b];
+        vTri.c = vertexBuffer[triangle.c];
+        return vTri;
     }
 }

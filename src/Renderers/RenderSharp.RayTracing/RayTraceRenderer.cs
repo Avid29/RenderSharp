@@ -32,6 +32,7 @@ namespace RenderSharp.RayTracing;
 public class RayTracingRenderer : IRenderer
 {
     private CommonCamera? _camera;
+    private ReadOnlyBuffer<Vertex>? _vertexBuffer;
     private ReadOnlyBuffer<Triangle>? _geometryBuffer;
     private ReadOnlyBuffer<Light>? _lightsBuffer;
     private ReadOnlyBuffer<BVHNode>? _bvhBuffer;
@@ -66,6 +67,7 @@ public class RayTracingRenderer : IRenderer
         loader.LoadScene(scene);
 
         // Store geometry and object count
+        _vertexBuffer = loader.VertexBuffer;
         _geometryBuffer = loader.GeometryBuffer;
         _lightsBuffer = loader.LightsBuffer;
         _objectCount = loader.ObjectCount;
@@ -121,16 +123,18 @@ public class RayTracingRenderer : IRenderer
 
         // Create shaders
         //var cameraShader = new CameraCastShader(tile, imageSize, camera, rayBuffer);
-        var collisionShader = new GeometryCollisionShader(_geometryBuffer, rayBuffer, rayCastBuffer);
+        var collisionShader = new GeometryCollisionShader(_vertexBuffer, _geometryBuffer, rayBuffer, rayCastBuffer);
         //var collisionShader = new GeometryCollisionBVHTreeShader(tile, bvhStack, _bvhBuffer, _geometryBuffer, rayBuffer, rayCastBuffer);
         var shadowCastShader = new ShadowCastShader(_lightsBuffer, shadowRayBuffer, rayCastBuffer);
-        var shadowIntersectShader = new ShadowIntersectionShader(_geometryBuffer, shadowRayBuffer);
+        var shadowIntersectShader = new ShadowIntersectionShader(_vertexBuffer, _geometryBuffer, shadowRayBuffer);
         var materialShader = new PhongShader(0, material, _lightsBuffer, rayBuffer, shadowRayBuffer, rayCastBuffer, colorBuffer);
         var skyShader = new SolidSkyShader(new float4(0.25f, 0.35f, 0.5f, 1f), rayBuffer, rayCastBuffer, attenuationBuffer, colorBuffer);
         var sampleCopyShader = new SampleCopyShader(tile, colorBuffer, RenderBuffer, samples);
 
         RenderAnalyzer?.LogProcess("Render Loop", ProcessCategory.Rendering);
         using var context = Device.CreateComputeContext();
+
+        #pragma warning disable
 
         for (int s = 0; s < samples; s++)
         {
@@ -151,6 +155,9 @@ public class RayTracingRenderer : IRenderer
                 context.For(tile.Width, tile.Height, collisionShader);
                 context.Barrier(rayCastBuffer);
 
+                //context.For(tile.Width, tile.Height, new RayCastBufferDumpShader(tile, rayCastBuffer, _geometryBuffer, RenderBuffer, _objectCount, (int)RayCastDumpValueType.Object));
+                //return;
+
                 // Create shadow ray casts
                 context.For(tile.Width, tile.Height, _lightsBuffer.Length, shadowCastShader);
                 context.Barrier(shadowRayBuffer);
@@ -168,8 +175,6 @@ public class RayTracingRenderer : IRenderer
                 context.For(tile.Width, tile.Height, skyShader);
                 context.Barrier(attenuationBuffer);
                 context.Barrier(colorBuffer);
-
-                //context.For(width, height, new RayCastBufferDumpShader(rayCastBuffer, _geometryBuffer, RenderBuffer, _objectCount, (int)RayCastDumpValueType.Object));
             }
 
             // Copy color buffer to RenderBuffer
@@ -190,6 +195,7 @@ public class RayTracingRenderer : IRenderer
     {
         Guard.IsNotNull(_camera);
         Guard.IsNotNull(RenderBuffer);
+        Guard.IsNotNull(_vertexBuffer);
         Guard.IsNotNull(_geometryBuffer);
         Guard.IsNotNull(_lightsBuffer);
     }

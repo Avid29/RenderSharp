@@ -8,6 +8,8 @@ using RenderSharp.Scenes.Geometry.Meshes;
 using RenderSharp.Scenes.Lights;
 using System.Numerics;
 using CommonScene = RenderSharp.Scenes.Scene;
+using CommonVertex = RenderSharp.Scenes.Geometry.Meshes.Vertex;
+using Vertex = RenderSharp.RayTracing.Models.Geometry.Vertex;
 
 namespace RenderSharp.RayTracing.Setup;
 
@@ -16,8 +18,10 @@ namespace RenderSharp.RayTracing.Setup;
 /// </summary>
 public class ObjectLoader
 {
+    private readonly List<Vertex> _vertices;
     private readonly List<Triangle> _triangles;
     private readonly List<Light> _lights;
+    private readonly Dictionary<CommonVertex, int> _vertexIndexDictionary;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ObjectLoader"/> class.
@@ -26,14 +30,21 @@ public class ObjectLoader
     public ObjectLoader(GraphicsDevice device)
     {
         Device = device;
+        _vertices = new List<Vertex>();
         _triangles = new List<Triangle>();
         _lights = new List<Light>();
+        _vertexIndexDictionary= new  Dictionary<CommonVertex, int>();
     }
 
     /// <summary>
     /// Gets the device for buffer allocation.
     /// </summary>
     public GraphicsDevice Device { get; }
+
+    /// <summary>
+    /// Gets the generated vertex buffer.
+    /// </summary>
+    public ReadOnlyBuffer<Vertex>? VertexBuffer { get; private set; }
 
     /// <summary>
     /// Gets the generated geometry buffer.
@@ -91,7 +102,7 @@ public class ObjectLoader
     /// Gets a <see cref="BVHBuilder"/> for the loaded geometry.
     /// </summary>
     public BVHBuilder GetBVHBuilder()
-        => new(Device, _triangles);
+        => new(Device, _vertices, _triangles);
 
     private void LoadMesh(Mesh mesh, Transformation transformation)
     {
@@ -99,16 +110,11 @@ public class ObjectLoader
         foreach (var tri in mesh.Faces)
         {
             // TODO: Polygon triangulation
+            var a = LoadVertex(tri.A, transformation);
+            var b = LoadVertex(tri.B, transformation);
+            var c = LoadVertex(tri.C, transformation);
 
-            var a = tri.A.Position;
-            var b = tri.B.Position;
-            var c = tri.C.Position;
-
-            a = Vector3.Transform(a, (Matrix4x4)transformation);
-            b = Vector3.Transform(b, (Matrix4x4)transformation);
-            c = Vector3.Transform(c, (Matrix4x4)transformation);
-
-            // Track which the triangle's object id.
+            // Track the id of the object the triangle belongs to.
             // TODO: Assign Material ID
             int objectId = ObjectCount;
             var triangle = new Triangle(a, b, c, 0, objectId);
@@ -116,8 +122,22 @@ public class ObjectLoader
         }
     }
 
+    private int LoadVertex(CommonVertex vertex, Transformation transformation)
+    {
+        if (!_vertexIndexDictionary.ContainsKey(vertex))
+        {
+            var pos = Vector3.Transform(vertex.Position, (Matrix4x4)transformation);
+            var v = new Vertex(pos, vertex.Normal);
+            _vertexIndexDictionary.Add(vertex, _vertices.Count);
+            _vertices.Add(v);
+        }
+        
+        return _vertexIndexDictionary[vertex];
+    }
+
     private void AllocateBuffers()
     {
+        VertexBuffer = Device.AllocateReadOnlyBuffer(_vertices.ToArray());
         GeometryBuffer = Device.AllocateReadOnlyBuffer(_triangles.ToArray());
         LightsBuffer = Device.AllocateReadOnlyBuffer(_lights.ToArray());
     }

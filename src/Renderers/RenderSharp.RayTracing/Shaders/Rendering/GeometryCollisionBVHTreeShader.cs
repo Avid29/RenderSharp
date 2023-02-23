@@ -6,6 +6,7 @@ using RenderSharp.RayTracing.Models.Geometry;
 using RenderSharp.RayTracing.Models.Rays;
 
 namespace RenderSharp.RayTracing.Shaders.Rendering;
+/*
 
 /// <summary>
 /// An <see cref="IComputeShader"/> that creates detects geometry collisions.
@@ -75,3 +76,5 @@ public readonly partial struct GeometryCollisionBVHTreeShader : IComputeShader
         rayCastBuffer[fIndex] = rayCast;
     }
 }
+
+*/

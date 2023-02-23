@@ -12,13 +12,15 @@ namespace RenderSharp.RayTracing.Setup;
 /// </summary>
 public class BVHBuilder
 {
+    private readonly List<Vertex> _verticies;
     private readonly List<Triangle> _triangles;
     private readonly BVHNode[] _bvhHeap;
     private int _pos;
 
-    public BVHBuilder(GraphicsDevice device, List<Triangle> geometries)
+    public BVHBuilder(GraphicsDevice device, List<Vertex> vertices, List<Triangle> geometries)
     {
         Device = device;
+        _verticies = vertices;
         _triangles = geometries;
         _bvhHeap = new BVHNode[(geometries.Count * 2) - 1];
     }
@@ -55,14 +57,21 @@ public class BVHBuilder
 
         if (geometries.Length == 1)
         {
-            AABB box = Triangle.GetAABB(geometries[0]);
+            var tri = Triangle.LoadVertexTriangle(geometries[0], _verticies);
+            AABB box = VertexTriangle.GetAABB(tri);
             node = BVHNode.Create(box, index);
         }
         else
         {
             // TODO: Split on a better basis
             int axis = depth % 3;
-            geometries.Sort((a, b) => Triangle.GetAABB(a).highCorner[axis].CompareTo(Triangle.GetAABB(b).highCorner[axis]));
+            geometries.Sort((a, b) =>
+            {
+                var vA = Triangle.LoadVertexTriangle(a, _verticies);
+                var vB = Triangle.LoadVertexTriangle(b, _verticies);
+                return VertexTriangle.GetAABB(vA).highCorner[axis]
+                    .CompareTo(VertexTriangle.GetAABB(vB).highCorner[axis]);
+            });
 
             int mid = geometries.Length / 2;
             int rightI = BuildBVH(geometries[mid..], index + mid, depth + 1);
