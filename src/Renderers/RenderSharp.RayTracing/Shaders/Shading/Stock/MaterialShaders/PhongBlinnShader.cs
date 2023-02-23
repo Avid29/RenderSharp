@@ -11,7 +11,7 @@ namespace RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
 
 [AutoConstructor]
 [EmbeddedBytecode(DispatchAxis.XY)]
-public partial struct PhongShader : IComputeShader
+public partial struct PhongBlinnShader : IComputeShader
 {
     private readonly int matId;
     private readonly PhongMaterial material;
@@ -45,10 +45,10 @@ public partial struct PhongShader : IComputeShader
             var fShadowIndex = (i * DispatchSize.X * DispatchSize.Y) + (index2D.Y * DispatchSize.X) + index2D.X; 
             var dir = shadowCastBuffer[fShadowIndex].direction;
             if (Hlsl.Length(dir) == 0)
-                break;
-
-            diffuseIntensity += lightsBuffer[i].color * Hlsl.Dot(cast.normal, shadowCastBuffer[fShadowIndex].direction);
-            specularIntensity += lightsBuffer[i].color * Hlsl.Pow(Hlsl.Dot(cast.normal, Hlsl.Normalize(dir - ray.direction)), material.roughness);
+                continue;
+            
+            diffuseIntensity += lightsBuffer[i].color * Hlsl.Dot(cast.smoothNormal, shadowCastBuffer[fShadowIndex].direction);
+            specularIntensity += lightsBuffer[i].color * Hlsl.Pow(Hlsl.Dot(cast.smoothNormal, Hlsl.Normalize(dir - ray.direction)), material.roughness);
         }
 
         // Sum ambient, diffuse, and specular components

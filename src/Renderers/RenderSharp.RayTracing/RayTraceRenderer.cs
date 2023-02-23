@@ -118,16 +118,16 @@ public class RayTracingRenderer : IRenderer
         IReadWriteNormalizedTexture2D<float4> colorBuffer = Device.AllocateReadWriteTexture2D<Rgba32, float4>(tile.Width, tile.Height);
         IReadWriteNormalizedTexture2D<float4> attenuationBuffer = Device.AllocateReadWriteTexture2D<Rgba32, float4>(tile.Width, tile.Height);
 
-        var material = new PhongMaterial(Vector3.UnitX, Vector3.UnitY, Vector3.UnitZ, 50f,
+        var material = new PhongMaterial(Vector3.UnitX, Vector3.UnitY, Vector3.UnitZ, 16f,
                             cDiffuse: 1f, cSpecular: 1f, cAmbient: 1f);
 
         // Create shaders
-        //var cameraShader = new CameraCastShader(tile, imageSize, camera, rayBuffer);
+        var cameraShader = new CameraCastShader(tile, imageSize, camera, rayBuffer);
         var collisionShader = new GeometryCollisionShader(_vertexBuffer, _geometryBuffer, rayBuffer, rayCastBuffer);
         //var collisionShader = new GeometryCollisionBVHTreeShader(tile, bvhStack, _bvhBuffer, _geometryBuffer, rayBuffer, rayCastBuffer);
         var shadowCastShader = new ShadowCastShader(_lightsBuffer, shadowRayBuffer, rayCastBuffer);
         var shadowIntersectShader = new ShadowIntersectionShader(_vertexBuffer, _geometryBuffer, shadowRayBuffer);
-        var materialShader = new PhongShader(0, material, _lightsBuffer, rayBuffer, shadowRayBuffer, rayCastBuffer, colorBuffer);
+        var materialShader = new PhongBlinnShader(0, material, _lightsBuffer, rayBuffer, shadowRayBuffer, rayCastBuffer, colorBuffer);
         var skyShader = new SolidSkyShader(new float4(0.25f, 0.35f, 0.5f, 1f), rayBuffer, rayCastBuffer, attenuationBuffer, colorBuffer);
         var sampleCopyShader = new SampleCopyShader(tile, colorBuffer, RenderBuffer, samples);
 
@@ -139,7 +139,7 @@ public class RayTracingRenderer : IRenderer
         for (int s = 0; s < samples; s++)
         {
             var initShader = new SampleInitializeShader(attenuationBuffer, colorBuffer, randBuffer, s);
-            var cameraShader = new ScatteredCameraCastShader(tile, imageSize, camera, rayBuffer, randBuffer, s, samplesSqrt);
+            //var cameraShader = new ScatteredCameraCastShader(tile, imageSize, camera, rayBuffer, randBuffer, s, samplesSqrt);
 
             // Initialize the buffers
             context.For(tile.Width, tile.Height, initShader);
