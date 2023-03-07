@@ -8,19 +8,27 @@ using RenderSharp.RayTracing.Shaders.Shading.Interfaces;
 
 namespace RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
 
-[AutoConstructor]
 [EmbeddedBytecode(DispatchAxis.XY)]
 public partial struct PhongBlinnShader : IMaterialShader
 {
+#nullable disable
     private readonly int matId;
     private readonly PhongMaterial material;
 
-    private readonly ReadOnlyBuffer<Light> lightsBuffer;
-    private readonly ReadWriteBuffer<Ray> rayBuffer;
-    private readonly ReadWriteBuffer<Ray> shadowCastBuffer;
-    private readonly ReadWriteBuffer<GeometryCollision> rayCastBuffer;
-    private readonly IReadWriteNormalizedTexture2D<float4> colorBuffer;
+    private ReadOnlyBuffer<Light> lightsBuffer;
+    private ReadWriteBuffer<Ray> rayBuffer;
+    private ReadWriteBuffer<Ray> shadowCastBuffer;
+    private ReadWriteBuffer<GeometryCollision> rayCastBuffer;
+    private IReadWriteNormalizedTexture2D<float4> colorBuffer;
     
+    public PhongBlinnShader(int matId, PhongMaterial material)
+    {
+        this.matId = matId;
+        this.material = material;
+    }
+    
+#nullable restore
+
     /// <inheritdoc/>
     public void Execute()
     {
@@ -59,4 +67,16 @@ public partial struct PhongBlinnShader : IMaterialShader
         colorBuffer[index2D] += material.diffuse * diffuseIntensity;
         colorBuffer[index2D] += material.specular * specularIntensity;
     }
+
+    ReadOnlyBuffer<Light> IMaterialShader.LightBuffer  { set => lightsBuffer = value; }
+
+    ReadWriteBuffer<Ray> IMaterialShader.RayBuffer { set => rayBuffer = value; }
+
+    ReadWriteBuffer<Ray> IMaterialShader.ShadowCastBuffer { set => shadowCastBuffer = value; }
+
+    ReadWriteBuffer<GeometryCollision> IMaterialShader.RayCastBuffer {  set => rayCastBuffer = value; }
+
+    IReadWriteNormalizedTexture2D<float4> IMaterialShader.AttenuationBuffer { set => _ = value; }
+
+    IReadWriteNormalizedTexture2D<float4> IMaterialShader.ColorBuffer { set => colorBuffer = value; }
 }
