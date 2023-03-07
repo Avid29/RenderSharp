@@ -13,6 +13,7 @@ namespace RenderSharp.Rendering.Base;
 public class RenderManager
 {
     private readonly CancellationTokenSource _cancelTokenSource;
+    private IRenderer? _renderer;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RenderManager{TRenderer}"/> class.
@@ -59,7 +60,20 @@ public class RenderManager
     /// <summary>
     /// Gets the underlying renderer.
     /// </summary>
-    public IRenderer? Renderer { get; private set; }
+    public IRenderer? Renderer
+    {
+        get => _renderer;
+        set
+        {
+            Guard.IsTrue(State is RenderState.NotReady);
+
+            _renderer = value;
+            if (_renderer is not null)
+            {
+                _renderer.RenderAnalyzer = RenderAnalyzer;
+            }
+        }
+    }
 
     /// <summary>
     /// Loads the 3D scene to the renderer.
@@ -117,24 +131,11 @@ public class RenderManager
     }
 
     /// <summary>
-    /// Sets the render, if rendering is not already setup.
-    /// </summary>
-    /// <param name="renderer">The new renderer.</param>
-    public void SetRenderer(IRenderer renderer)
-    {
-        if (State is RenderState.NotReady)
-        {
-            Renderer = renderer;
-            Renderer.RenderAnalyzer = RenderAnalyzer;
-        }
-    }
-
-    /// <summary>
     /// Renders or copies a frame to <paramref name="buffer"/> for display.
     /// </summary>
     /// <param name="buffer">The buffer to display.</param>
     /// <returns>False if the frame should be skipped.</returns>
-    public virtual bool RenderFrame(IReadWriteNormalizedTexture2D<float4> buffer)
+    public virtual bool FrameUpdate(IReadWriteNormalizedTexture2D<float4> buffer)
     {
         Guard.IsNotNull(OutputBuffer);
         if (OutputBuffer.Width != buffer.Width ||

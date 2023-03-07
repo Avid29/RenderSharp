@@ -63,7 +63,7 @@ public class RenderViewer : IShaderRunner
         });
 
         _renderManager = new TManager();
-        _renderManager.SetRenderer(renderer);
+        _renderManager.Renderer = renderer;
         _renderManager.LoadScene(scene);
     }
 
@@ -94,6 +94,6 @@ public class RenderViewer : IShaderRunner
             return false;
 
         // Render the most current frame
-        return _renderManager.RenderFrame(texture);
+        return _renderManager.FrameUpdate(texture);
     }
 }

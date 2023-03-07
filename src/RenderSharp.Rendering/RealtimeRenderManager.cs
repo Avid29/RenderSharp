@@ -32,7 +32,7 @@ public class RealtimeRenderManager : RenderManager
     }
     
     /// <inheritdoc/>
-    public override bool RenderFrame(IReadWriteNormalizedTexture2D<float4> buffer)
+    public override bool FrameUpdate(IReadWriteNormalizedTexture2D<float4> buffer)
     {
         Guard.IsNotNull(Renderer);
 
