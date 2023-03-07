@@ -46,18 +46,21 @@ public readonly partial struct RayCastBufferDumpShader : IComputeShader
                 value = new float4(Hlsl.Abs(rayCast.position), 1);
                 break;
             case 1:
-                value = new float4(Hlsl.Abs(Hlsl.Normalize(rayCast.normal)), 1);
+                value = new float4(Hlsl.Abs(rayCast.normal), 1);
                 break;
             case 2:
-                value = new float4(rayCast.distance, 0, 0, 1);
+                value = new float4(Hlsl.Abs(rayCast.smoothNormal), 1);
                 break;
             case 3:
+                value = new float4(rayCast.distance, 0, 0, 1);
+                break;
             case 4:
+            case 5:
                 int id = rayCast.geoId;
                 int count = geometryBuffer.Length;
 
                 // Override the ID and count to the object id and count if dumping object data
-                if (dumpType == 4)
+                if (dumpType == 5)
                 {
                     id = geometryBuffer[rayCast.geoId].objId;
                     count = objectCount;
