@@ -11,24 +11,22 @@ namespace RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
 [EmbeddedBytecode(DispatchAxis.XY)]
 public partial struct PhongShader : IMaterialShader
 {
-#nullable disable
     private readonly int matId;
     private readonly PhongMaterial material;
-
+    
+#nullable disable
     private ReadOnlyBuffer<Light> lightsBuffer;
     private ReadWriteBuffer<Ray> rayBuffer;
     private ReadWriteBuffer<Ray> shadowCastBuffer;
     private ReadWriteBuffer<GeometryCollision> rayCastBuffer;
     private IReadWriteNormalizedTexture2D<float4> colorBuffer;
+#nullable restore
 
     public PhongShader(int matId, PhongMaterial material)
     {
         this.matId = matId;
         this.material = material;
     }
-
-#nullable restore
-
 
     /// <inheritdoc/>
     public void Execute()

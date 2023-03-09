@@ -133,16 +133,19 @@ public class RayTracingRenderer : IRenderer
         var material1 = new PhongMaterial(color1, Vector3.One, color1, 80f,
             cDiffuse: 0.8f, cSpecular: 0.9f, cAmbient: 0.2f);
 
-        var color2 = new Vector3(0.5f, 0.5f, 0.8f);
-        var material2 = new PhongMaterial(color2, Vector3.One, color2, 80f,
-            cDiffuse: 0.8f, cSpecular: 0.9f, cAmbient: 0.2f);
+        //var yellow = Vector3.UnitX + Vector3.UnitY;
+        //var material2 = new CheckeredPhongMaterial(yellow, Vector3.UnitX, Vector3.One, Vector3.One, 80f, 10f,
+        //    cDiffuse0: 0.8f, cDiffuse1: 0.8f, cSpecular: 0.9f, cAmbient: 0.2f);
 
+        //var material3 = new RadialGradientPhongMaterial(Vector3.UnitX, Vector3.UnitY, Vector3.One, Vector3.One, 80f, 3f,
+        //    cDiffuse0: 0.8f, cDiffuse1: 0.8f, cSpecular: 0.9f, cAmbient: 0.2f);
 
-        var materialShadersRunners = new[]
+        var materialShadersRunners = new MaterialShaderRunner[]
         {
-            new MaterialShaderRunner<PhongShader>(new PhongShader(0, material0), bc),
+            new MaterialShaderRunner<PhongShader>(new PhongShader(2, material0), bc),
             new MaterialShaderRunner<PhongShader>(new PhongShader(1, material1), bc),
-            new MaterialShaderRunner<PhongShader>(new PhongShader(2, material2), bc),
+            //new MaterialShaderRunner<CheckeredPhongShader>(new CheckeredPhongShader(0, material2), bc),
+            //new MaterialShaderRunner<RadialGradientPhongShader>(new RadialGradientPhongShader(0, material3), bc),
         };
 
         RenderAnalyzer?.LogProcess("Render Loop", ProcessCategory.Rendering);
@@ -178,12 +181,9 @@ public class RayTracingRenderer : IRenderer
                 context.For(tile.Width, tile.Height, _lightBuffer.Length, shadowIntersectShader);
                 context.Barrier(bc.ShadowCastBuffer);
 
-                // Apply object materials
+                // Apply material shaders
                 foreach (var runner in materialShadersRunners)
-                {
                     runner.Enqueue(in context, tile);
-                }
-
                 context.Barrier(bc.AttenuationBuffer);
                 context.Barrier(bc.ColorBuffer);
 
@@ -207,10 +207,10 @@ public class RayTracingRenderer : IRenderer
         nameof(_camera))]
     private void GuardReady()
     {
-        Guard.IsNotNull(_camera);
         Guard.IsNotNull(RenderBuffer);
         Guard.IsNotNull(_vertexBuffer);
         Guard.IsNotNull(_geometryBuffer);
         Guard.IsNotNull(_lightBuffer);
+        Guard.IsNotNull(_camera);
     }
 }
