@@ -14,6 +14,7 @@ public struct GeometryCollision
     public float2 uv;
     public float distance;
     public int matId;
+    public int objId;
     
     /// <summary>
     /// Initializes a new instance of the <see cref="GeometryCollision"/> struct.
@@ -26,6 +27,7 @@ public struct GeometryCollision
         this.smoothNormal = smoothNormal;
         this.geoId = -1;
         this.matId = -1;
+        this.objId = -1;
     }
     
     /// <remarks>
@@ -42,6 +44,7 @@ public struct GeometryCollision
         cast.distance = distance;
         cast.geoId = -1;
         cast.matId = -1;
+        cast.objId = -1;
         return cast;
     }
 }

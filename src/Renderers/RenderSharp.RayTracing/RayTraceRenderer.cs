@@ -2,24 +2,19 @@
 
 using CommunityToolkit.Diagnostics;
 using ComputeSharp;
-using RenderSharp.RayTracing.Models;
 using RenderSharp.RayTracing.Models.BVH;
 using RenderSharp.RayTracing.Models.Camera;
 using RenderSharp.RayTracing.Models.Geometry;
 using RenderSharp.RayTracing.Models.Lighting;
 using RenderSharp.RayTracing.Models.Materials;
-using RenderSharp.RayTracing.Models.Rays;
+using RenderSharp.RayTracing.Models.Materials.Enums;
 using RenderSharp.RayTracing.Setup;
-using RenderSharp.RayTracing.Shaders.Debugging;
-using RenderSharp.RayTracing.Shaders.Debugging.Enums;
 using RenderSharp.RayTracing.Shaders.Rendering;
 using RenderSharp.RayTracing.Shaders.Shading;
-using RenderSharp.RayTracing.Shaders.Shading.Interfaces;
 using RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
 using RenderSharp.RayTracing.Shaders.Shading.Stock.SkyShaders;
 using RenderSharp.Rendering.Enums;
 using RenderSharp.Rendering.Interfaces;
-using RenderSharp.Scenes.Geometry;
 using RenderSharp.Utilities.Tiles;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
@@ -34,11 +29,11 @@ namespace RenderSharp.RayTracing;
 public class RayTracingRenderer : IRenderer
 {
     private CommonCamera? _camera;
+    private ReadOnlyBuffer<ObjectSpace>? _objectBuffer;
     private ReadOnlyBuffer<Vertex>? _vertexBuffer;
     private ReadOnlyBuffer<Triangle>? _geometryBuffer;
     private ReadOnlyBuffer<Light>? _lightBuffer;
     private ReadOnlyBuffer<BVHNode>? _bvhBuffer;
-    private int _objectCount;
     private int _bvhDepth;
 
     /// <summary>
@@ -69,10 +64,10 @@ public class RayTracingRenderer : IRenderer
         loader.LoadScene(scene);
 
         // Store geometry and object count
+        _objectBuffer = loader.ObjectBuffer;
         _vertexBuffer = loader.VertexBuffer;
         _geometryBuffer = loader.GeometryBuffer;
         _lightBuffer = loader.LightsBuffer;
-        _objectCount = loader.ObjectCount;
 
         // Build a BVH tree for geometry traversal
         RenderAnalyzer?.LogProcess("Build BVH tree", ProcessCategory.Setup);
@@ -112,7 +107,7 @@ public class RayTracingRenderer : IRenderer
         // Allocate buffers
         RenderAnalyzer?.LogProcess("Allocate Buffers", ProcessCategory.Rendering);
 
-        var bc = new TileBufferCollection(Device, tile, _vertexBuffer, _geometryBuffer, _lightBuffer);
+        var bc = new TileBufferCollection(Device, tile, _objectBuffer, _vertexBuffer, _geometryBuffer, _lightBuffer);
 
         // Create shaders
         var cameraShader = new CameraCastShader(tile, imageSize, camera, bc.RayBuffer);
@@ -137,15 +132,15 @@ public class RayTracingRenderer : IRenderer
         //var material2 = new CheckeredPhongMaterial(yellow, Vector3.UnitX, Vector3.One, Vector3.One, 80f, 10f,
         //    cDiffuse0: 0.8f, cDiffuse1: 0.8f, cSpecular: 0.9f, cAmbient: 0.2f);
 
-        //var material3 = new RadialGradientPhongMaterial(Vector3.UnitX, Vector3.UnitY, Vector3.One, Vector3.One, 80f, 3f,
-        //    cDiffuse0: 0.8f, cDiffuse1: 0.8f, cSpecular: 0.9f, cAmbient: 0.2f);
+        var material3 = new RadialGradientPhongMaterial(Vector3.UnitX, Vector3.UnitY, Vector3.One, Vector3.One, 80f, 3f, (int)TextureSpace.Object,
+            cDiffuse0: 0.8f, cDiffuse1: 0.8f, cSpecular: 0.9f, cAmbient: 0.2f);
 
         var materialShadersRunners = new MaterialShaderRunner[]
         {
             new MaterialShaderRunner<PhongShader>(new PhongShader(2, material0), bc),
             new MaterialShaderRunner<PhongShader>(new PhongShader(1, material1), bc),
             //new MaterialShaderRunner<CheckeredPhongShader>(new CheckeredPhongShader(0, material2), bc),
-            //new MaterialShaderRunner<RadialGradientPhongShader>(new RadialGradientPhongShader(0, material3), bc),
+            new MaterialShaderRunner<RadialGradientPhongShader>(new RadialGradientPhongShader(0, material3), bc),
         };
 
         RenderAnalyzer?.LogProcess("Render Loop", ProcessCategory.Rendering);
@@ -201,6 +196,7 @@ public class RayTracingRenderer : IRenderer
 
     [MemberNotNull(
         nameof(RenderBuffer),
+        nameof(_objectBuffer),
         nameof(_vertexBuffer),
         nameof(_geometryBuffer),
         nameof(_lightBuffer),
@@ -208,6 +204,7 @@ public class RayTracingRenderer : IRenderer
     private void GuardReady()
     {
         Guard.IsNotNull(RenderBuffer);
+        Guard.IsNotNull(_objectBuffer);
         Guard.IsNotNull(_vertexBuffer);
         Guard.IsNotNull(_geometryBuffer);
         Guard.IsNotNull(_lightBuffer);

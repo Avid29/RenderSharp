@@ -13,12 +13,14 @@ public struct TileBufferCollection
 {
     public TileBufferCollection(
         GraphicsDevice device, Tile tile,
+        ReadOnlyBuffer<ObjectSpace> objectBuffer,
         ReadOnlyBuffer<Vertex> vertexBuffer,
         ReadOnlyBuffer<Triangle> geometryBuffer,
         ReadOnlyBuffer<Light> lightBuffer)
     {
         Device = device;
         Tile = tile;
+        ObjectBuffer = objectBuffer;
         VertexBuffer = vertexBuffer;
         GeometryBuffer = geometryBuffer;
         LightBuffer = lightBuffer;
@@ -39,6 +41,8 @@ public struct TileBufferCollection
     public GraphicsDevice Device { get; }
 
     public Tile Tile { get; }
+    
+    public ReadOnlyBuffer<ObjectSpace> ObjectBuffer { get; }
     
     public ReadOnlyBuffer<Vertex> VertexBuffer { get; }
     

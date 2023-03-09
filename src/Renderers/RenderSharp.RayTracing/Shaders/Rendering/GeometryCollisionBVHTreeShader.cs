@@ -66,6 +66,7 @@ public readonly partial struct GeometryCollisionBVHTreeShader : IComputeShader
                         distance = cast.distance;
                         cast.geoId = node.geoIndex;
                         cast.matId = tri.matId;
+                        cast.objId = tri.objId;
                         rayCast = cast;
                     }
                 }

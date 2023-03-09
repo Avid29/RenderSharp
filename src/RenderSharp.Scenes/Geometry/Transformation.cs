@@ -29,7 +29,6 @@ public struct Transformation
         var scale = Matrix4x4.CreateScale(Scale);
         var rotate = Matrix4x4.CreateFromQuaternion(Rotation);
         var translate = Matrix4x4.CreateTranslation(Translation);
-
         return scale * rotate * translate;
     }
 

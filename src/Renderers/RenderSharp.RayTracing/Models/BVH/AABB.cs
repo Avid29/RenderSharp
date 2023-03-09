@@ -4,6 +4,7 @@ using RenderSharp.RayTracing.Models.Rays;
 using System.Numerics;
 
 namespace RenderSharp.RayTracing.Models.BVH;
+
 public struct AABB
 {
     public Vector3 highCorner;

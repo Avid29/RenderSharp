@@ -18,6 +18,7 @@ namespace RenderSharp.RayTracing.Setup;
 /// </summary>
 public class ObjectLoader
 {
+    private readonly List<ObjectSpace> _objects;
     private readonly List<Vertex> _vertices;
     private readonly List<Triangle> _triangles;
     private readonly List<Light> _lights;
@@ -30,6 +31,7 @@ public class ObjectLoader
     public ObjectLoader(GraphicsDevice device)
     {
         Device = device;
+        _objects = new List<ObjectSpace>();
         _vertices = new List<Vertex>();
         _triangles = new List<Triangle>();
         _lights = new List<Light>();
@@ -42,6 +44,11 @@ public class ObjectLoader
     public GraphicsDevice Device { get; }
 
     /// <summary>
+    /// Gets the generated object buffer.
+    /// </summary>
+    public ReadOnlyBuffer<ObjectSpace>? ObjectBuffer { get; private set; }
+
+    /// <summary>
     /// Gets the generated vertex buffer.
     /// </summary>
     public ReadOnlyBuffer<Vertex>? VertexBuffer { get; private set; }
@@ -50,13 +57,11 @@ public class ObjectLoader
     /// Gets the generated geometry buffer.
     /// </summary>
     public ReadOnlyBuffer<Triangle>? GeometryBuffer { get; private set; }
-
-    public ReadOnlyBuffer<Light>? LightsBuffer { get; private set; }
-
+    
     /// <summary>
-    /// Gets the number of objects converted.
+    /// Gets the generated light buffer.
     /// </summary>
-    public int ObjectCount { get; private set; }
+    public ReadOnlyBuffer<Light>? LightsBuffer { get; private set; }
     
     /// <summary>
     /// Loads a scene into the appropriate buffers.
@@ -76,7 +81,12 @@ public class ObjectLoader
         {
             var mesh = obj.ConvertToMesh();
             LoadMesh(mesh, obj.Transformation);
-            ObjectCount++;
+            Matrix4x4.Invert(Matrix4x4.CreateTranslation(-1.25f, 0, 4f), out var m);
+            _objects.Add(new ObjectSpace
+            {
+                //inverseTransformation = obj.Transformation.ToTransformationMatrix().ToFloat4x4(),
+                inverseTransformation = m.ToFloat4x4(),
+            });
         }
     }
 
@@ -115,9 +125,9 @@ public class ObjectLoader
             var c = LoadVertex(tri.C, transformation);
 
             // Track the id of the object the triangle belongs to.
-            int objectId = ObjectCount;
+            int objectId = _objects.Count;
             // TODO: Properly assign Material ID
-            int matId = ObjectCount;
+            int matId = objectId;
             var triangle = new Triangle(a, b, c, matId, objectId);
             _triangles.Add(triangle);
         }
@@ -138,6 +148,7 @@ public class ObjectLoader
 
     private void AllocateBuffers()
     {
+        ObjectBuffer = Device.AllocateReadOnlyBuffer(_objects.ToArray());
         VertexBuffer = Device.AllocateReadOnlyBuffer(_vertices.ToArray());
         GeometryBuffer = Device.AllocateReadOnlyBuffer(_triangles.ToArray());
         LightsBuffer = Device.AllocateReadOnlyBuffer(_lights.ToArray());

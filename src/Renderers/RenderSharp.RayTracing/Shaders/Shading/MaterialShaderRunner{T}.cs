@@ -14,6 +14,7 @@ public class MaterialShaderRunner<T> : MaterialShaderRunner
     public MaterialShaderRunner(T shader, TileBufferCollection buffers)
     {
         _shader = shader;
+        _shader.ObjectBuffer = buffers.ObjectBuffer;
         _shader.LightBuffer = buffers.LightBuffer;
         _shader.RayBuffer = buffers.RayBuffer;
         _shader.ShadowCastBuffer = buffers.ShadowCastBuffer;

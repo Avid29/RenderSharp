@@ -1,10 +1,12 @@
 ﻿// Adam Dernis 2023
 
 using ComputeSharp;
+using RenderSharp.RayTracing.Models.Geometry;
 using RenderSharp.RayTracing.Models.Lighting;
 using RenderSharp.RayTracing.Models.Materials;
 using RenderSharp.RayTracing.Models.Rays;
 using RenderSharp.RayTracing.Shaders.Shading.Interfaces;
+using System.Numerics;
 
 namespace RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
 
@@ -15,7 +17,8 @@ public partial struct RadialGradientPhongShader : IMaterialShader
     private readonly RadialGradientPhongMaterial material;
     
 #nullable disable
-    private ReadOnlyBuffer<Light> lightsBuffer;
+    private ReadOnlyBuffer<ObjectSpace> objectBuffer;
+    private ReadOnlyBuffer<Light> lightBuffer;
     private ReadWriteBuffer<Ray> rayBuffer;
     private ReadWriteBuffer<Ray> shadowCastBuffer;
     private ReadWriteBuffer<GeometryCollision> rayCastBuffer;
@@ -46,7 +49,7 @@ public partial struct RadialGradientPhongShader : IMaterialShader
         // Calculate diffuse and specular intensity
         float4 diffuseIntensity = float4.Zero;
         float4 specularIntensity = float4.Zero;
-        for (int i = 0; i < lightsBuffer.Length; i++)
+        for (int i = 0; i < lightBuffer.Length; i++)
         {
             var fShadowIndex = (i * DispatchSize.X * DispatchSize.Y) + (index2D.Y * DispatchSize.X) + index2D.X; 
             var l = shadowCastBuffer[fShadowIndex].direction;
@@ -57,11 +60,20 @@ public partial struct RadialGradientPhongShader : IMaterialShader
             var v = ray.direction;
             var h = Hlsl.Normalize(l - v);
 
-            diffuseIntensity += lightsBuffer[i].color * Hlsl.Max(Hlsl.Dot(n, l), 0f);
-            specularIntensity += lightsBuffer[i].color * Hlsl.Pow(Hlsl.Dot(n, h), material.roughness);
+            diffuseIntensity += lightBuffer[i].color * Hlsl.Max(Hlsl.Dot(n, l), 0f);
+            specularIntensity += lightBuffer[i].color * Hlsl.Pow(Hlsl.Dot(n, h), material.roughness);
         }
 
-        var x = Hlsl.Clamp(Hlsl.Length(cast.position) / material.scale, 0f, 1f);
+        var pos = cast.position;
+
+        // Object space
+        if (material.textureSpace == 1)
+        {
+            var objectSpace = objectBuffer[cast.objId];
+            pos = Hlsl.Mul(new float4(pos, 1), objectSpace.inverseTransformation).XYZ;
+        }
+
+        var x = Hlsl.Clamp(Hlsl.Length(pos) / material.scale, 0f, 1f);
         var diffuse = (material.diffuse0 * x) + (material.diffuse1 * (1 - x));
 
         // Sum ambient, diffuse, and specular components
@@ -70,7 +82,9 @@ public partial struct RadialGradientPhongShader : IMaterialShader
         colorBuffer[index2D] += material.specular * specularIntensity;
     }
 
-    ReadOnlyBuffer<Light> IMaterialShader.LightBuffer  { set => lightsBuffer = value; }
+    ReadOnlyBuffer<ObjectSpace> IMaterialShader.ObjectBuffer  { set => objectBuffer = value; }
+
+    ReadOnlyBuffer<Light> IMaterialShader.LightBuffer  { set => lightBuffer = value; }
 
     ReadWriteBuffer<Ray> IMaterialShader.RayBuffer { set => rayBuffer = value; }
 

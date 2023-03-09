@@ -1,6 +1,7 @@
 ﻿// Adam Dernis 2023
 
 using ComputeSharp;
+using RenderSharp.RayTracing.Models.Geometry;
 using RenderSharp.RayTracing.Models.Lighting;
 using RenderSharp.RayTracing.Models.Rays;
 
@@ -8,6 +9,8 @@ namespace RenderSharp.RayTracing.Shaders.Shading.Interfaces;
 
 public interface IMaterialShader : IComputeShader
 {
+    ReadOnlyBuffer<ObjectSpace> ObjectBuffer { set; }
+
     ReadOnlyBuffer<Light> LightBuffer { set; }
 
     ReadWriteBuffer<Ray> RayBuffer { set; }

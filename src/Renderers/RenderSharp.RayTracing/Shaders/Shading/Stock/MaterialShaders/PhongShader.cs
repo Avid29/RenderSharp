@@ -1,6 +1,7 @@
 ﻿// Adam Dernis 2023
 
 using ComputeSharp;
+using RenderSharp.RayTracing.Models.Geometry;
 using RenderSharp.RayTracing.Models.Lighting;
 using RenderSharp.RayTracing.Models.Materials;
 using RenderSharp.RayTracing.Models.Rays;
@@ -15,7 +16,8 @@ public partial struct PhongShader : IMaterialShader
     private readonly PhongMaterial material;
     
 #nullable disable
-    private ReadOnlyBuffer<Light> lightsBuffer;
+    private ReadOnlyBuffer<ObjectSpace> objectBuffer;
+    private ReadOnlyBuffer<Light> lightBuffer;
     private ReadWriteBuffer<Ray> rayBuffer;
     private ReadWriteBuffer<Ray> shadowCastBuffer;
     private ReadWriteBuffer<GeometryCollision> rayCastBuffer;
@@ -46,7 +48,7 @@ public partial struct PhongShader : IMaterialShader
         // Calculate diffuse and specular intensity
         float4 diffuseIntensity = float4.Zero;
         float4 specularIntensity = float4.Zero;
-        for (int i = 0; i < lightsBuffer.Length; i++)
+        for (int i = 0; i < lightBuffer.Length; i++)
         {
             var fShadowIndex = (i * DispatchSize.X * DispatchSize.Y) + (index2D.Y * DispatchSize.X) + index2D.X; 
             var l = shadowCastBuffer[fShadowIndex].direction;
@@ -57,8 +59,8 @@ public partial struct PhongShader : IMaterialShader
             var v = ray.direction;
             var r = Hlsl.Reflect(l, cast.smoothNormal);
             
-            diffuseIntensity += lightsBuffer[i].color * Hlsl.Max(Hlsl.Dot(n, l), 0f);
-            specularIntensity += lightsBuffer[i].color * Hlsl.Pow(Hlsl.Max(Hlsl.Dot(r, ray.direction), 0), material.roughness);
+            diffuseIntensity += lightBuffer[i].color * Hlsl.Max(Hlsl.Dot(n, l), 0f);
+            specularIntensity += lightBuffer[i].color * Hlsl.Pow(Hlsl.Max(Hlsl.Dot(r, ray.direction), 0), material.roughness);
         }
 
         // Sum ambient, diffuse, and specular components
@@ -67,7 +69,9 @@ public partial struct PhongShader : IMaterialShader
         colorBuffer[index2D] += material.specular * specularIntensity;
     }
 
-    ReadOnlyBuffer<Light> IMaterialShader.LightBuffer  { set => lightsBuffer = value; }
+    ReadOnlyBuffer<ObjectSpace> IMaterialShader.ObjectBuffer  { set => objectBuffer = value; }
+
+    ReadOnlyBuffer<Light> IMaterialShader.LightBuffer  { set => lightBuffer = value; }
 
     ReadWriteBuffer<Ray> IMaterialShader.RayBuffer { set => rayBuffer = value; }
 
