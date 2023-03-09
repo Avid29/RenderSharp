@@ -81,7 +81,7 @@ public class ObjectLoader
         {
             var mesh = obj.ConvertToMesh();
             LoadMesh(mesh, obj.Transformation);
-            Matrix4x4.Invert(Matrix4x4.CreateTranslation(-1.25f, 0, 4f), out var m);
+            Matrix4x4.Invert(Matrix4x4.CreateTranslation(-0.625f, 0, 3f), out var m);
             _objects.Add(new ObjectSpace
             {
                 //inverseTransformation = obj.Transformation.ToTransformationMatrix().ToFloat4x4(),

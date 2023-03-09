@@ -65,11 +65,11 @@ public partial struct CheckeredPhongShader : IMaterialShader
 
         // Evaluate texture
         float3 sines = Hlsl.Sin(cast.position * material.scale);
-        float sign = sines.X * sines.Z;
+        float sign = sines.X * sines.Y * sines.Z;
         float4 diffuse = sign < 0 ? material.diffuse0 : material.diffuse1;
 
         // Sum ambient, diffuse, and specular components
-        colorBuffer[index2D] += material.ambient;
+        colorBuffer[index2D] += diffuse * material.cAmbient;
         colorBuffer[index2D] += diffuse * diffuseIntensity;
         colorBuffer[index2D] += material.specular * specularIntensity;
     }

@@ -53,13 +53,13 @@ public class RenderViewer : IShaderRunner
                 Radius = 0.25f,
                 Transformation = Transformation.CreateFromTranslation(new Vector3(0.5f, 3.5f, 0.5f)),
             },
-            new PointLight
-            {
-                Color = Vector3.One,
-                Power = 0.2f,
-                Radius = 0.25f,
-                Transformation = Transformation.CreateFromTranslation(new Vector3(-1.5f, 3.5f, 1f)),
-            },
+            //new PointLight
+            //{
+            //    Color = Vector3.One,
+            //    Power = 0.2f,
+            //    Radius = 0.25f,
+            //    Transformation = Transformation.CreateFromTranslation(new Vector3(-1.5f, 3.5f, 1f)),
+            //},
         });
 
         _renderManager = new TManager();

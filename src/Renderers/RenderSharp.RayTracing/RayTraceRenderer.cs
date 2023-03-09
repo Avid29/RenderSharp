@@ -128,11 +128,11 @@ public class RayTracingRenderer : IRenderer
         var material1 = new PhongMaterial(color1, Vector3.One, color1, 80f,
             cDiffuse: 0.8f, cSpecular: 0.9f, cAmbient: 0.2f);
 
-        //var yellow = Vector3.UnitX + Vector3.UnitY;
-        //var material2 = new CheckeredPhongMaterial(yellow, Vector3.UnitX, Vector3.One, Vector3.One, 80f, 10f,
-        //    cDiffuse0: 0.8f, cDiffuse1: 0.8f, cSpecular: 0.9f, cAmbient: 0.2f);
+        var yellow = Vector3.UnitX + Vector3.UnitY;
+        var material2 = new CheckeredPhongMaterial(yellow, Vector3.UnitX, Vector3.One, 80f, 10f,
+            cDiffuse0: 0.8f, cDiffuse1: 0.8f, cSpecular: 0.9f, cAmbient: 0.2f);
 
-        var material3 = new RadialGradientPhongMaterial(Vector3.UnitX, Vector3.UnitY, Vector3.One, Vector3.One, 80f, 3f, (int)TextureSpace.Object,
+        var material3 = new RadialGradientPhongMaterial(Vector3.UnitX, Vector3.UnitY, Vector3.One, 80f, 4f, (int)TextureSpace.Object,
             cDiffuse0: 0.8f, cDiffuse1: 0.8f, cSpecular: 0.9f, cAmbient: 0.2f);
 
         var materialShadersRunners = new MaterialShaderRunner[]

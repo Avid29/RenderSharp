@@ -6,6 +6,7 @@ using RenderSharp.RayTracing.Models.Lighting;
 using RenderSharp.RayTracing.Models.Materials;
 using RenderSharp.RayTracing.Models.Rays;
 using RenderSharp.RayTracing.Shaders.Shading.Interfaces;
+using RenderSharp.RayTracing.Utils;
 using System.Numerics;
 
 namespace RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
@@ -74,10 +75,11 @@ public partial struct RadialGradientPhongShader : IMaterialShader
         }
 
         var x = Hlsl.Clamp(Hlsl.Length(pos) / material.scale, 0f, 1f);
+        //var diffuse = new float4(VectorUtils.HSVtoRGB(new float3(x * 360f, 1f, 1f)), 1);
         var diffuse = (material.diffuse0 * x) + (material.diffuse1 * (1 - x));
 
         // Sum ambient, diffuse, and specular components
-        colorBuffer[index2D] += material.ambient;
+        colorBuffer[index2D] += diffuse * material.cAmbient;
         colorBuffer[index2D] += diffuse * diffuseIntensity;
         colorBuffer[index2D] += material.specular * specularIntensity;
     }
