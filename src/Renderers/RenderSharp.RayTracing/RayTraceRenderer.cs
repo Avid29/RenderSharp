@@ -138,9 +138,10 @@ public class RayTracingRenderer : IRenderer
         var materialShadersRunners = new MaterialShaderRunner[]
         {
             new MaterialShaderRunner<PhongShader>(new PhongShader(2, material0), bc),
-            new MaterialShaderRunner<PhongShader>(new PhongShader(1, material1), bc),
+            //new MaterialShaderRunner<PhongShader>(new PhongShader(1, material1), bc),
             //new MaterialShaderRunner<CheckeredPhongShader>(new CheckeredPhongShader(0, material2), bc),
-            new MaterialShaderRunner<RadialGradientPhongShader>(new RadialGradientPhongShader(0, material3), bc),
+            //new MaterialShaderRunner<RadialGradientPhongShader>(new RadialGradientPhongShader(0, material3), bc),
+            new MaterialShaderRunner<VoronoiPhongShader>(new VoronoiPhongShader(0), bc),
         };
 
         RenderAnalyzer?.LogProcess("Render Loop", ProcessCategory.Rendering);
