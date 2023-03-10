@@ -80,16 +80,18 @@ public partial struct VoronoiPhongShader : IMaterialShader
         var minDistance = Hlsl.Min(Hlsl.Min(dis1, dis2), Hlsl.Min(dis3, dis4));
         //var minDistance = Hlsl.Min(Hlsl.Min(dis1, dis2), dis3);
 
-        if (minDistance == dis1)
-            diffuse = float4.UnitX;
-        else if (minDistance == dis2)
-            diffuse = float4.UnitY;
-        else if (minDistance == dis3)
-            diffuse = float4.UnitZ;
-        else if (minDistance == dis4)
-            diffuse = float4.UnitX + float4.UnitY;
+        diffuse *= minDistance;
 
-        diffuse += float4.UnitW;
+        //if (minDistance == dis1)
+        //    diffuse = float4.UnitX;
+        //else if (minDistance == dis2)
+        //    diffuse = float4.UnitY;
+        //else if (minDistance == dis3)
+        //    diffuse = float4.UnitZ;
+        //else if (minDistance == dis4)
+        //    diffuse = float4.UnitX + float4.UnitY;
+
+        //diffuse += float4.UnitW;
 
         // Sum ambient, diffuse, and specular components
         colorBuffer[index2D] += diffuse * cAmbient;

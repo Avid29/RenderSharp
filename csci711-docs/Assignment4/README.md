@@ -1,10 +1,10 @@
-# Procedural Shading
+# Procedural Texturing
 
 ![image](Checkers.png)
 
 This image was rendered in RenderSharp.
 
-# Radial Gradient
+# Radial Gradient Texture
 
 ![image](RadialGradient.png)
 
@@ -43,11 +43,17 @@ return i switch
 }
 ```
 
-
 # Voronoi Texture
 
 ![image](4PointVoronoi.png)
 
 This texture uses 4 hardcoded points for the voronoi cells, but an algorithm could be developed to generate the points and iterate over a buffer
+
+# Voronoi Distance Texture
+
+![image](4PointVoronoiDistance.png)
+
+Now the distance from the cell center is used as the diffuse coefficient instead of the cell color
+
 
 Adam Dernis
