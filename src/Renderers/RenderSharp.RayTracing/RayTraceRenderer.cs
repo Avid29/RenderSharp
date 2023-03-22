@@ -124,24 +124,29 @@ public class RayTracingRenderer : IRenderer
         var material0 = new PhongMaterial(color0, Vector3.One, color0, 80f,
             cDiffuse: 0.8f, cSpecular: 0.9f, cAmbient: 0.2f);
 
-        var color1 = new Vector3(0.2f, 0.5f, 0.8f);
-        var material1 = new PhongMaterial(color1, Vector3.One, color1, 80f,
+        var color1 = new Vector3(0.25f, 0.35f, 0.35f);
+        var material1 = new PhongMaterial(color1, Vector3.One, color1, 10f,
             cDiffuse: 0.8f, cSpecular: 0.9f, cAmbient: 0.2f);
 
         var yellow = Vector3.UnitX + Vector3.UnitY;
-        var material2 = new CheckeredPhongMaterial(yellow, Vector3.UnitX, Vector3.One, 80f, 10f,
+        var material2 = new CheckeredPhongMaterial(yellow, Vector3.UnitX, Vector3.One, 50f, 10f,
             cDiffuse0: 0.8f, cDiffuse1: 0.8f, cSpecular: 0.9f, cAmbient: 0.2f);
 
-        var material3 = new RadialGradientPhongMaterial(Vector3.UnitX, Vector3.UnitY, Vector3.One, 80f, 4f, (int)TextureSpace.Object,
+        var material3 = new RadialGradientPhongMaterial(Vector3.UnitX, Vector3.UnitY, Vector3.One, 50f, 4f, (int)TextureSpace.Object,
             cDiffuse0: 0.8f, cDiffuse1: 0.8f, cSpecular: 0.9f, cAmbient: 0.2f);
+
+        var material4 = new PrincipledMaterial(Vector3.One * 0.5f, Vector3.One * 0.5f, Vector3.Zero, 10f, 0.8f);
+        var material5 = new PrincipledMaterial(new Vector3(0.25f, 0.35f, 0.35f), Vector3.One * 0.5f, Vector3.Zero, 20f, 0.025f);
 
         var materialShadersRunners = new MaterialShaderRunner[]
         {
-            new MaterialShaderRunner<PhongShader>(new PhongShader(2, material0), bc),
-            new MaterialShaderRunner<PhongShader>(new PhongShader(1, material1), bc),
-            //new MaterialShaderRunner<CheckeredPhongShader>(new CheckeredPhongShader(0, material2), bc),
+            new MaterialShaderRunner<PrincipledShader>(new PrincipledShader(2, material4), bc),
+            new MaterialShaderRunner<PrincipledShader>(new PrincipledShader(1, material5), bc),
+            //new MaterialShaderRunner<GlossyShader>(new GlossyShader(2), bc);
+            //new MaterialShaderRunner<PhongShader>(new PhongShader(2, material0), bc),
+            //new MaterialShaderRunner<PhongShader>(new PhongShader(1, material1), bc),
+            new MaterialShaderRunner<CheckeredPhongShader>(new CheckeredPhongShader(0, material2), bc),
             //new MaterialShaderRunner<RadialGradientPhongShader>(new RadialGradientPhongShader(0, material3), bc),
-            new MaterialShaderRunner<VoronoiPhongShader>(new VoronoiPhongShader(0), bc),
         };
 
         RenderAnalyzer?.LogProcess("Render Loop", ProcessCategory.Rendering);
@@ -161,9 +166,8 @@ public class RayTracingRenderer : IRenderer
             context.For(tile.Width, tile.Height, cameraShader);
             context.Barrier(bc.RayBuffer);
 
-
             // Bounces
-            for (int b = 0; b < 1; b++)
+            for (int b = 0; b < 8; b++)
             {
                 // Find object collision and cache the resulting ray cast 
                 context.For(tile.Width, tile.Height, collisionShader);

@@ -10,10 +10,10 @@ using RenderSharp.RayTracing.Shaders.Shading.Interfaces;
 namespace RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
 
 [EmbeddedBytecode(DispatchAxis.XY)]
-public partial struct CheckeredPhongShader : IMaterialShader
+public partial struct PrincipledShader : IMaterialShader
 {
     private readonly int matId;
-    private readonly CheckeredPhongMaterial material;
+    private readonly PrincipledMaterial material;
     
 #nullable disable
     private ReadOnlyBuffer<ObjectSpace> objectBuffer;
@@ -25,7 +25,7 @@ public partial struct CheckeredPhongShader : IMaterialShader
     private IReadWriteNormalizedTexture2D<float4> colorBuffer;
 #nullable restore
 
-    public CheckeredPhongShader(int matId, CheckeredPhongMaterial material)
+    public PrincipledShader(int matId, PrincipledMaterial material)
     {
         this.matId = matId;
         this.material = material;
@@ -46,8 +46,13 @@ public partial struct CheckeredPhongShader : IMaterialShader
         if (cast.matId != matId)
             return;
 
+        var n = cast.smoothNormal;
+        var v = ray.direction;
+        var r = Hlsl.Reflect(v, n);
+
         // Calculate diffuse and specular intensity
         float4 diffuseIntensity = float4.Zero;
+        float4 glossyIntensity = float4.Zero;
         float4 specularIntensity = float4.Zero;
         for (int i = 0; i < lightBuffer.Length; i++)
         {
@@ -56,26 +61,20 @@ public partial struct CheckeredPhongShader : IMaterialShader
             if (Hlsl.Length(l) == 0)
                 continue;
             
-            var n = cast.smoothNormal;
-            var v = ray.direction;
-            var r = Hlsl.Reflect(l, cast.smoothNormal);
+            var lr = Hlsl.Reflect(l, cast.smoothNormal);
             
             diffuseIntensity += lightBuffer[i].color * Hlsl.Max(Hlsl.Dot(n, l), 0f);
-            specularIntensity += lightBuffer[i].color * Hlsl.Pow(Hlsl.Max(Hlsl.Dot(r, ray.direction), 0), material.roughness);
+            specularIntensity += lightBuffer[i].color * Hlsl.Pow(Hlsl.Max(Hlsl.Dot(lr, ray.direction), 0), material.roughness);
         }
-
-        // Evaluate texture
-        float3 sines = Hlsl.Sin(cast.position * material.scale);
-        float sign = sines.X /** sines.Y*/ * sines.Z;
-        float4 diffuse = sign < 0 ? material.diffuse0 : material.diffuse1;
 
         var att = attenuationBuffer[index2D];
 
         // Sum ambient, diffuse, and specular components
-        colorBuffer[index2D] += att * diffuse * material.cAmbient;
-        colorBuffer[index2D] += att * diffuse * diffuseIntensity;
-        colorBuffer[index2D] += att * material.specular * specularIntensity;
-        attenuationBuffer[index2D] = 0;
+        colorBuffer[index2D] += material.ambient;
+        colorBuffer[index2D] += material.diffuse * diffuseIntensity;
+        colorBuffer[index2D] += material.specular * specularIntensity;
+        attenuationBuffer[index2D] *= material.metallic;
+        rayBuffer[fIndex] = Ray.Create(cast.position, r);
     }
 
     ReadOnlyBuffer<ObjectSpace> IMaterialShader.ObjectBuffer  { set => objectBuffer = value; }

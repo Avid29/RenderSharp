@@ -3,17 +3,15 @@
 using ComputeSharp;
 using RenderSharp.RayTracing.Models.Geometry;
 using RenderSharp.RayTracing.Models.Lighting;
-using RenderSharp.RayTracing.Models.Materials;
 using RenderSharp.RayTracing.Models.Rays;
 using RenderSharp.RayTracing.Shaders.Shading.Interfaces;
 
 namespace RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
 
 [EmbeddedBytecode(DispatchAxis.XY)]
-public partial struct PhongShader : IMaterialShader
+public partial struct GlossyShader : IMaterialShader
 {
     private readonly int matId;
-    private readonly PhongMaterial material;
     
 #nullable disable
     private ReadOnlyBuffer<ObjectSpace> objectBuffer;
@@ -21,14 +19,12 @@ public partial struct PhongShader : IMaterialShader
     private ReadWriteBuffer<Ray> rayBuffer;
     private ReadWriteBuffer<Ray> shadowCastBuffer;
     private ReadWriteBuffer<GeometryCollision> rayCastBuffer;
-    private IReadWriteNormalizedTexture2D<float4> attenuationBuffer;
     private IReadWriteNormalizedTexture2D<float4> colorBuffer;
 #nullable restore
 
-    public PhongShader(int matId, PhongMaterial material)
+    public GlossyShader(int matId)
     {
         this.matId = matId;
-        this.material = material;
     }
 
     /// <inheritdoc/>
@@ -46,32 +42,10 @@ public partial struct PhongShader : IMaterialShader
         if (cast.matId != matId)
             return;
 
-        // Calculate diffuse and specular intensity
-        float4 diffuseIntensity = float4.Zero;
-        float4 specularIntensity = float4.Zero;
-        for (int i = 0; i < lightBuffer.Length; i++)
-        {
-            var fShadowIndex = (i * DispatchSize.X * DispatchSize.Y) + (index2D.Y * DispatchSize.X) + index2D.X; 
-            var l = shadowCastBuffer[fShadowIndex].direction;
-            if (Hlsl.Length(l) == 0)
-                continue;
-            
-            var n = cast.smoothNormal;
-            var v = ray.direction;
-            var r = Hlsl.Reflect(l, cast.smoothNormal);
-            
-            diffuseIntensity += lightBuffer[i].color * Hlsl.Max(Hlsl.Dot(n, l), 0f);
-            specularIntensity += lightBuffer[i].color * Hlsl.Pow(Hlsl.Max(Hlsl.Dot(r, ray.direction), 0), material.roughness);
-        }
-
-        var att = attenuationBuffer[index2D];
-
-        // Sum ambient, diffuse, and specular components
-        colorBuffer[index2D] += material.ambient;
-        colorBuffer[index2D] += material.diffuse * diffuseIntensity;
-        colorBuffer[index2D] += material.specular * specularIntensity;
-        attenuationBuffer[index2D] = 0;
+        var r = Hlsl.Reflect(ray.direction, cast.smoothNormal);
+        rayBuffer[fIndex] = Ray.Create(cast.position, r);
     }
+    
 
     ReadOnlyBuffer<ObjectSpace> IMaterialShader.ObjectBuffer  { set => objectBuffer = value; }
 
@@ -83,7 +57,7 @@ public partial struct PhongShader : IMaterialShader
 
     ReadWriteBuffer<GeometryCollision> IMaterialShader.RayCastBuffer {  set => rayCastBuffer = value; }
 
-    IReadWriteNormalizedTexture2D<float4> IMaterialShader.AttenuationBuffer { set => attenuationBuffer = value; }
+    IReadWriteNormalizedTexture2D<float4> IMaterialShader.AttenuationBuffer { set => _ = value; }
 
     IReadWriteNormalizedTexture2D<float4> IMaterialShader.ColorBuffer { set => colorBuffer = value; }
 }
