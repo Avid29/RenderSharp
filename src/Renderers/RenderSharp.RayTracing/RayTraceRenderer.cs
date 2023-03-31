@@ -140,9 +140,9 @@ public class RayTracingRenderer : IRenderer
 
         var materialShadersRunners = new MaterialShaderRunner[]
         {
-            new MaterialShaderRunner<PrincipledShader>(new PrincipledShader(2, material4), bc),
+            //new MaterialShaderRunner<PrincipledShader>(new PrincipledShader(2, material4), bc),
             new MaterialShaderRunner<PrincipledShader>(new PrincipledShader(1, material5), bc),
-            //new MaterialShaderRunner<GlossyShader>(new GlossyShader(2), bc);
+            new MaterialShaderRunner<GlossyShader>(new GlossyShader(2), bc),
             //new MaterialShaderRunner<PhongShader>(new PhongShader(2, material0), bc),
             //new MaterialShaderRunner<PhongShader>(new PhongShader(1, material1), bc),
             new MaterialShaderRunner<CheckeredPhongShader>(new CheckeredPhongShader(0, material2), bc),
