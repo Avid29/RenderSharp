@@ -9,6 +9,7 @@ using RenderSharp.RayTracing.Models.Lighting;
 using RenderSharp.RayTracing.Models.Materials;
 using RenderSharp.RayTracing.Models.Materials.Enums;
 using RenderSharp.RayTracing.Setup;
+using RenderSharp.RayTracing.Shaders.Debugging;
 using RenderSharp.RayTracing.Shaders.Rendering;
 using RenderSharp.RayTracing.Shaders.Shading;
 using RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
@@ -138,10 +139,13 @@ public class RayTracingRenderer : IRenderer
         var material4 = new PrincipledMaterial(Vector3.One * 0.5f, Vector3.One * 0.5f, Vector3.Zero, 10f, 0.8f);
         var material5 = new PrincipledMaterial(new Vector3(0.25f, 0.35f, 0.35f), Vector3.One * 0.5f, Vector3.Zero, 20f, 0.025f);
 
+        var material6 = new TransmissionMaterial(1.2f);
+;
         var materialShadersRunners = new MaterialShaderRunner[]
         {
             //new MaterialShaderRunner<PrincipledShader>(new PrincipledShader(2, material4), bc),
-            new MaterialShaderRunner<PrincipledShader>(new PrincipledShader(1, material5), bc),
+            //new MaterialShaderRunner<PrincipledShader>(new PrincipledShader(1, material5), bc),
+            new MaterialShaderRunner<TransmissionShader>(new TransmissionShader(1, material6), bc),
             new MaterialShaderRunner<GlossyShader>(new GlossyShader(2), bc),
             //new MaterialShaderRunner<PhongShader>(new PhongShader(2, material0), bc),
             //new MaterialShaderRunner<PhongShader>(new PhongShader(1, material1), bc),
@@ -191,6 +195,12 @@ public class RayTracingRenderer : IRenderer
                 context.For(tile.Width, tile.Height, skyShader);
                 context.Barrier(bc.AttenuationBuffer);
                 context.Barrier(bc.ColorBuffer);
+
+                if (b == 1)
+                {
+                    context.For(tile.Width, tile.Height, new RayBufferDumpShader(tile, bc.RayBuffer, RenderBuffer, 1));
+                    return;
+                }
             }
 
             // Copy color buffer to color sum buffer

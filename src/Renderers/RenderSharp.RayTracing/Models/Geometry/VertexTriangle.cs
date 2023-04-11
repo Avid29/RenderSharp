@@ -33,8 +33,8 @@ public struct VertexTriangle
 
         // TODO: Check if squared length can be used instead for greater performance
         // TODO: Replace with back face culling
-        if (Hlsl.Length(normal) < 0)
-            return false;
+        //if (Hlsl.Length(normal) < 0)
+        //    return false;
 
         // Find the length required for the ray to collide with the triangle's plane
         // TODO: Handle perpendicular plane (division by zero?)
