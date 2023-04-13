@@ -26,7 +26,7 @@ public struct VertexTriangle
     public static bool IsHit(VertexTriangle tri, Ray ray, float maxClip, out GeometryCollision cast)
     {
         // Set default cast values
-        cast = GeometryCollision.Create(float3.Zero, float3.Zero, float3.Zero, float2.Zero, 0);
+        cast = GeometryCollision.Create();
 
         // Find the triangle's normal direction
         var normal = Hlsl.Cross(tri.b.position - tri.a.position, tri.c.position - tri.a.position);
@@ -37,8 +37,9 @@ public struct VertexTriangle
         //    return false;
 
         // Find the length required for the ray to collide with the triangle's plane
-        // TODO: Handle perpendicular plane (division by zero?)
-        float t = (Hlsl.Dot(normal, tri.a.position) - Hlsl.Dot(normal, ray.origin)) / Hlsl.Dot(normal, ray.direction);
+        var dn = Hlsl.Dot(normal, ray.direction);
+        float t = (Hlsl.Dot(normal, tri.a.position) - Hlsl.Dot(normal, ray.origin)) / dn;
+        bool isBackFace = dn > 0;   
 
         // Ensure the collision is in the positive direction, and not outside the clipped range
         if (t < 0.0001f || t > maxClip)
@@ -66,7 +67,7 @@ public struct VertexTriangle
         if (Hlsl.Length(smoothNormal) == 0)
             smoothNormal = normal;
 
-        cast = GeometryCollision.Create(q, Hlsl.Normalize(normal), Hlsl.Normalize(smoothNormal), new float2(u, v), t);
+        cast = GeometryCollision.Create(q, Hlsl.Normalize(normal), Hlsl.Normalize(smoothNormal), new float2(u, v), t, isBackFace);
         return true;
     }
 

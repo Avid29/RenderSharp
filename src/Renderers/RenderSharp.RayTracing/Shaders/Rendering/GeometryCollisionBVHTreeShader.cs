@@ -33,7 +33,7 @@ public readonly partial struct GeometryCollisionBVHTreeShader : IComputeShader
         if (Hlsl.Length(ray.direction) == 0)
             return;
         
-        var rayCast = GeometryCollision.Create(0, 0, 0, 0, 0);
+        var rayCast = GeometryCollision.Create();
 
         // Track the nearest scene collision
         float distance = float.MaxValue;

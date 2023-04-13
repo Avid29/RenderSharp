@@ -136,17 +136,17 @@ public class RayTracingRenderer : IRenderer
         var material3 = new RadialGradientPhongMaterial(Vector3.UnitX, Vector3.UnitY, Vector3.One, 50f, 4f, (int)TextureSpace.Object,
             cDiffuse0: 0.8f, cDiffuse1: 0.8f, cSpecular: 0.9f, cAmbient: 0.2f);
 
-        var material4 = new PrincipledMaterial(Vector3.One * 0.5f, Vector3.One * 0.5f, Vector3.Zero, 10f, 0.8f);
-        var material5 = new PrincipledMaterial(new Vector3(0.25f, 0.35f, 0.35f), Vector3.One * 0.5f, Vector3.Zero, 20f, 0.025f);
-
-        var material6 = new TransmissionMaterial(1.2f);
+        var material4 = new PrincipledMaterial(Vector3.One * 0.5f, Vector3.One * 0.5f, Vector3.Zero, 10f, 0.8f, 0, 1);
+        var material5 = new PrincipledMaterial(new Vector3(0.25f, 0.35f, 0.35f), Vector3.One * 0.5f, Vector3.Zero, 20f, 0.025f, 0, 1);
+        
+        var material6 = new PrincipledMaterial(Vector3.One * 0.5f, Vector3.One, Vector3.Zero, 20f, 0f, 0.9f, 0.95f);
 ;
         var materialShadersRunners = new MaterialShaderRunner[]
         {
-            //new MaterialShaderRunner<PrincipledShader>(new PrincipledShader(2, material4), bc),
+            new MaterialShaderRunner<PrincipledShader>(new PrincipledShader(1, material4), bc),
             //new MaterialShaderRunner<PrincipledShader>(new PrincipledShader(1, material5), bc),
-            new MaterialShaderRunner<TransmissionShader>(new TransmissionShader(1, material6), bc),
-            new MaterialShaderRunner<GlossyShader>(new GlossyShader(2), bc),
+            new MaterialShaderRunner<PrincipledShader>(new PrincipledShader(2, material6), bc),
+            //new MaterialShaderRunner<GlossyShader>(new GlossyShader(2), bc),
             //new MaterialShaderRunner<PhongShader>(new PhongShader(2, material0), bc),
             //new MaterialShaderRunner<PhongShader>(new PhongShader(1, material1), bc),
             new MaterialShaderRunner<CheckeredPhongShader>(new CheckeredPhongShader(0, material2), bc),
@@ -196,11 +196,11 @@ public class RayTracingRenderer : IRenderer
                 context.Barrier(bc.AttenuationBuffer);
                 context.Barrier(bc.ColorBuffer);
 
-                if (b == 1)
-                {
-                    context.For(tile.Width, tile.Height, new RayBufferDumpShader(tile, bc.RayBuffer, RenderBuffer, 1));
-                    return;
-                }
+                //if (b == 1)
+                //{
+                //    context.For(tile.Width, tile.Height, new RayBufferDumpShader(tile, bc.RayBuffer, RenderBuffer, 1));
+                //    return;
+                //}
             }
 
             // Copy color buffer to color sum buffer

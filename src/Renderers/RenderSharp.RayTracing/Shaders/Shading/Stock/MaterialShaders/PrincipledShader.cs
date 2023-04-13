@@ -73,8 +73,19 @@ public partial struct PrincipledShader : IMaterialShader
         colorBuffer[index2D] += material.ambient;
         colorBuffer[index2D] += material.diffuse * diffuseIntensity;
         colorBuffer[index2D] += material.specular * specularIntensity;
-        attenuationBuffer[index2D] *= material.metallic;
-        rayBuffer[fIndex] = Ray.Create(cast.position, r);
+
+        if (material.transmission > material.metallic)
+        {
+            n *= cast.isBackFace ? -1 : 1;
+            var refr = Hlsl.Refract(v, n, material.ior);
+            rayBuffer[fIndex] = Ray.Create(cast.position, refr);
+            attenuationBuffer[index2D] *= material.transmission;
+        }
+        else
+        {
+            rayBuffer[fIndex] = Ray.Create(cast.position, r);
+            attenuationBuffer[index2D] *= material.metallic;
+        }
     }
 
     ReadOnlyBuffer<ObjectSpace> IMaterialShader.ObjectBuffer  { set => objectBuffer = value; }
