@@ -47,8 +47,16 @@ public partial struct TransmissionShader : IMaterialShader
             return;
 
 
-        var n = cast.smoothNormal * (cast.isBackFace ? -1 : 1);
-        var r = Hlsl.Refract(ray.direction, n, material.ior);
+        var n = cast.smoothNormal;
+        var ior = material.ior;
+
+        if (cast.isBackFace)
+        {
+            n *= -1;
+            ior = 1 - (1 - ior);
+        }
+
+        var r = Hlsl.Refract(ray.direction, n, ior);
 
         // Cannot refract
         if (Hlsl.Length(r) == 0)

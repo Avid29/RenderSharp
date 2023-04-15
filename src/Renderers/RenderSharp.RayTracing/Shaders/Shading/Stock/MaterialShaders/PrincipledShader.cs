@@ -76,8 +76,24 @@ public partial struct PrincipledShader : IMaterialShader
 
         if (material.transmission > material.metallic)
         {
-            n *= cast.isBackFace ? -1 : 1;
-            var refr = Hlsl.Refract(v, n, material.ior);
+            var refrN = n;
+            var ior = material.ior;
+
+            if (cast.isBackFace)
+            {
+                refrN = -refrN;
+            }
+            else
+            {
+                ior = 1 / ior;
+            }
+
+            var refr = Hlsl.Refract(v, refrN, ior);
+            
+            // Cannot refract
+            if (Hlsl.Length(refr) == 0)
+                refr = Hlsl.Reflect(ray.direction, cast.smoothNormal);
+
             rayBuffer[fIndex] = Ray.Create(cast.position, refr);
             attenuationBuffer[index2D] *= material.transmission;
         }
