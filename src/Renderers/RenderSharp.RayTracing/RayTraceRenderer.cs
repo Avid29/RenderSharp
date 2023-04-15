@@ -196,7 +196,7 @@ public class RayTracingRenderer : IRenderer
                 context.Barrier(bc.AttenuationBuffer);
                 context.Barrier(bc.ColorBuffer);
 
-                //if (b == 1)
+                //if (b == 0)
                 //{
                 //    context.For(tile.Width, tile.Height, new RayBufferDumpShader(tile, bc.RayBuffer, RenderBuffer, 1));
                 //    return;
