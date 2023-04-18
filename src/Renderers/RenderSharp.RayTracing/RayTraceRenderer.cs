@@ -12,6 +12,7 @@ using RenderSharp.RayTracing.Setup;
 using RenderSharp.RayTracing.Shaders.Pipeline;
 using RenderSharp.RayTracing.Shaders.Pipeline.CameraCasting;
 using RenderSharp.RayTracing.Shaders.Pipeline.Collision;
+using RenderSharp.RayTracing.Shaders.Pipeline.Collision.Enums;
 using RenderSharp.RayTracing.Shaders.Shading;
 using RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
 using RenderSharp.RayTracing.Shaders.Shading.Stock.SkyShaders;
@@ -112,11 +113,14 @@ public class RayTracingRenderer : IRenderer
         var bc = new TileBufferCollection(Device, tile, _objectBuffer, _vertexBuffer, _geometryBuffer, _lightBuffer);
 
         // Create shaders
-        var cameraShader = new CameraCastShader(tile, imageSize, camera, bc.PathRayBuffer);
-        var collisionShader = new GeometryCollisionShader(bc.VertexBuffer, bc.GeometryBuffer, bc.PathRayBuffer, bc.PathCastBuffer);
-        //var collisionShader = new GeometryCollisionBVHTreeShader(bvhStack, _bvhBuffer, _vertexBuffer _geometryBuffer, rayBuffer, rayCastBuffer);
+        // Cast shaders
+        var cameraCastShader = new CameraCastShader(tile, imageSize, camera, bc.PathRayBuffer);
         var shadowCastShader = new ShadowCastShader(bc.LightBuffer, bc.ShadowRayBuffer, bc.PathCastBuffer);
-        var shadowIntersectShader = new GeometryCollisionShader(bc.VertexBuffer, bc.GeometryBuffer, bc.ShadowRayBuffer, bc.ShadowCastBuffer);
+        // Collision Shaders
+        var collisionShader = new GeometryCollisionShader(bc.VertexBuffer, bc.GeometryBuffer, bc.PathRayBuffer, bc.PathCastBuffer, (int)CollisionMode.Nearest);
+        var shadowIntersectShader = new GeometryCollisionShader(bc.VertexBuffer, bc.GeometryBuffer, bc.ShadowRayBuffer, bc.ShadowCastBuffer, (int)CollisionMode.Any);
+        //var collisionShader = new GeometryCollisionBVHTreeShader(bvhStack, _bvhBuffer, _vertexBuffer _geometryBuffer, rayBuffer, rayCastBuffer);
+
         var skyShader = new SolidSkyShader(new float4(0.25f, 0.35f, 0.5f, 1f), bc.PathRayBuffer, bc.PathCastBuffer, bc.AttenuationBuffer, bc.ColorBuffer);
         var sampleCopyShader = new SampleCopyShader(tile, bc.ColorBuffer, RenderBuffer, samples);
 
@@ -168,7 +172,7 @@ public class RayTracingRenderer : IRenderer
             context.For(tile.Width, tile.Height, initShader);
 
             // Create the rays from the camera
-            context.For(tile.Width, tile.Height, cameraShader);
+            context.For(tile.Width, tile.Height, cameraCastShader);
             context.Barrier(bc.PathRayBuffer);
 
             // Bounces

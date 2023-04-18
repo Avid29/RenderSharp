@@ -17,6 +17,7 @@ public readonly partial struct GeometryCollisionShader : IComputeShader
     private readonly ReadOnlyBuffer<Triangle> geometryBuffer;
     private readonly ReadWriteBuffer<Ray> rayBuffer;
     private readonly ReadWriteBuffer<GeometryCollision> rayCastBuffer;
+    private readonly int collisionMode;
     
     private bool IsHit(Triangle tri, Ray ray, out GeometryCollision cast)
         => IsHit(tri, ray, float.MaxValue, out cast);
@@ -31,13 +32,13 @@ public readonly partial struct GeometryCollisionShader : IComputeShader
         cast = GeometryCollision.Create();
 
         // Find the triangle's normal direction
-        var normal = Hlsl.Cross(b.position - a.position, c.position - a.position);
+        var normal = Hlsl.Normalize(Hlsl.Cross(b.position - a.position, c.position - a.position));
 
         // Find the length required for the ray to collide with the triangle's plane
         var dn = Hlsl.Dot(normal, ray.direction);
         float t = (Hlsl.Dot(normal, a.position) - Hlsl.Dot(normal, ray.origin)) / dn;
 
-        // Track backface collisions
+        // Check for backface collision
         bool isBackFace = dn > 0;   
 
         // Ensure the collision is in the positive direction, and not outside the clipped range
@@ -56,14 +57,14 @@ public readonly partial struct GeometryCollisionShader : IComputeShader
         if (u < 0 || v < 0 || w < 0)
             return false;
 
-        // TODO: Calculate smooth normal
-        var smoothNormal = c.normal * u + a.normal * v + b.normal * w;
+        // Calculate smooth normal from vertex normals
+        var smoothNormal = Hlsl.Normalize(c.normal * u + a.normal * v + b.normal * w);
 
-        // Revert smooth normal to normal if normals are empty
+        // Revert smooth normal to normal if vertex normals are 0
         if (Hlsl.Length(smoothNormal) == 0)
             smoothNormal = normal;
 
-        cast = GeometryCollision.Create(q, Hlsl.Normalize(normal), Hlsl.Normalize(smoothNormal), new float2(u, v), t, isBackFace);
+        cast = GeometryCollision.Create(q, normal, smoothNormal, new float2(u, v), t, isBackFace);
         return true;
     }
 
@@ -87,14 +88,19 @@ public readonly partial struct GeometryCollisionShader : IComputeShader
         for (int i = 0; i < geometryBuffer.Length; i++)
         {
             var tri = geometryBuffer[i];
-            if (IsHit(tri, ray, distance, out var cast))
-            {
-                distance = cast.distance;
-                cast.geoId = i;
-                cast.matId = tri.matId;
-                cast.objId = tri.objId;
-                rayCast = cast;
-            }
+
+            if (!IsHit(tri, ray, distance, out var cast))
+                continue;
+
+            distance = cast.distance;
+            cast.geoId = i;
+            cast.matId = tri.matId;
+            cast.objId = tri.objId;
+            rayCast = cast;
+
+            // Return first collision when in CollisionMode.Any
+            if (collisionMode == 1)
+                break;
         }
 
         // Store the ray cast in the ray cast buffer
