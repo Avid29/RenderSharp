@@ -3,10 +3,10 @@
 using ComputeSharp;
 using RenderSharp.RayTracing.Models;
 using RenderSharp.RayTracing.Models.Camera;
-using RenderSharp.RayTracing.Models.Rays;
+using RenderSharp.RayTracing.RayCasts;
 using RenderSharp.Utilities.Tiles;
 
-namespace RenderSharp.RayTracing.Shaders.Rendering;
+namespace RenderSharp.RayTracing.Shaders.Pipeline;
 
 [AutoConstructor]
 [EmbeddedBytecode(DispatchAxis.XY)]
@@ -14,7 +14,7 @@ public partial struct ScatteredCameraCastShader : IComputeShader
 {
     private readonly Tile tile;
     private readonly int2 imageSize;
-    private readonly Camera camera;
+    private readonly PinholeCamera camera;
     private readonly ReadWriteBuffer<Ray> rayBuffer;
     private readonly ReadWriteBuffer<Rand> randBuffer;
     private int sample;
@@ -45,7 +45,7 @@ public partial struct ScatteredCameraCastShader : IComputeShader
         float v = 1 - (imageIndex.Y + vOffset) / imageSize.Y;
 
         // Create a ray from the camera and store it in the ray buffer.
-        var ray = Camera.CreateRay(camera, u, v);
+        var ray = PinholeCamera.CreateRay(camera, u, v);
         randBuffer[fIndex] = rand;
         rayBuffer[fIndex] = ray;
     }

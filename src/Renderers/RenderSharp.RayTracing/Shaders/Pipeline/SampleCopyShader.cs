@@ -4,7 +4,7 @@
 using ComputeSharp;
 using RenderSharp.Utilities.Tiles;
 
-namespace RenderSharp.RayTracing.Shaders.Rendering;
+namespace RenderSharp.RayTracing.Shaders.Pipeline;
 
 [AutoConstructor]
 [EmbeddedBytecode(DispatchAxis.XY)]

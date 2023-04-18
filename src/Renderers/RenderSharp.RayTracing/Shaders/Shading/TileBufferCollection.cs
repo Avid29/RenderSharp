@@ -4,7 +4,7 @@ using ComputeSharp;
 using RenderSharp.RayTracing.Models;
 using RenderSharp.RayTracing.Models.Geometry;
 using RenderSharp.RayTracing.Models.Lighting;
-using RenderSharp.RayTracing.Models.Rays;
+using RenderSharp.RayTracing.RayCasts;
 using RenderSharp.Utilities.Tiles;
 
 namespace RenderSharp.RayTracing.Shaders.Shading;
@@ -27,14 +27,13 @@ public struct TileBufferCollection
         
         var tilePixelCount = tile.Width * tile.Height;
 
-        RayBuffer = Device.AllocateReadWriteBuffer<Ray>(tilePixelCount);
-        ShadowCastBuffer = Device.AllocateReadWriteBuffer<Ray>(tilePixelCount * LightBuffer.Length);
-        RayCastBuffer = Device.AllocateReadWriteBuffer<GeometryCollision>(tilePixelCount);
+        PathRayBuffer = Device.AllocateReadWriteBuffer<Ray>(tilePixelCount);
+        PathCastBuffer = Device.AllocateReadWriteBuffer<GeometryCollision>(tilePixelCount);
+        ShadowRayBuffer = Device.AllocateReadWriteBuffer<Ray>(tilePixelCount * LightBuffer.Length);
+        ShadowCastBuffer = Device.AllocateReadWriteBuffer<GeometryCollision>(tilePixelCount * LightBuffer.Length);
         AttenuationBuffer = Device.AllocateReadWriteTexture2D<Rgba32, float4>(Tile.Width, Tile.Height);
         ColorBuffer = Device.AllocateReadWriteTexture2D<Rgba32, float4>(Tile.Width, Tile.Height);
-
         //bvhStack = Device.AllocateReadWriteTexture3D<int>(Tile.Width, Tile.Height, _bvhDepth + 1);
-
         RandBuffer = Device.AllocateReadWriteBuffer<Rand>(tilePixelCount);
     }
 
@@ -50,11 +49,13 @@ public struct TileBufferCollection
 
     public ReadOnlyBuffer<Light> LightBuffer { get; }
 
-    public ReadWriteBuffer<Ray> RayBuffer { get; }
+    public ReadWriteBuffer<Ray> PathRayBuffer { get; }
 
-    public ReadWriteBuffer<Ray> ShadowCastBuffer { get; }
+    public ReadWriteBuffer<GeometryCollision> PathCastBuffer { get; }
 
-    public ReadWriteBuffer<GeometryCollision> RayCastBuffer { get; }
+    public ReadWriteBuffer<Ray> ShadowRayBuffer { get; }
+
+    public ReadWriteBuffer<GeometryCollision> ShadowCastBuffer { get; }
 
     public IReadWriteNormalizedTexture2D<float4> AttenuationBuffer { get; }
 

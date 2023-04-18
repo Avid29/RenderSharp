@@ -3,8 +3,7 @@
 using ComputeSharp;
 using RenderSharp.RayTracing.Models.Geometry;
 using RenderSharp.RayTracing.Models.Lighting;
-using RenderSharp.RayTracing.Models.Materials;
-using RenderSharp.RayTracing.Models.Rays;
+using RenderSharp.RayTracing.RayCasts;
 using RenderSharp.RayTracing.Shaders.Shading.Interfaces;
 
 namespace RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
@@ -17,9 +16,10 @@ public partial struct VoronoiPhongShader : IMaterialShader
 #nullable disable
     private ReadOnlyBuffer<ObjectSpace> objectBuffer;
     private ReadOnlyBuffer<Light> lightBuffer;
-    private ReadWriteBuffer<Ray> rayBuffer;
-    private ReadWriteBuffer<Ray> shadowCastBuffer;
-    private ReadWriteBuffer<GeometryCollision> rayCastBuffer;
+    private ReadWriteBuffer<Ray> pathRayBuffer;
+    private ReadWriteBuffer<GeometryCollision> pathRayCastBuffer;
+    private ReadWriteBuffer<Ray> shadowRayBuffer;
+    private ReadWriteBuffer<GeometryCollision> shadowCastBuffer;
     private IReadWriteNormalizedTexture2D<float4> colorBuffer;
 #nullable restore
 
@@ -46,8 +46,8 @@ public partial struct VoronoiPhongShader : IMaterialShader
         int2 index2D = ThreadIds.XY;
         int fIndex = (index2D.Y * DispatchSize.X) + index2D.X;
         
-        var cast = rayCastBuffer[fIndex];
-        var ray = rayBuffer[fIndex];
+        var cast = pathRayCastBuffer[fIndex];
+        var ray = pathRayBuffer[fIndex];
 
         // If this material was not hit do not execute
         if (cast.matId != matId)
@@ -58,10 +58,12 @@ public partial struct VoronoiPhongShader : IMaterialShader
         float4 specularIntensity = float4.Zero;
         for (int i = 0; i < lightBuffer.Length; i++)
         {
-            var fShadowIndex = (i * DispatchSize.X * DispatchSize.Y) + (index2D.Y * DispatchSize.X) + index2D.X; 
-            var l = shadowCastBuffer[fShadowIndex].direction;
-            if (Hlsl.Length(l) == 0)
+            var fShadowIndex = (i * DispatchSize.X * DispatchSize.Y) + (index2D.Y * DispatchSize.X) + index2D.X;
+
+            if (shadowCastBuffer[fShadowIndex].geoId != -1)
                 continue;
+
+            var l = shadowRayBuffer[fShadowIndex].direction;
             
             var n = cast.smoothNormal;
             var v = ray.direction;
@@ -103,11 +105,13 @@ public partial struct VoronoiPhongShader : IMaterialShader
 
     ReadOnlyBuffer<Light> IMaterialShader.LightBuffer  { set => lightBuffer = value; }
 
-    ReadWriteBuffer<Ray> IMaterialShader.RayBuffer { set => rayBuffer = value; }
+    ReadWriteBuffer<Ray> IMaterialShader.PathRayBuffer { set => pathRayBuffer = value; }
 
-    ReadWriteBuffer<Ray> IMaterialShader.ShadowCastBuffer { set => shadowCastBuffer = value; }
+    ReadWriteBuffer<GeometryCollision> IMaterialShader.PathCastBuffer {  set => pathRayCastBuffer = value; }
 
-    ReadWriteBuffer<GeometryCollision> IMaterialShader.RayCastBuffer {  set => rayCastBuffer = value; }
+    ReadWriteBuffer<Ray> IMaterialShader.ShadowRayBuffer { set => shadowRayBuffer = value; }
+
+    ReadWriteBuffer<GeometryCollision> IMaterialShader.ShadowCastBuffer { set => shadowCastBuffer = value; }
 
     IReadWriteNormalizedTexture2D<float4> IMaterialShader.AttenuationBuffer { set => _ = value; }
 

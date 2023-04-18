@@ -3,9 +3,9 @@
 using ComputeSharp;
 using RenderSharp.RayTracing.Models.BVH;
 using RenderSharp.RayTracing.Models.Geometry;
-using RenderSharp.RayTracing.Models.Rays;
+using RenderSharp.RayTracing.RayCasts;
 
-namespace RenderSharp.RayTracing.Shaders.Rendering;
+namespace RenderSharp.RayTracing.Shaders.Pipeline.Collision;
 
 /// <summary>
 /// An <see cref="IComputeShader"/> that creates detects geometry collisions.
@@ -61,14 +61,14 @@ public readonly partial struct GeometryCollisionBVHTreeShader : IComputeShader
                     vTri.b = vertexBuffer[tri.b];
                     vTri.c = vertexBuffer[tri.c];
 
-                    if (VertexTriangle.IsHit(vTri, ray, distance, out var cast))
-                    {
-                        distance = cast.distance;
-                        cast.geoId = node.geoIndex;
-                        cast.matId = tri.matId;
-                        cast.objId = tri.objId;
-                        rayCast = cast;
-                    }
+                    //if (VertexTriangle.IsHit(vTri, ray, distance, out var cast))
+                    //{
+                    //    distance = cast.distance;
+                    //    cast.geoId = node.geoIndex;
+                    //    cast.matId = tri.matId;
+                    //    cast.objId = tri.objId;
+                    //    rayCast = cast;
+                    //}
                 }
                 else
                 {

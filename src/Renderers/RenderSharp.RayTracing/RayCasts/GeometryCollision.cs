@@ -2,7 +2,7 @@
 
 using ComputeSharp;
 
-namespace RenderSharp.RayTracing.Models.Rays;
+namespace RenderSharp.RayTracing.RayCasts;
 
 /// <summary>
 /// Primary ray collision information tracked for shading.

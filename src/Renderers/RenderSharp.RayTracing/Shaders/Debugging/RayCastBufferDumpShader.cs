@@ -2,7 +2,7 @@
 
 using ComputeSharp;
 using RenderSharp.RayTracing.Models.Geometry;
-using RenderSharp.RayTracing.Models.Rays;
+using RenderSharp.RayTracing.RayCasts;
 using RenderSharp.RayTracing.Utils;
 using RenderSharp.Utilities.Tiles;
 

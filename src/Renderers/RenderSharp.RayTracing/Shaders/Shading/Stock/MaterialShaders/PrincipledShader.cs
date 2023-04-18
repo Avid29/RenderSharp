@@ -4,7 +4,7 @@ using ComputeSharp;
 using RenderSharp.RayTracing.Models.Geometry;
 using RenderSharp.RayTracing.Models.Lighting;
 using RenderSharp.RayTracing.Models.Materials;
-using RenderSharp.RayTracing.Models.Rays;
+using RenderSharp.RayTracing.RayCasts;
 using RenderSharp.RayTracing.Shaders.Shading.Interfaces;
 
 namespace RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
@@ -19,8 +19,9 @@ public partial struct PrincipledShader : IMaterialShader
     private ReadOnlyBuffer<ObjectSpace> objectBuffer;
     private ReadOnlyBuffer<Light> lightBuffer;
     private ReadWriteBuffer<Ray> rayBuffer;
-    private ReadWriteBuffer<Ray> shadowCastBuffer;
     private ReadWriteBuffer<GeometryCollision> rayCastBuffer;
+    private ReadWriteBuffer<Ray> shadowRayBuffer;
+    private ReadWriteBuffer<GeometryCollision> shadowCastBuffer;
     private IReadWriteNormalizedTexture2D<float4> attenuationBuffer;
     private IReadWriteNormalizedTexture2D<float4> colorBuffer;
 #nullable restore
@@ -57,9 +58,11 @@ public partial struct PrincipledShader : IMaterialShader
         for (int i = 0; i < lightBuffer.Length; i++)
         {
             var fShadowIndex = (i * DispatchSize.X * DispatchSize.Y) + (index2D.Y * DispatchSize.X) + index2D.X; 
-            var l = shadowCastBuffer[fShadowIndex].direction;
-            if (Hlsl.Length(l) == 0)
+            
+            if (shadowCastBuffer[fShadowIndex].geoId != -1)
                 continue;
+
+            var l = shadowRayBuffer[fShadowIndex].direction;
             
             var lr = Hlsl.Reflect(l, cast.smoothNormal);
             
@@ -108,11 +111,13 @@ public partial struct PrincipledShader : IMaterialShader
 
     ReadOnlyBuffer<Light> IMaterialShader.LightBuffer  { set => lightBuffer = value; }
 
-    ReadWriteBuffer<Ray> IMaterialShader.RayBuffer { set => rayBuffer = value; }
+    ReadWriteBuffer<Ray> IMaterialShader.PathRayBuffer { set => rayBuffer = value; }
 
-    ReadWriteBuffer<Ray> IMaterialShader.ShadowCastBuffer { set => shadowCastBuffer = value; }
+    ReadWriteBuffer<GeometryCollision> IMaterialShader.PathCastBuffer {  set => rayCastBuffer = value; }
 
-    ReadWriteBuffer<GeometryCollision> IMaterialShader.RayCastBuffer {  set => rayCastBuffer = value; }
+    ReadWriteBuffer<Ray> IMaterialShader.ShadowRayBuffer { set => shadowRayBuffer = value; }
+
+    ReadWriteBuffer<GeometryCollision> IMaterialShader.ShadowCastBuffer { set => shadowCastBuffer = value; }
 
     IReadWriteNormalizedTexture2D<float4> IMaterialShader.AttenuationBuffer { set => attenuationBuffer = value; }
 

@@ -3,7 +3,7 @@
 using ComputeSharp;
 using RenderSharp.RayTracing.Models;
 
-namespace RenderSharp.RayTracing.Shaders.Rendering;
+namespace RenderSharp.RayTracing.Shaders.Pipeline;
 
 [AutoConstructor]
 [EmbeddedBytecode(DispatchAxis.XY)]

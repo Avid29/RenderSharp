@@ -1,7 +1,7 @@
 ﻿// Adam Dernis 2023
 
 using ComputeSharp;
-using RenderSharp.RayTracing.Models.Rays;
+using RenderSharp.RayTracing.RayCasts;
 using RenderSharp.Utilities.Tiles;
 
 namespace RenderSharp.RayTracing.Shaders.Debugging;

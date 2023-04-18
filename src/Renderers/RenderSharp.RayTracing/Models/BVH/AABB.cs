@@ -1,6 +1,6 @@
 ﻿// Adam Dernis 2023
 
-using RenderSharp.RayTracing.Models.Rays;
+using RenderSharp.RayTracing.RayCasts;
 using System.Numerics;
 
 namespace RenderSharp.RayTracing.Models.BVH;

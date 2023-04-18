@@ -16,9 +16,10 @@ public class MaterialShaderRunner<T> : MaterialShaderRunner
         _shader = shader;
         _shader.ObjectBuffer = buffers.ObjectBuffer;
         _shader.LightBuffer = buffers.LightBuffer;
-        _shader.RayBuffer = buffers.RayBuffer;
+        _shader.PathRayBuffer = buffers.PathRayBuffer;
+        _shader.ShadowRayBuffer = buffers.ShadowRayBuffer;
         _shader.ShadowCastBuffer = buffers.ShadowCastBuffer;
-        _shader.RayCastBuffer = buffers.RayCastBuffer;
+        _shader.PathCastBuffer = buffers.PathCastBuffer;
         _shader.AttenuationBuffer = buffers.AttenuationBuffer;
         _shader.ColorBuffer = buffers.ColorBuffer;
     }

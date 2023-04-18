@@ -1,6 +1,6 @@
 ﻿// Adam Dernis 2023
 
-using RenderSharp.RayTracing.Models.Rays;
+using RenderSharp.RayTracing.RayCasts;
 using RenderSharp.RayTracing.Utils;
 using RenderSharp.Scenes.Geometry;
 using System.Numerics;
@@ -10,7 +10,7 @@ namespace RenderSharp.RayTracing.Models.Camera;
 /// <summary>
 /// A camera for creating rays.
 /// </summary>
-public struct Camera
+public struct PinholeCamera
 {
     public Vector3 origin;
     public Vector3 u, v, n;
@@ -19,13 +19,13 @@ public struct Camera
     public float lensRadius;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Camera"/> struct.
+    /// Initializes a new instance of the <see cref="PinholeCamera"/> struct.
     /// </summary>
     /// <remarks>
     /// This constructor is designed to be called from the CPU unlike
     /// many of the models which are designed exclusively for shader execution.
     /// </remarks>
-    public Camera(Transformation transformation, float fov, float aspectRatio)
+    public PinholeCamera(Transformation transformation, float fov, float aspectRatio)
     {
         float theta = FloatUtils.DegreesToRadians(fov);
         float h = MathF.Tan(theta / 2);
@@ -56,7 +56,7 @@ public struct Camera
     /// TODO: Convert to an instance method.
     /// Waiting on https://github.com/Sergio0694/ComputeSharp/issues/479
     /// </remarks>
-    public static Ray CreateRay(Camera c, float u, float v)
+    public static Ray CreateRay(PinholeCamera c, float u, float v)
     {
         var origin = c.origin;
         var direction = c.corner + (u * c.horizontal) + (v * c.vertical) - origin;
@@ -70,7 +70,7 @@ public struct Camera
     /// TODO: Convert to an instance method.
     /// Waiting on https://github.com/Sergio0694/ComputeSharp/issues/479
     /// </remarks>
-    public static Ray CreateRay(Camera c, float u, float v, ref Rand rand)
+    public static Ray CreateRay(PinholeCamera c, float u, float v, ref Rand rand)
     {
         var rd = c.lensRadius * rand.NextInUnitDisk();
         var offset = c.u * rd.X + c.v * rd.Y;

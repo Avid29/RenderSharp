@@ -1,7 +1,7 @@
 ﻿// Adam Dernis 2023
 
 using ComputeSharp;
-using RenderSharp.RayTracing.Models.Rays;
+using RenderSharp.RayTracing.RayCasts;
 
 namespace RenderSharp.RayTracing.Shaders.Shading.Stock.SkyShaders;
 

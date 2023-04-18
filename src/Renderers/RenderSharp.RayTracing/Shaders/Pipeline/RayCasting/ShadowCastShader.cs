@@ -2,16 +2,16 @@
 
 using ComputeSharp;
 using RenderSharp.RayTracing.Models.Lighting;
-using RenderSharp.RayTracing.Models.Rays;
+using RenderSharp.RayTracing.RayCasts;
 
-namespace RenderSharp.RayTracing.Shaders.Rendering;
+namespace RenderSharp.RayTracing.Shaders.Pipeline;
 
 [AutoConstructor]
 [EmbeddedBytecode(DispatchAxis.XYZ)]
 public partial struct ShadowCastShader : IComputeShader
 {
     private readonly ReadOnlyBuffer<Light> lightsBuffer;
-    private readonly ReadWriteBuffer<Ray> shadowCastBuffer;
+    private readonly ReadWriteBuffer<Ray> shadowRayBuffer;
     private readonly ReadWriteBuffer<GeometryCollision> rayCastBuffer;
 
     public void Execute()
@@ -25,8 +25,8 @@ public partial struct ShadowCastShader : IComputeShader
         int fLightIndex = (index3D.Z * DispatchSize.X * DispatchSize.Y) + (index3D.Y * DispatchSize.X) + index3D.X;
 
         var origin = rayCastBuffer[fPxlIndex].position;
-        var direction = lightsBuffer[lightIndex].position - origin;
+        var direction = Hlsl.Normalize(lightsBuffer[lightIndex].position - origin);
 
-        shadowCastBuffer[fLightIndex] = Ray.Create(origin, Hlsl.Normalize(direction));
+        shadowRayBuffer[fLightIndex] = Ray.Create(origin, Hlsl.Normalize(direction));
     }
 }

@@ -2,10 +2,10 @@
 
 using ComputeSharp;
 using RenderSharp.RayTracing.Models.Camera;
-using RenderSharp.RayTracing.Models.Rays;
+using RenderSharp.RayTracing.RayCasts;
 using RenderSharp.Utilities.Tiles;
 
-namespace RenderSharp.RayTracing.Shaders.Rendering;
+namespace RenderSharp.RayTracing.Shaders.Pipeline.CameraCasting;
 
 /// <summary>
 /// An <see cref="IComputeShader"/> that creates camera rays.
@@ -16,7 +16,7 @@ public readonly partial struct CameraCastShader : IComputeShader
 {
     private readonly Tile tile;
     private readonly int2 imageSize;
-    private readonly Camera camera;
+    private readonly PinholeCamera camera;
     private readonly ReadWriteBuffer<Ray> rayBuffer;
 
     public void Execute()
@@ -32,7 +32,7 @@ public readonly partial struct CameraCastShader : IComputeShader
         float v = 1 - (imageIndex.Y + 0.5f) / imageSize.Y;
 
         // Create a ray from the camera and store it in the ray buffer.
-        var ray = Camera.CreateRay(camera, u, v);
+        var ray = PinholeCamera.CreateRay(camera, u, v);
         rayBuffer[fIndex] = ray;
     }
 }

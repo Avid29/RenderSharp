@@ -9,8 +9,9 @@ using RenderSharp.RayTracing.Models.Lighting;
 using RenderSharp.RayTracing.Models.Materials;
 using RenderSharp.RayTracing.Models.Materials.Enums;
 using RenderSharp.RayTracing.Setup;
-using RenderSharp.RayTracing.Shaders.Debugging;
-using RenderSharp.RayTracing.Shaders.Rendering;
+using RenderSharp.RayTracing.Shaders.Pipeline;
+using RenderSharp.RayTracing.Shaders.Pipeline.CameraCasting;
+using RenderSharp.RayTracing.Shaders.Pipeline.Collision;
 using RenderSharp.RayTracing.Shaders.Shading;
 using RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
 using RenderSharp.RayTracing.Shaders.Shading.Stock.SkyShaders;
@@ -103,7 +104,7 @@ public class RayTracingRenderer : IRenderer
         int samples = samplesSqrt * samplesSqrt;
 
         // Prepare camera with aspect ratio
-        var camera = new Camera(_camera.Transformation, _camera.Fov, imageRatio);
+        var camera = new PinholeCamera(_camera.Transformation, _camera.Fov, imageRatio);
 
         // Allocate buffers
         RenderAnalyzer?.LogProcess("Allocate Buffers", ProcessCategory.Rendering);
@@ -111,12 +112,12 @@ public class RayTracingRenderer : IRenderer
         var bc = new TileBufferCollection(Device, tile, _objectBuffer, _vertexBuffer, _geometryBuffer, _lightBuffer);
 
         // Create shaders
-        var cameraShader = new CameraCastShader(tile, imageSize, camera, bc.RayBuffer);
-        var collisionShader = new GeometryCollisionShader(bc.VertexBuffer, bc.GeometryBuffer, bc.RayBuffer, bc.RayCastBuffer);
+        var cameraShader = new CameraCastShader(tile, imageSize, camera, bc.PathRayBuffer);
+        var collisionShader = new GeometryCollisionShader(bc.VertexBuffer, bc.GeometryBuffer, bc.PathRayBuffer, bc.PathCastBuffer);
         //var collisionShader = new GeometryCollisionBVHTreeShader(bvhStack, _bvhBuffer, _vertexBuffer _geometryBuffer, rayBuffer, rayCastBuffer);
-        var shadowCastShader = new ShadowCastShader(bc.LightBuffer, bc.ShadowCastBuffer, bc.RayCastBuffer);
-        var shadowIntersectShader = new ShadowIntersectionShader(bc.VertexBuffer, bc.GeometryBuffer, bc.ShadowCastBuffer);
-        var skyShader = new SolidSkyShader(new float4(0.25f, 0.35f, 0.5f, 1f), bc.RayBuffer, bc.RayCastBuffer, bc.AttenuationBuffer, bc.ColorBuffer);
+        var shadowCastShader = new ShadowCastShader(bc.LightBuffer, bc.ShadowRayBuffer, bc.PathCastBuffer);
+        var shadowIntersectShader = new GeometryCollisionShader(bc.VertexBuffer, bc.GeometryBuffer, bc.ShadowRayBuffer, bc.ShadowCastBuffer);
+        var skyShader = new SolidSkyShader(new float4(0.25f, 0.35f, 0.5f, 1f), bc.PathRayBuffer, bc.PathCastBuffer, bc.AttenuationBuffer, bc.ColorBuffer);
         var sampleCopyShader = new SampleCopyShader(tile, bc.ColorBuffer, RenderBuffer, samples);
 
         // Create materials
@@ -168,22 +169,22 @@ public class RayTracingRenderer : IRenderer
 
             // Create the rays from the camera
             context.For(tile.Width, tile.Height, cameraShader);
-            context.Barrier(bc.RayBuffer);
+            context.Barrier(bc.PathRayBuffer);
 
             // Bounces
             for (int b = 0; b < 8; b++)
             {
                 // Find object collision and cache the resulting ray cast 
-                context.For(tile.Width, tile.Height, collisionShader);
-                context.Barrier(bc.RayCastBuffer);
+                context.For(tile.Width * tile.Height, collisionShader);
+                context.Barrier(bc.PathCastBuffer);
 
                 // Create shadow ray casts
                 context.For(tile.Width, tile.Height, _lightBuffer.Length, shadowCastShader);
-                context.Barrier(bc.ShadowCastBuffer);
+                context.Barrier(bc.ShadowRayBuffer);
 
                 // Detect shadow ray collisions
-                context.For(tile.Width, tile.Height, _lightBuffer.Length, shadowIntersectShader);
-                context.Barrier(bc.ShadowCastBuffer);
+                context.For(tile.Width * tile.Height * _lightBuffer.Length, shadowIntersectShader);
+                context.Barrier(bc.ShadowRayBuffer);
 
                 // Apply material shaders
                 foreach (var runner in materialShadersRunners)
