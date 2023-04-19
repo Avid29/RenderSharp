@@ -8,6 +8,9 @@ using RenderSharp.RayTracing.Shaders.Shading.Interfaces;
 
 namespace RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
 
+/// <summary>
+/// A shader for a phong material with a voronoi texture pattern.
+/// </summary>
 [EmbeddedBytecode(DispatchAxis.XY)]
 public partial struct VoronoiPhongShader : IMaterialShader
 {
@@ -20,9 +23,13 @@ public partial struct VoronoiPhongShader : IMaterialShader
     private ReadWriteBuffer<GeometryCollision> pathRayCastBuffer;
     private ReadWriteBuffer<Ray> shadowRayBuffer;
     private ReadWriteBuffer<GeometryCollision> shadowCastBuffer;
-    private IReadWriteNormalizedTexture2D<float4> colorBuffer;
+    private IReadWriteNormalizedTexture2D<float4> luminanceBuffer;
 #nullable restore
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VoronoiPhongShader"/> struct.
+    /// </summary>
+    /// <param name="matId">The material id associated to the shader.</param>
     public VoronoiPhongShader(int matId)
     {
         this.matId = matId;
@@ -69,8 +76,8 @@ public partial struct VoronoiPhongShader : IMaterialShader
             var v = ray.direction;
             var r = Hlsl.Reflect(l, cast.smoothNormal);
             
-            diffuseIntensity += lightBuffer[i].color * Hlsl.Max(Hlsl.Dot(n, l), 0f);
-            specularIntensity += lightBuffer[i].color * Hlsl.Pow(Hlsl.Max(Hlsl.Dot(r, ray.direction), 0), roughness);
+            diffuseIntensity += lightBuffer[i].radiance * Hlsl.Max(Hlsl.Dot(n, l), 0f);
+            specularIntensity += lightBuffer[i].radiance * Hlsl.Pow(Hlsl.Max(Hlsl.Dot(r, ray.direction), 0), roughness);
         }
 
         // Evaluate texture
@@ -96,9 +103,9 @@ public partial struct VoronoiPhongShader : IMaterialShader
         //diffuse += float4.UnitW;
 
         // Sum ambient, diffuse, and specular components
-        colorBuffer[index2D] += diffuse * cAmbient;
-        colorBuffer[index2D] += diffuse * diffuseIntensity;
-        colorBuffer[index2D] += specular * specularIntensity;
+        luminanceBuffer[index2D] += diffuse * cAmbient;
+        luminanceBuffer[index2D] += diffuse * diffuseIntensity;
+        luminanceBuffer[index2D] += specular * specularIntensity;
     }
 
     ReadOnlyBuffer<ObjectSpace> IMaterialShader.ObjectBuffer  { set => objectBuffer = value; }
@@ -115,5 +122,5 @@ public partial struct VoronoiPhongShader : IMaterialShader
 
     IReadWriteNormalizedTexture2D<float4> IMaterialShader.AttenuationBuffer { set => _ = value; }
 
-    IReadWriteNormalizedTexture2D<float4> IMaterialShader.ColorBuffer { set => colorBuffer = value; }
+    IReadWriteNormalizedTexture2D<float4> IMaterialShader.LuminanceBuffer { set => luminanceBuffer = value; }
 }

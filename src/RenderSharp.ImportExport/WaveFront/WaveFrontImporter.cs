@@ -11,6 +11,9 @@ using System.Text.RegularExpressions;
 
 namespace RenderSharp.ImportExport.WaveFront;
 
+/// <summary>
+/// A class for importing WaveFront files to a RenderSharp <see cref="ImportResult"/>.
+/// </summary>
 public partial class WaveFrontImporter
 {
     private readonly Dictionary<string, Action<string>> _actionDictionary;
@@ -31,10 +34,17 @@ public partial class WaveFrontImporter
         };
     }
 
-    public static ImportResult Parse(string objFile, string? mtlFile = null, bool useMtl = true)
+    /// <summary>
+    /// Parses a WaveFront obj file (and mtl pair file) into a RenderSharp <see cref="ImportResult"/>.
+    /// </summary>
+    /// <param name="objFilePath">The WaveFront obj filepath.</param>
+    /// <param name="mtlFilePath">The WaveFront mtl filepath, if specified.</param>
+    /// <param name="useMtl"><see langword="true"/>if the mtl filepath should be used or generated.</param>
+    /// <returns>A RenderSharp <see cref="ImportResult"/>.</returns>
+    public static ImportResult Parse(string objFilePath, string? mtlFilePath = null, bool useMtl = true)
     {
         var importer = new WaveFrontImporter();
-        importer.ParseFile(objFile);
+        importer.ParseFile(objFilePath);
 
         // TODO: Use MTL
         //if (useMtl)

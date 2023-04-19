@@ -5,11 +5,29 @@ using System.Numerics;
 
 namespace RenderSharp.RayTracing.Models.BVH;
 
+/// <summary>
+/// An axis-aligned bounding box.
+/// </summary>
 public struct AABB
 {
+    /// <summary>
+    /// The top right front corner.
+    /// </summary>
     public Vector3 highCorner;
+
+    /// <summary>
+    /// The bottom left back corner.
+    /// </summary>
     public Vector3 lowCorner;
 
+    /// <summary>
+    /// Checks if a <see cref="Ray"/> intersects an <see cref="AABB"/> within the clipping range.
+    /// </summary>
+    /// <param name="box">The <see cref="AABB"/>.</param>
+    /// <param name="ray">The <see cref="Ray"/>.</param>
+    /// <param name="maxClip">The maximum intersection distance.</param>
+    /// <param name="minClip">The minimum intersection distance.</param>
+    /// <returns>True if the ray intersections in the intersection range.</returns>
     public static bool IsHit(AABB box, Ray ray, float maxClip, float minClip)
     {
         for (int axis = 0; axis < 3; axis++)
@@ -47,6 +65,12 @@ public struct AABB
         return box;
     }
 
+    /// <summary>
+    /// Gets the AABB surrounding two AABBs.
+    /// </summary>
+    /// <param name="box1">The first AABB.</param>
+    /// <param name="box2">The second AABB.</param>
+    /// <returns>The surrounding AABB.</returns>
     public static AABB GetSurroundingBox(AABB box1, AABB box2)
     {
         Vector3 high = Vector3.Zero;

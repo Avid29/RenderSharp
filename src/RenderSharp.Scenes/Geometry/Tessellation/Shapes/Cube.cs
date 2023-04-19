@@ -7,13 +7,26 @@ using System.Numerics;
 
 namespace RenderSharp.Scenes.Geometry.Tessellation.Shapes;
 
+/// <summary>
+/// A class for cubes to be tessellated for rendering.
+/// </summary>
 public class Cube : TessellatedShape
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Cube"/> class.
+    /// </summary>
     public Cube()
     {
         Size = 2;
     }
+    
+    /// <inheritdoc/>
+    public override void ApplyTransformation(Transformation transformation)
+    {
+        throw new NotImplementedException();
+    }
 
+    /// <inheritdoc/>
     public override Mesh ConvertToMesh()
     {
         // Define vertex vectors
@@ -75,5 +88,8 @@ public class Cube : TessellatedShape
         };
     }
 
+    /// <summary>
+    /// Gets or sets the cube size.
+    /// </summary>
     public float Size { get; set; }
 }

@@ -8,18 +8,22 @@ using RenderSharp.Utilities.Tiles;
 
 namespace RenderSharp.RayTracing.Shaders.Pipeline;
 
+/// <summary>
+/// A shader that casts rays from a camera in a scattered pattern.
+/// </summary>
 [AutoConstructor]
 [EmbeddedBytecode(DispatchAxis.XY)]
-public partial struct ScatteredCameraCastShader : IComputeShader
+public readonly partial struct ScatteredCameraCastShader : IComputeShader
 {
     private readonly Tile tile;
     private readonly int2 imageSize;
     private readonly PinholeCamera camera;
     private readonly ReadWriteBuffer<Ray> rayBuffer;
     private readonly ReadWriteBuffer<Rand> randBuffer;
-    private int sample;
-    private int samplesSqrt;
-
+    private readonly int sample;
+    private readonly int samplesSqrt;
+    
+    /// <inheritdoc/>
     public void Execute()
     {
         // Get the index of resources managed by the current thread

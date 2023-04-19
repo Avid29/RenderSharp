@@ -55,11 +55,6 @@ public readonly partial struct GeometryCollisionBVHTreeShader : IComputeShader
                 if (node.geoIndex != -1)
                 {
                     var tri = geometryBuffer[node.geoIndex];
-                    VertexTriangle vTri;
-                    vTri.triangle = tri;
-                    vTri.a = vertexBuffer[tri.a];
-                    vTri.b = vertexBuffer[tri.b];
-                    vTri.c = vertexBuffer[tri.c];
 
                     //if (VertexTriangle.IsHit(vTri, ray, distance, out var cast))
                     //{

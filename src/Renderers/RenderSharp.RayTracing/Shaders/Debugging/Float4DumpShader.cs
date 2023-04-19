@@ -14,6 +14,7 @@ public readonly partial struct Float4DumpShader : IComputeShader
     private readonly IReadWriteNormalizedTexture2D<float4> attenuationBuffer;
     private readonly IReadWriteNormalizedTexture2D<float4> renderBuffer;
 
+    /// <inheritdoc/>
     public void Execute()
     {
         renderBuffer[ThreadIds.XY] = attenuationBuffer[ThreadIds.XY];

@@ -60,7 +60,7 @@ public class RayTracingRenderer : IRenderer
     public void SetupScene(CommonScene scene)
     {
         RenderAnalyzer?.LogProcess("Load Objects", ProcessCategory.Setup);
-        _camera = scene.ActiveCamera;
+        _camera = scene.ActiveActiveCamera;
 
         // Load geometry objects to the geometry buffer
         var loader = new ObjectLoader(Device);
@@ -121,8 +121,8 @@ public class RayTracingRenderer : IRenderer
         var shadowIntersectShader = new GeometryCollisionShader(bc.VertexBuffer, bc.GeometryBuffer, bc.ShadowRayBuffer, bc.ShadowCastBuffer, (int)CollisionMode.Any);
         //var collisionShader = new GeometryCollisionBVHTreeShader(bvhStack, _bvhBuffer, _vertexBuffer _geometryBuffer, rayBuffer, rayCastBuffer);
 
-        var skyShader = new SolidSkyShader(new float4(0.25f, 0.35f, 0.5f, 1f), bc.PathRayBuffer, bc.PathCastBuffer, bc.AttenuationBuffer, bc.ColorBuffer);
-        var sampleCopyShader = new SampleCopyShader(tile, bc.ColorBuffer, RenderBuffer, samples);
+        var skyShader = new SolidSkyShader(new float4(0.25f, 0.35f, 0.5f, 1f), bc.PathRayBuffer, bc.PathCastBuffer, bc.AttenuationBuffer, bc.LuminanceBuffer);
+        var sampleCopyShader = new SampleCopyShader(tile, bc.LuminanceBuffer, RenderBuffer, samples);
 
         // Create materials
         // TODO: Load dynamically
@@ -165,7 +165,7 @@ public class RayTracingRenderer : IRenderer
 
         for (int s = 0; s < samples; s++)
         {
-            var initShader = new SampleInitializeShader(bc.AttenuationBuffer, bc.ColorBuffer, bc.RandBuffer, s);
+            var initShader = new SampleInitializeShader(bc.AttenuationBuffer, bc.LuminanceBuffer, bc.RandStateBuffer, s);
             //var cameraShader = new ScatteredCameraCastShader(tile, imageSize, camera, rayBuffer, randBuffer, s, samplesSqrt);
 
             // Initialize the buffers
@@ -194,12 +194,12 @@ public class RayTracingRenderer : IRenderer
                 foreach (var runner in materialShadersRunners)
                     runner.Enqueue(in context, tile);
                 context.Barrier(bc.AttenuationBuffer);
-                context.Barrier(bc.ColorBuffer);
+                context.Barrier(bc.LuminanceBuffer);
 
                 // Apply sky material
                 context.For(tile.Width, tile.Height, skyShader);
                 context.Barrier(bc.AttenuationBuffer);
-                context.Barrier(bc.ColorBuffer);
+                context.Barrier(bc.LuminanceBuffer);
 
                 //if (b == 0)
                 //{

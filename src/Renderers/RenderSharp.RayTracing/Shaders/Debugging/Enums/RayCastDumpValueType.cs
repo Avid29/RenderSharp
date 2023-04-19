@@ -9,10 +9,12 @@ namespace RenderSharp.RayTracing.Shaders.Debugging.Enums;
 /// </summary>
 public enum RayCastDumpValueType : int
 {
+#pragma warning disable CS1591
     Position,
     Normal,
     SmoothNormal,
     Distance,
     Triangle,
     Object,
+#pragma warning restore CS1591
 }

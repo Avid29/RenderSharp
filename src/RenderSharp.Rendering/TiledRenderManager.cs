@@ -9,14 +9,21 @@ using System.Threading;
 
 namespace RenderSharp.Rendering;
 
+/// <summary>
+/// A <see cref="RenderManager"/> for rendering an image in tiles.
+/// </summary>
 public class TiledRenderManager : RenderManager
 {
     private TileManager? _tileManager;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TiledRenderManager"/> class.
+    /// </summary>
     public TiledRenderManager()
     {
     }
 
+    /// <inheritdoc/>
     protected override void AllocateBuffer(int width, int height)
     {
         base.AllocateBuffer(width, height);
@@ -24,7 +31,8 @@ public class TiledRenderManager : RenderManager
         var config = new TileConfig(new int2(64, 64));
         _tileManager = new TileManager(config, new int2(width, height));
     }
-
+    
+    /// <inheritdoc/>
     protected override void Render(CancellationToken token)
     {
         Guard.IsNotNull(OutputBuffer);

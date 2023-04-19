@@ -101,8 +101,7 @@ public class ObjectLoader
             
             if (lightSource is PointLight pointLight)
             {
-                var radius = pointLight.Radius;
-                var light = new Light(position, color, power, radius);
+                var light = new Light(position, color, power);
                 _lights.Add(light);
             }
         }

@@ -9,6 +9,9 @@ using RenderSharp.RayTracing.Shaders.Shading.Interfaces;
 
 namespace RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
 
+/// <summary>
+/// A shader for a phong-blinn material.
+/// </summary>
 [EmbeddedBytecode(DispatchAxis.XY)]
 public partial struct PhongBlinnShader : IMaterialShader
 {
@@ -22,9 +25,14 @@ public partial struct PhongBlinnShader : IMaterialShader
     private ReadWriteBuffer<GeometryCollision> pathRayCastBuffer;
     private ReadWriteBuffer<Ray> shadowRayBuffer;
     private ReadWriteBuffer<GeometryCollision> shadowCastBuffer;
-    private IReadWriteNormalizedTexture2D<float4> colorBuffer;
+    private IReadWriteNormalizedTexture2D<float4> luminanceBuffer;
 #nullable restore
     
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PhongBlinnShader"/> struct.
+    /// </summary>
+    /// <param name="matId">The material id associated to the shader.</param>
+    /// <param name="material">The material properties assigned to the shader instance.</param>
     public PhongBlinnShader(int matId, PhongMaterial material)
     {
         this.matId = matId;
@@ -62,14 +70,14 @@ public partial struct PhongBlinnShader : IMaterialShader
             var v = ray.direction;
             var h = Hlsl.Normalize(l - v);
 
-            diffuseIntensity += lightBuffer[i].color * Hlsl.Max(Hlsl.Dot(n, l), 0f);
-            specularIntensity += lightBuffer[i].color * Hlsl.Pow(Hlsl.Dot(n, h), material.roughness);
+            diffuseIntensity += lightBuffer[i].radiance * Hlsl.Max(Hlsl.Dot(n, l), 0f);
+            specularIntensity += lightBuffer[i].radiance * Hlsl.Pow(Hlsl.Dot(n, h), material.roughness);
         }
 
         // Sum ambient, diffuse, and specular components
-        colorBuffer[index2D] += material.ambient;
-        colorBuffer[index2D] += material.diffuse * diffuseIntensity;
-        colorBuffer[index2D] += material.specular * specularIntensity;
+        luminanceBuffer[index2D] += material.ambient;
+        luminanceBuffer[index2D] += material.diffuse * diffuseIntensity;
+        luminanceBuffer[index2D] += material.specular * specularIntensity;
     }
     
     ReadOnlyBuffer<ObjectSpace> IMaterialShader.ObjectBuffer  { set => objectBuffer = value; }
@@ -86,5 +94,5 @@ public partial struct PhongBlinnShader : IMaterialShader
 
     IReadWriteNormalizedTexture2D<float4> IMaterialShader.AttenuationBuffer { set => _ = value; }
 
-    IReadWriteNormalizedTexture2D<float4> IMaterialShader.ColorBuffer { set => colorBuffer = value; }
+    IReadWriteNormalizedTexture2D<float4> IMaterialShader.LuminanceBuffer { set => luminanceBuffer = value; }
 }

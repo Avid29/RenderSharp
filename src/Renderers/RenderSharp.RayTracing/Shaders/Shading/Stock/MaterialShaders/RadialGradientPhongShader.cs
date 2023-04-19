@@ -6,11 +6,12 @@ using RenderSharp.RayTracing.Models.Lighting;
 using RenderSharp.RayTracing.Models.Materials;
 using RenderSharp.RayTracing.RayCasts;
 using RenderSharp.RayTracing.Shaders.Shading.Interfaces;
-using RenderSharp.RayTracing.Utils;
-using System.Numerics;
 
 namespace RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
 
+/// <summary>
+/// A shader for a phong material with a radial gradient texture pattern.
+/// </summary>
 [EmbeddedBytecode(DispatchAxis.XY)]
 public partial struct RadialGradientPhongShader : IMaterialShader
 {
@@ -24,9 +25,14 @@ public partial struct RadialGradientPhongShader : IMaterialShader
     private ReadWriteBuffer<GeometryCollision> pathCastBuffer;
     private ReadWriteBuffer<Ray> shadowRayBuffer;
     private ReadWriteBuffer<GeometryCollision> shadowCastBuffer;
-    private IReadWriteNormalizedTexture2D<float4> colorBuffer;
+    private IReadWriteNormalizedTexture2D<float4> luminanceBuffer;
 #nullable restore
     
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RadialGradientPhongShader"/> struct.
+    /// </summary>
+    /// <param name="matId">The material id associated to the shader.</param>
+    /// <param name="material">The material properties assigned to the shader instance.</param>
     public RadialGradientPhongShader(int matId, RadialGradientPhongMaterial material)
     {
         this.matId = matId;
@@ -64,8 +70,8 @@ public partial struct RadialGradientPhongShader : IMaterialShader
             var v = ray.direction;
             var h = Hlsl.Normalize(l - v);
 
-            diffuseIntensity += lightBuffer[i].color * Hlsl.Max(Hlsl.Dot(n, l), 0f);
-            specularIntensity += lightBuffer[i].color * Hlsl.Pow(Hlsl.Dot(n, h), material.roughness);
+            diffuseIntensity += lightBuffer[i].radiance * Hlsl.Max(Hlsl.Dot(n, l), 0f);
+            specularIntensity += lightBuffer[i].radiance * Hlsl.Pow(Hlsl.Dot(n, h), material.roughness);
         }
 
         var pos = cast.position;
@@ -82,9 +88,9 @@ public partial struct RadialGradientPhongShader : IMaterialShader
         var diffuse = (material.diffuse0 * x) + (material.diffuse1 * (1 - x));
 
         // Sum ambient, diffuse, and specular components
-        colorBuffer[index2D] += diffuse * material.cAmbient;
-        colorBuffer[index2D] += diffuse * diffuseIntensity;
-        colorBuffer[index2D] += material.specular * specularIntensity;
+        luminanceBuffer[index2D] += diffuse * material.cAmbient;
+        luminanceBuffer[index2D] += diffuse * diffuseIntensity;
+        luminanceBuffer[index2D] += material.specular * specularIntensity;
     }
 
     ReadOnlyBuffer<ObjectSpace> IMaterialShader.ObjectBuffer  { set => objectBuffer = value; }
@@ -101,5 +107,5 @@ public partial struct RadialGradientPhongShader : IMaterialShader
 
     IReadWriteNormalizedTexture2D<float4> IMaterialShader.AttenuationBuffer { set => _ = value; }
 
-    IReadWriteNormalizedTexture2D<float4> IMaterialShader.ColorBuffer { set => colorBuffer = value; }
+    IReadWriteNormalizedTexture2D<float4> IMaterialShader.LuminanceBuffer { set => luminanceBuffer = value; }
 }

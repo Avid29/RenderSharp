@@ -2,6 +2,9 @@
 
 namespace System;
 
+/// <summary>
+/// A class containing extensions for primitive number types.
+/// </summary>
 public static class NumberExtensions
 {
     /// <summary>

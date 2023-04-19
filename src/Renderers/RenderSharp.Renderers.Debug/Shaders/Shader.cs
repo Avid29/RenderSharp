@@ -4,6 +4,9 @@ using ComputeSharp;
 
 namespace RenderSharp.Renderers.Debug.Shaders;
 
+/// <summary>
+/// A test shader.
+/// </summary>
 [AutoConstructor]
 [EmbeddedBytecode(DispatchAxis.XY)]
 public readonly partial struct Shader : IComputeShader

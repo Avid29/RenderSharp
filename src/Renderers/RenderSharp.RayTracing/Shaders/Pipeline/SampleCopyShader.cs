@@ -6,12 +6,15 @@ using RenderSharp.Utilities.Tiles;
 
 namespace RenderSharp.RayTracing.Shaders.Pipeline;
 
+/// <summary>
+/// A shader that copies a sample's luminance buffer to the render buffer.
+/// </summary>
 [AutoConstructor]
 [EmbeddedBytecode(DispatchAxis.XY)]
 public partial struct SampleCopyShader : IComputeShader
 { 
     private readonly Tile tile;
-    private readonly IReadWriteNormalizedTexture2D<float4> colorBuffer;
+    private readonly IReadWriteNormalizedTexture2D<float4> luminanceBuffer;
     private readonly IReadWriteNormalizedTexture2D<float4> RenderBuffer;
     private readonly int samples;
 
@@ -21,6 +24,6 @@ public partial struct SampleCopyShader : IComputeShader
         var sourceIndex = ThreadIds.XY;
         var destinationIndex = sourceIndex + tile.offset;
 
-        RenderBuffer[destinationIndex] += colorBuffer[sourceIndex] / samples;
+        RenderBuffer[destinationIndex] += luminanceBuffer[sourceIndex] / samples;
     }
 }

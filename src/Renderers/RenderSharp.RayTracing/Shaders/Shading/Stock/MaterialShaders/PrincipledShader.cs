@@ -9,6 +9,9 @@ using RenderSharp.RayTracing.Shaders.Shading.Interfaces;
 
 namespace RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
 
+/// <summary>
+/// A shader for a principle material.
+/// </summary>
 [EmbeddedBytecode(DispatchAxis.XY)]
 public partial struct PrincipledShader : IMaterialShader
 {
@@ -23,9 +26,14 @@ public partial struct PrincipledShader : IMaterialShader
     private ReadWriteBuffer<Ray> shadowRayBuffer;
     private ReadWriteBuffer<GeometryCollision> shadowCastBuffer;
     private IReadWriteNormalizedTexture2D<float4> attenuationBuffer;
-    private IReadWriteNormalizedTexture2D<float4> colorBuffer;
+    private IReadWriteNormalizedTexture2D<float4> luminanceBuffer;
 #nullable restore
-
+    
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PrincipledShader"/> struct.
+    /// </summary>
+    /// <param name="matId">The material id associated to the shader.</param>
+    /// <param name="material">The material properties assigned to the shader instance.</param>
     public PrincipledShader(int matId, PrincipledMaterial material)
     {
         this.matId = matId;
@@ -66,16 +74,16 @@ public partial struct PrincipledShader : IMaterialShader
             
             var lr = Hlsl.Reflect(l, cast.smoothNormal);
             
-            diffuseIntensity += lightBuffer[i].color * Hlsl.Max(Hlsl.Dot(n, l), 0f);
-            specularIntensity += lightBuffer[i].color * Hlsl.Pow(Hlsl.Max(Hlsl.Dot(lr, ray.direction), 0), material.roughness);
+            diffuseIntensity += lightBuffer[i].radiance * Hlsl.Max(Hlsl.Dot(n, l), 0f);
+            specularIntensity += lightBuffer[i].radiance * Hlsl.Pow(Hlsl.Max(Hlsl.Dot(lr, ray.direction), 0), material.roughness);
         }
 
         var att = attenuationBuffer[index2D];
 
         // Sum ambient, diffuse, and specular components
-        colorBuffer[index2D] += material.ambient;
-        colorBuffer[index2D] += material.diffuse * diffuseIntensity;
-        colorBuffer[index2D] += material.specular * specularIntensity;
+        luminanceBuffer[index2D] += material.ambient;
+        luminanceBuffer[index2D] += material.diffuse * diffuseIntensity;
+        luminanceBuffer[index2D] += material.specular * specularIntensity;
 
         if (material.transmission > material.metallic)
         {
@@ -121,5 +129,5 @@ public partial struct PrincipledShader : IMaterialShader
 
     IReadWriteNormalizedTexture2D<float4> IMaterialShader.AttenuationBuffer { set => attenuationBuffer = value; }
 
-    IReadWriteNormalizedTexture2D<float4> IMaterialShader.ColorBuffer { set => colorBuffer = value; }
+    IReadWriteNormalizedTexture2D<float4> IMaterialShader.LuminanceBuffer { set => luminanceBuffer = value; }
 }

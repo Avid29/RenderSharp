@@ -9,17 +9,27 @@ using RenderSharp.Utilities.Tiles;
 
 namespace RenderSharp.Renderers.Debug;
 
+/// <summary>
+/// A simple naive renderer.
+/// </summary>
 public class SimpleRenderer : IRenderer
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SimpleRenderer"/> class.
+    /// </summary>
+    /// <param name="device">The <see cref="GraphicsDevice"/> to use for rendering.</param>
     public SimpleRenderer(GraphicsDevice device)
     {
         Device = device;
     }
 
-    public GraphicsDevice Device { get; set; }
+    /// <inheritdoc/>
+    public GraphicsDevice Device { get;  }
     
+    /// <inheritdoc/>
     public IReadWriteNormalizedTexture2D<float4>? RenderBuffer { get; set; }
-
+    
+    /// <inheritdoc/>
     public IRenderAnalyzer? RenderAnalyzer { get; set; }
 
     /// <inheritdoc/>

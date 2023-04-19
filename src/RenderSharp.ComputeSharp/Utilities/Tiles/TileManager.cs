@@ -2,11 +2,19 @@
 
 namespace RenderSharp.Utilities.Tiles;
 
+/// <summary>
+/// A class for managing the sequence tiles are rendered.
+/// </summary>
 public class TileManager
 {
     private readonly TileConfig _config;
     private readonly int2 _imageSize;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TileManager"/> class.
+    /// </summary>
+    /// <param name="config">The tile config.</param>
+    /// <param name="imageSize">The size of the image to render.</param>
     public TileManager(TileConfig config, int2 imageSize)
     {
         _config = config;
@@ -14,12 +22,25 @@ public class TileManager
         TileCount = DetermineTileCount();
     }
 
+    /// <summary>
+    /// Gets the index of the last queued tile.
+    /// </summary>
     public int PreviousTileIndex { get; private set; }
 
+    /// <summary>
+    /// Gets the total number of tiles to render.
+    /// </summary>
     public int TileCount { get; }
     
+    /// <summary>
+    /// Gets a value indicating whether or not the tile queue is finished.
+    /// </summary>
     public bool Finished => !(PreviousTileIndex < TileCount);
     
+    /// <summary>
+    /// Gets next <see cref="Tile"/> to render.
+    /// </summary>
+    /// <returns>The next <see cref="Tile"/> to render.</returns>
     public Tile GetNextTile()
     {
         if (Finished)

@@ -8,7 +8,7 @@ using RenderSharp.Utilities.Tiles;
 namespace RenderSharp.RayTracing.Shaders.Pipeline.CameraCasting;
 
 /// <summary>
-/// An <see cref="IComputeShader"/> that creates camera rays.
+/// A shader that casts rays from a camera.
 /// </summary>
 [AutoConstructor]
 [EmbeddedBytecode(DispatchAxis.XY)]
@@ -19,6 +19,7 @@ public readonly partial struct CameraCastShader : IComputeShader
     private readonly PinholeCamera camera;
     private readonly ReadWriteBuffer<Ray> rayBuffer;
 
+    /// <inheritdoc/>
     public void Execute()
     {
         // Get the index of resources managed by the current thread

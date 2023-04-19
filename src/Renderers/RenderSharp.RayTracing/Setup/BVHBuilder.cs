@@ -3,6 +3,7 @@
 using ComputeSharp;
 using RenderSharp.RayTracing.Models.BVH;
 using RenderSharp.RayTracing.Models.Geometry;
+using System.Numerics;
 using System.Runtime.InteropServices;
 
 namespace RenderSharp.RayTracing.Setup;
@@ -12,15 +13,21 @@ namespace RenderSharp.RayTracing.Setup;
 /// </summary>
 public class BVHBuilder
 {
-    private readonly List<Vertex> _verticies;
+    private readonly List<Vertex> _vertices;
     private readonly List<Triangle> _triangles;
     private readonly BVHNode[] _bvhHeap;
     private int _pos;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BVHBuilder"/> class.
+    /// </summary>
+    /// <param name="device">The graphics device to store the BVH heap on.</param>
+    /// <param name="vertices">The list of vertices </param>
+    /// <param name="geometries"></param>
     public BVHBuilder(GraphicsDevice device, List<Vertex> vertices, List<Triangle> geometries)
     {
         Device = device;
-        _verticies = vertices;
+        _vertices = vertices;
         _triangles = geometries;
         _bvhHeap = new BVHNode[(geometries.Count * 2) - 1];
     }
@@ -40,6 +47,9 @@ public class BVHBuilder
     /// </summary>
     public int Depth { get; private set; }
 
+    /// <summary>
+    /// Builds the BVH Tree according to the vertex and geometry buffer.
+    /// </summary>
     public void BuildBVHTree()
     {
         Depth = 0;
@@ -57,21 +67,14 @@ public class BVHBuilder
 
         if (geometries.Length == 1)
         {
-            var tri = Triangle.LoadVertexTriangle(geometries[0], _verticies);
-            AABB box = VertexTriangle.GetAABB(tri);
+            AABB box = GetTriangleAABB(geometries[0]);
             node = BVHNode.Create(box, index);
         }
         else
         {
             // TODO: Split on a better basis
             int axis = depth % 3;
-            geometries.Sort((a, b) =>
-            {
-                var vA = Triangle.LoadVertexTriangle(a, _verticies);
-                var vB = Triangle.LoadVertexTriangle(b, _verticies);
-                return VertexTriangle.GetAABB(vA).highCorner[axis]
-                    .CompareTo(VertexTriangle.GetAABB(vB).highCorner[axis]);
-            });
+            geometries.Sort((a, b) => GetTriangleAABB(a).highCorner[axis].CompareTo(GetTriangleAABB(b).highCorner[axis]));
 
             int mid = geometries.Length / 2;
             int rightI = BuildBVH(geometries[mid..], index + mid, depth + 1);
@@ -91,5 +94,23 @@ public class BVHBuilder
     private void AllocateBuffers()
     {
         BVHBuffer = Device.AllocateReadOnlyBuffer(_bvhHeap.ToArray());
+    }
+
+    private AABB GetTriangleAABB(Triangle tri)
+    {
+        Vector3 high = Vector3.Zero;
+        Vector3 low = Vector3.Zero;
+
+        var a = _vertices[tri.a];
+        var b = _vertices[tri.b];
+        var c = _vertices[tri.c];
+
+        for (int axis = 0; axis < 3; axis++)
+        {
+            high[axis] = MathF.Max(MathF.Max(((Vector3)a.position)[axis], ((Vector3)b.position)[axis]), ((Vector3)c.position)[axis]);
+            low[axis] = MathF.Min(MathF.Min(((Vector3)a.position)[axis], ((Vector3)b.position)[axis]), ((Vector3)c.position)[axis]);
+        }
+
+        return AABB.Create(high, low);
     }
 }

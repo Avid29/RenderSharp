@@ -9,6 +9,9 @@ using RenderSharp.RayTracing.Shaders.Shading.Interfaces;
 
 namespace RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
 
+/// <summary>
+/// A shader for a transmissive material.
+/// </summary>
 [EmbeddedBytecode(DispatchAxis.XY)]
 public partial struct TransmissionShader : IMaterialShader
 {
@@ -23,9 +26,14 @@ public partial struct TransmissionShader : IMaterialShader
     private ReadWriteBuffer<Ray> shadowRayBuffer;
     private ReadWriteBuffer<GeometryCollision> shadowCastBuffer;
     private IReadWriteNormalizedTexture2D<float4> attenuationBuffer;
-    private IReadWriteNormalizedTexture2D<float4> colorBuffer;
+    private IReadWriteNormalizedTexture2D<float4> luminanceBuffer;
 #nullable restore
     
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TransmissionShader"/> struct.
+    /// </summary>
+    /// <param name="matId">The material id associated to the shader.</param>
+    /// <param name="material">The material properties assigned to the shader instance.</param>
     public TransmissionShader(int matId, TransmissionMaterial material)
     {
         this.matId = matId;
@@ -80,5 +88,5 @@ public partial struct TransmissionShader : IMaterialShader
 
     IReadWriteNormalizedTexture2D<float4> IMaterialShader.AttenuationBuffer { set => attenuationBuffer = value; }
 
-    IReadWriteNormalizedTexture2D<float4> IMaterialShader.ColorBuffer { set => colorBuffer = value; }
+    IReadWriteNormalizedTexture2D<float4> IMaterialShader.LuminanceBuffer { set => luminanceBuffer = value; }
 }

@@ -16,7 +16,7 @@ public partial struct SolidSkyShader : IComputeShader
     private readonly ReadWriteBuffer<Ray> rayBuffer;
     private readonly ReadWriteBuffer<GeometryCollision> rayCastBuffer;
     private readonly IReadWriteNormalizedTexture2D<float4> attenuationBuffer;
-    private readonly IReadWriteNormalizedTexture2D<float4> colorBuffer;
+    private readonly IReadWriteNormalizedTexture2D<float4> luminanceBuffer;
 
     /// <inheritdoc/>
     public void Execute()
@@ -31,7 +31,7 @@ public partial struct SolidSkyShader : IComputeShader
             return;
 
         // Add to the color buffer
-        colorBuffer[index2D] += color * attenuationBuffer[index2D];
+        luminanceBuffer[index2D] += color * attenuationBuffer[index2D];
 
         // Clear the ray in the ray buffer
         rayBuffer[fIndex].origin = 0;

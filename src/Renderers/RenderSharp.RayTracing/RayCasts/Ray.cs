@@ -7,7 +7,14 @@ namespace RenderSharp.RayTracing.RayCasts;
 /// </summary>
 public struct Ray
 {
+    /// <summary>
+    /// The ray's origin.
+    /// </summary>
     public float3 origin;
+    
+    /// <summary>
+    /// The ray's direction.
+    /// </summary>
     public float3 direction;
 
     /// <summary>

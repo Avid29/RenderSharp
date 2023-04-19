@@ -1,11 +1,9 @@
 ﻿// Adam Dernis 2023
 
-using CommunityToolkit.Diagnostics;
 using RenderSharp.Scenes.Geometry;
 using RenderSharp.Scenes.Geometry.Meshes;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Text.RegularExpressions;
 
 namespace RenderSharp.ImportExport.WaveFront;
 
@@ -15,9 +13,8 @@ public partial class WaveFrontImporter
     private readonly List<Vector3> _vertexNormals;
     private readonly List<GeometryObject<Mesh>> _meshes;
     private GeometryObject<Mesh> _currentMesh;
-    
 
-    public void ParseObjectLine(string line)
+    private void ParseObjectLine(string line)
     {
         var split = line.Split(' ');
 
@@ -29,7 +26,7 @@ public partial class WaveFrontImporter
         _currentMesh = new GeometryObject<Mesh>(new Mesh()){Name = split[1]};
     }
 
-    public void ParseFaceLine(string line)
+    private void ParseFaceLine(string line)
     {
         var split = line.Split(' ');
 
@@ -52,7 +49,7 @@ public partial class WaveFrontImporter
         _currentMesh.Geometry.Faces.Add(new Face(vertices[0], vertices[1], vertices[2]));
     }
 
-    public Vertex? ParseFaceVertex(string vertex)
+    private Vertex? ParseFaceVertex(string vertex)
     {
         var split = vertex.Split('/');
 
@@ -78,7 +75,7 @@ public partial class WaveFrontImporter
         return new Vertex(vector, vertexNormal);
     }
 
-    public void ParseVertexLine(string line)
+    private void ParseVertexLine(string line)
     {
         var split = line.Split(' ');
 
@@ -97,7 +94,7 @@ public partial class WaveFrontImporter
         _vertices.Add(vector);
     }
 
-    public void ParseVertexNormalLine(string line)
+    private void ParseVertexNormalLine(string line)
     {
         var split = line.Split(' ');
 

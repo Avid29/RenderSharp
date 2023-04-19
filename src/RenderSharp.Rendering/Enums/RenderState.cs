@@ -7,6 +7,7 @@ namespace RenderSharp.Rendering.Enums;
 /// </summary>
 public enum RenderState
 {
+#pragma warning disable CS1591
     NotReady,
     Preparing,
     Ready,
@@ -20,4 +21,5 @@ public enum RenderState
     //Paused,
 
     Error
+#pragma warning restore CS1591
 }

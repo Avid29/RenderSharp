@@ -9,20 +9,32 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace RenderSharp.Rendering;
 
+/// <summary>
+/// A class for analyzing a render.
+/// </summary>
 public class RenderAnalyzer : IRenderAnalyzer
 {
     private Stopwatch? _stopwatch;
     private List<RenderProcess> _processes;
     private RenderProcess? _activeProcess;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RenderAnalyzer"/> class.
+    /// </summary>
     public RenderAnalyzer()
     {
         _processes = new List<RenderProcess>();
     }
 
+    /// <summary>
+    /// Get a value indicating whether or not the <see cref="RenderAnalyzer"/> is running.
+    /// </summary>
     [MemberNotNullWhen(true, nameof(_stopwatch))]
     public bool IsRunning => _stopwatch is not null && _stopwatch.IsRunning;
 
+    /// <summary>
+    /// Begin the render analysis.
+    /// </summary>
     public void Begin()
     {
         if (IsRunning)
@@ -32,6 +44,7 @@ public class RenderAnalyzer : IRenderAnalyzer
         _stopwatch.Start();
     }
 
+    /// <inheritdoc/>
     public void LogProcess(string name, ProcessCategory category)
     {
         if (!IsRunning)
@@ -43,6 +56,9 @@ public class RenderAnalyzer : IRenderAnalyzer
         _activeProcess = new RenderProcess(name, category, _stopwatch.Elapsed);
     }
 
+    /// <summary>
+    /// Finish the render analysis.
+    /// </summary>
     public void Finish()
     {
         if (!IsRunning)

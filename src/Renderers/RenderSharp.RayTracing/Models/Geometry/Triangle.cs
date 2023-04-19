@@ -1,16 +1,25 @@
 ﻿// Adam Dernis 2023
 
-using ComputeSharp;
-
 namespace RenderSharp.RayTracing.Models.Geometry;
 
 /// <summary>
-/// A single triangle for geometry collision.
+/// A triangle for geometry collision.
 /// </summary>
 public struct Triangle
 {
+    /// <summary>
+    /// The triangle vertex indices in the vertex buffer.
+    /// </summary>
     public int a, b, c;
+
+    /// <summary>
+    /// The material id of the triangle's shader.
+    /// </summary>
     public int matId;
+
+    /// <summary>
+    /// The id of the object the triangle belongs to.
+    /// </summary>
     public int objId;
     
     /// <summary>
@@ -38,25 +47,5 @@ public struct Triangle
         tri.matId = matId;
         tri.objId = objId;
         return tri;
-    }
-
-    public static VertexTriangle LoadVertexTriangle(Triangle triangle, List<Vertex> vertexBuffer)
-    {
-        VertexTriangle vTri;
-        vTri.triangle = triangle;
-        vTri.a = vertexBuffer[triangle.a];
-        vTri.b = vertexBuffer[triangle.b];
-        vTri.c = vertexBuffer[triangle.c];
-        return vTri;
-    }
-
-    public static VertexTriangle LoadVertexTriangle(Triangle triangle, ReadOnlyBuffer<Vertex> vertexBuffer)
-    {
-        VertexTriangle vTri;
-        vTri.triangle = triangle;
-        vTri.a = vertexBuffer[triangle.a];
-        vTri.b = vertexBuffer[triangle.b];
-        vTri.c = vertexBuffer[triangle.c];
-        return vTri;
     }
 }

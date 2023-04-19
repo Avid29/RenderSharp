@@ -2,10 +2,14 @@
 
 using ComputeSharp;
 using RenderSharp.Scenes;
+using RenderSharp.Rendering.Base;
 using RenderSharp.Utilities.Tiles;
 
 namespace RenderSharp.Rendering.Interfaces;
 
+/// <summary>
+/// An interface for rendering with the <see cref="RenderManager"/>.
+/// </summary>
 public interface IRenderer
 {
     /// <summary>

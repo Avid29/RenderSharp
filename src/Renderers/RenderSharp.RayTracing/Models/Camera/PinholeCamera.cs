@@ -12,11 +12,22 @@ namespace RenderSharp.RayTracing.Models.Camera;
 /// </summary>
 public struct PinholeCamera
 {
+    /// <summary>
+    /// The camera origin.
+    /// </summary>
     public Vector3 origin;
+
+    /// <summary>
+    /// The camera u, v, and normal.
+    /// </summary>
     public Vector3 u, v, n;
+
+    
+#pragma warning disable CS1591
     public Vector3 horizontal, vertical;
     public Vector3 corner;
     public float lensRadius;
+#pragma warning restore CS1591
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PinholeCamera"/> struct.

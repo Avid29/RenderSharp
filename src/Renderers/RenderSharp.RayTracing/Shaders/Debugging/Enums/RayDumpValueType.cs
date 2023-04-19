@@ -9,6 +9,8 @@ namespace RenderSharp.RayTracing.Shaders.Debugging.Enums;
 /// </summary>
 public enum RayDumpValueType : int
 {
+#pragma warning disable CS1591
     Origin,
     Direction,
+#pragma warning restore CS1591
 }

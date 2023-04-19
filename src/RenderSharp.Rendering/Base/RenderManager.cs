@@ -10,13 +10,16 @@ using System.Threading.Tasks;
 
 namespace RenderSharp.Rendering.Base;
 
+/// <summary>
+/// A class for managing a rendering.
+/// </summary>
 public class RenderManager
 {
     private readonly CancellationTokenSource _cancelTokenSource;
     private IRenderer? _renderer;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="RenderManager{TRenderer}"/> class.
+    /// Initializes a new instance of the <see cref="RenderManager"/> class.
     /// </summary>
     public RenderManager()
     {
@@ -30,6 +33,9 @@ public class RenderManager
     /// </summary>
     public RenderState State { get; protected set; }
 
+    /// <summary>
+    /// Gets the <see cref="RenderManager"/>'s associated <see cref="Rendering.RenderAnalyzer"/>.
+    /// </summary>
     protected RenderAnalyzer RenderAnalyzer { get; }
 
     /// <summary>

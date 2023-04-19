@@ -9,6 +9,9 @@ using RenderSharp.RayTracing.Shaders.Shading.Interfaces;
 
 namespace RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
 
+/// <summary>
+/// A shader for a phong material with a voronoi texture pattern.
+/// </summary>
 [EmbeddedBytecode(DispatchAxis.XY)]
 public partial struct CheckeredPhongShader : IMaterialShader
 {
@@ -23,9 +26,14 @@ public partial struct CheckeredPhongShader : IMaterialShader
     private ReadWriteBuffer<Ray> shadowRayBuffer;
     private ReadWriteBuffer<GeometryCollision> shadowCastBuffer;
     private IReadWriteNormalizedTexture2D<float4> attenuationBuffer;
-    private IReadWriteNormalizedTexture2D<float4> colorBuffer;
+    private IReadWriteNormalizedTexture2D<float4> luminanceBuffer;
 #nullable restore
-
+    
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CheckeredPhongShader"/> struct.
+    /// </summary>
+    /// <param name="matId">The material id associated to the shader.</param>
+    /// <param name="material">The material properties assigned to the shader instance.</param>
     public CheckeredPhongShader(int matId, CheckeredPhongMaterial material)
     {
         this.matId = matId;
@@ -63,21 +71,21 @@ public partial struct CheckeredPhongShader : IMaterialShader
             var v = ray.direction;
             var r = Hlsl.Reflect(l, cast.smoothNormal);
             
-            diffuseIntensity += lightBuffer[i].color * Hlsl.Max(Hlsl.Dot(n, l), 0f);
-            specularIntensity += lightBuffer[i].color * Hlsl.Pow(Hlsl.Max(Hlsl.Dot(r, ray.direction), 0), material.roughness);
+            diffuseIntensity += lightBuffer[i].radiance * Hlsl.Max(Hlsl.Dot(n, l), 0f);
+            specularIntensity += lightBuffer[i].radiance * Hlsl.Pow(Hlsl.Max(Hlsl.Dot(r, ray.direction), 0), material.roughness);
         }
 
         // Evaluate texture
         float3 sines = Hlsl.Sin(cast.position * material.scale);
-        float sign = sines.X /** sines.Y*/ * sines.Z;
+        float sign = sines.X * sines.Z;
         float4 diffuse = sign < 0 ? material.diffuse0 : material.diffuse1;
 
         var att = attenuationBuffer[index2D];
 
         // Sum ambient, diffuse, and specular components
-        colorBuffer[index2D] += att * diffuse * material.cAmbient;
-        colorBuffer[index2D] += att * diffuse * diffuseIntensity;
-        colorBuffer[index2D] += att * material.specular * specularIntensity;
+        luminanceBuffer[index2D] += att * diffuse * material.cAmbient;
+        luminanceBuffer[index2D] += att * diffuse * diffuseIntensity;
+        luminanceBuffer[index2D] += att * material.specular * specularIntensity;
         attenuationBuffer[index2D] = 0;
     }
 
@@ -95,5 +103,5 @@ public partial struct CheckeredPhongShader : IMaterialShader
 
     IReadWriteNormalizedTexture2D<float4> IMaterialShader.AttenuationBuffer { set => attenuationBuffer = value; }
 
-    IReadWriteNormalizedTexture2D<float4> IMaterialShader.ColorBuffer { set => colorBuffer = value; }
+    IReadWriteNormalizedTexture2D<float4> IMaterialShader.LuminanceBuffer { set => luminanceBuffer = value; }
 }

@@ -8,11 +8,17 @@ using System.Numerics;
 
 namespace RenderSharp.Scenes.Geometry.Tessellation.Shapes;
 
+/// <summary>
+/// A class for uv spheres to be tessellated for rendering.
+/// </summary>
 public class UVSphere : TessellatedShape
 {
     private int _segments;
     private int _rings;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="UVSphere"/> class.
+    /// </summary>
     public UVSphere()
     {
         Segments = 32;
@@ -20,20 +26,36 @@ public class UVSphere : TessellatedShape
         Radius = 1;
     }
 
+    /// <summary>
+    /// Gets or sets the uv sphere segment count.
+    /// </summary>
     public int Segments
     {
         get => _segments;
         set => ClampedSet(ref _segments, value, 3);
     }
 
+    /// <summary>
+    /// Gets or sets the uv sphere ring count.
+    /// </summary>
     public int Rings
     {
         get => _rings;
         set => ClampedSet(ref _rings, value, 3);
     }
 
+    /// <summary>
+    /// Gets or sets the radius of the uv sphere.
+    /// </summary>
     public float Radius { get; set; }
+    
+    /// <inheritdoc/>
+    public override void ApplyTransformation(Transformation transformation)
+    {
+        throw new NotImplementedException();
+    }
 
+    /// <inheritdoc/>
     public override Mesh ConvertToMesh()
     {
         Dictionary<Vector3, Vertex> vertices = new();

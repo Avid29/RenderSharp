@@ -9,16 +9,16 @@ using RenderSharp.Rendering.Interfaces;
 using RenderSharp.Scenes;
 using RenderSharp.Scenes.Cameras;
 using RenderSharp.Scenes.Geometry;
-using RenderSharp.Scenes.Geometry.Tessellation.Shapes;
 using RenderSharp.Scenes.Lights;
 using System;
 using System.Linq;
 using System.Numerics;
 
-using Plane = RenderSharp.Scenes.Geometry.Tessellation.Shapes.Plane;
-
 namespace RenderSharp.UI.Shared.Rendering;
 
+/// <summary>
+/// A class for running an <see cref="IRenderer"/> through a <see cref="RenderManager"/>.
+/// </summary>
 public class RenderViewer : IShaderRunner
 {
     private RenderManager? _renderManager;

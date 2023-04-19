@@ -13,6 +13,9 @@ namespace RenderSharp.Samples.WinUI;
 /// </summary>
 public sealed partial class MainWindow : Window
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MainWindow"/> class.
+    /// </summary>
     public MainWindow()
     {
         this.InitializeComponent();
@@ -20,6 +23,9 @@ public sealed partial class MainWindow : Window
         RenderViewer = new RenderViewer();
     }
 
+    /// <summary>
+    /// Gets the renderer viewer for the window.
+    /// </summary>
     public RenderViewer RenderViewer { get; }
 
     private void AnimatedComputeShaderPanel_Loaded(object sender, RoutedEventArgs e)

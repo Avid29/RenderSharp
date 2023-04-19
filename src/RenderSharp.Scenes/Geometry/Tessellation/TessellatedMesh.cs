@@ -2,15 +2,20 @@
 
 using RenderSharp.Scenes.Geometry.Interfaces;
 using RenderSharp.Scenes.Geometry.Meshes;
-using System;
 
 namespace RenderSharp.Scenes.Geometry.Tessellation;
+
+/// <summary>
+/// A base class for objects to be tessellated for rendering.
+/// </summary>
 public abstract class TessellatedShape : IGeometry
 {
-    public void ApplyTransformation(Transformation transformation)
-    {
-        throw new NotImplementedException();
-    }
+    /// <inheritdoc/>
+    public abstract void ApplyTransformation(Transformation transformation);
 
+    /// <summary>
+    /// Tessellates the object into a <see cref="Mesh"/>.
+    /// </summary>
+    /// <returns>The <see cref="TessellatedShape"/> as a <see cref="Mesh"/>.</returns>
     public abstract Mesh ConvertToMesh();
 }

@@ -6,14 +6,18 @@ using RenderSharp.RayTracing.RayCasts;
 
 namespace RenderSharp.RayTracing.Shaders.Pipeline;
 
+/// <summary>
+/// A shader that casts shadow rays from path ray collisions.
+/// </summary>
 [AutoConstructor]
 [EmbeddedBytecode(DispatchAxis.XYZ)]
-public partial struct ShadowCastShader : IComputeShader
+public readonly partial struct ShadowCastShader : IComputeShader
 {
     private readonly ReadOnlyBuffer<Light> lightsBuffer;
     private readonly ReadWriteBuffer<Ray> shadowRayBuffer;
     private readonly ReadWriteBuffer<GeometryCollision> rayCastBuffer;
 
+    /// <inheritdoc/>
     public void Execute()
     {
         // Get the index of resources managed by the current thread
