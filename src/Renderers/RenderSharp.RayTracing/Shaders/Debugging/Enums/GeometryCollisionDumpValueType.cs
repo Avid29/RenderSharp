@@ -7,7 +7,7 @@ namespace RenderSharp.RayTracing.Shaders.Debugging.Enums;
 /// <summary>
 /// An enum for which <see cref="GeometryCollision"/> property to dump.
 /// </summary>
-public enum RayCastDumpValueType : int
+public enum GeometryCollisionDumpValueType : int
 {
 #pragma warning disable CS1591
     Position,

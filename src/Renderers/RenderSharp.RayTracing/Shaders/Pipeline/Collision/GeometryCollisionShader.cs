@@ -18,9 +18,6 @@ public readonly partial struct GeometryCollisionShader : IComputeShader
     private readonly ReadWriteBuffer<Ray> rayBuffer;
     private readonly ReadWriteBuffer<GeometryCollision> rayCastBuffer;
     private readonly int collisionMode;
-    
-    private bool IsHit(Triangle tri, Ray ray, out GeometryCollision cast)
-        => IsHit(tri, ray, float.MaxValue, out cast);
 
     private bool IsHit(Triangle tri, Ray ray, float maxClip, out GeometryCollision cast)
     {
@@ -71,8 +68,6 @@ public readonly partial struct GeometryCollisionShader : IComputeShader
     /// <inheritdoc/>
     public void Execute()
     {
-        // Get the index of resources managed by the current thread
-        // in both 2D textures and flat buffers
         int index = ThreadIds.X;
 
         Ray ray = rayBuffer[index];

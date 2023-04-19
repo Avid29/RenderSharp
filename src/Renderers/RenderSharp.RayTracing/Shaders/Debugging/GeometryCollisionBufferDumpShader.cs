@@ -13,13 +13,13 @@ namespace RenderSharp.RayTracing.Shaders.Debugging;
 /// </summary>
 [AutoConstructor]
 [EmbeddedBytecode(DispatchAxis.XY)]
-public readonly partial struct RayCastBufferDumpShader : IComputeShader
+public readonly partial struct GeometryCollisionBufferDumpShader : IComputeShader
 {
     private readonly Tile tile;
     private readonly ReadWriteBuffer<GeometryCollision> rayCastBuffer;
     private readonly ReadOnlyBuffer<Triangle> geometryBuffer;
+    private readonly ReadOnlyBuffer<ObjectSpace> objectBuffer;
     private readonly IReadWriteNormalizedTexture2D<float4> renderBuffer;
-    private readonly int objectCount;
 
     /// <remarks>
     /// TODO: Use enum
@@ -63,7 +63,7 @@ public readonly partial struct RayCastBufferDumpShader : IComputeShader
                 if (dumpType == 5)
                 {
                     id = geometryBuffer[rayCast.geoId].objId;
-                    count = objectCount;
+                    count = objectBuffer.Length;
                 }
 
                 float hue = (id * 360f) / (count * 1.05f);
