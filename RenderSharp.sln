@@ -31,7 +31,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderSharp.Scenes", "src\R
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderSharp.ComputeSharp", "src\RenderSharp.ComputeSharp\RenderSharp.ComputeSharp.csproj", "{11EE3292-3576-47C8-A76E-F05D49B946B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderSharp", "src\RenderSharp\RenderSharp.csproj", "{97B45EA9-260C-4B16-8523-E136D8F83540}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RenderSharp", "src\RenderSharp\RenderSharp.csproj", "{97B45EA9-260C-4B16-8523-E136D8F83540}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PostProcessing", "PostProcessing", "{D837E095-1D7A-4DCD-B7AD-24157F8F2E83}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderSharp.ToneReproduction", "src\PostProcessing\RenderSharp.ToneReproduction\RenderSharp.ToneReproduction.csproj", "{F1A54BD6-6C2B-459E-A9AC-55218FBA60E7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -181,6 +185,22 @@ Global
 		{97B45EA9-260C-4B16-8523-E136D8F83540}.Release|x64.Build.0 = Release|Any CPU
 		{97B45EA9-260C-4B16-8523-E136D8F83540}.Release|x86.ActiveCfg = Release|Any CPU
 		{97B45EA9-260C-4B16-8523-E136D8F83540}.Release|x86.Build.0 = Release|Any CPU
+		{F1A54BD6-6C2B-459E-A9AC-55218FBA60E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1A54BD6-6C2B-459E-A9AC-55218FBA60E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1A54BD6-6C2B-459E-A9AC-55218FBA60E7}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{F1A54BD6-6C2B-459E-A9AC-55218FBA60E7}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{F1A54BD6-6C2B-459E-A9AC-55218FBA60E7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F1A54BD6-6C2B-459E-A9AC-55218FBA60E7}.Debug|x64.Build.0 = Debug|Any CPU
+		{F1A54BD6-6C2B-459E-A9AC-55218FBA60E7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F1A54BD6-6C2B-459E-A9AC-55218FBA60E7}.Debug|x86.Build.0 = Debug|Any CPU
+		{F1A54BD6-6C2B-459E-A9AC-55218FBA60E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1A54BD6-6C2B-459E-A9AC-55218FBA60E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1A54BD6-6C2B-459E-A9AC-55218FBA60E7}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{F1A54BD6-6C2B-459E-A9AC-55218FBA60E7}.Release|ARM64.Build.0 = Release|Any CPU
+		{F1A54BD6-6C2B-459E-A9AC-55218FBA60E7}.Release|x64.ActiveCfg = Release|Any CPU
+		{F1A54BD6-6C2B-459E-A9AC-55218FBA60E7}.Release|x64.Build.0 = Release|Any CPU
+		{F1A54BD6-6C2B-459E-A9AC-55218FBA60E7}.Release|x86.ActiveCfg = Release|Any CPU
+		{F1A54BD6-6C2B-459E-A9AC-55218FBA60E7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -190,6 +210,7 @@ Global
 		{59B023B7-E178-42C1-BB89-B75D98240045} = {929B4547-2F75-439F-900F-42AAB2F71422}
 		{28A89032-5D78-4AB7-9D4E-120BDA5DC224} = {B2F83727-66FB-44DD-BFE5-4BB221F7FDC5}
 		{5C420F37-8672-4B52-A48C-3EC7AD3E9B9D} = {03E42BA3-4954-453D-87F4-02F7F1788370}
+		{F1A54BD6-6C2B-459E-A9AC-55218FBA60E7} = {D837E095-1D7A-4DCD-B7AD-24157F8F2E83}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {47CEC7E8-F913-4C7B-B625-8143BAAD2D51}

@@ -10,22 +10,12 @@ namespace RenderSharp.Rendering.Interfaces;
 /// <summary>
 /// An interface for rendering with the <see cref="RenderManager"/>.
 /// </summary>
-public interface IRenderer
+public interface IRenderer : IRenderingComponent
 {
-    /// <summary>
-    /// The device the renderer is using to render.
-    /// </summary>
-    GraphicsDevice Device { get; }
-
     /// <summary>
     /// Gets or sets the render buffer to be used by the renderer.
     /// </summary>
     IReadWriteNormalizedTexture2D<float4>? RenderBuffer { get; set; }
-
-    /// <summary>
-    /// Gets or sets the render analyzer for tracking render progress and time.
-    /// </summary>
-    IRenderAnalyzer? RenderAnalyzer { get; set; }
 
     /// <summary>
     /// Loads the 3D scene to the renderer.

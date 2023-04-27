@@ -9,8 +9,6 @@ using RenderSharp.RayTracing.Models.Lighting;
 using RenderSharp.RayTracing.Models.Materials;
 using RenderSharp.RayTracing.Models.Materials.Enums;
 using RenderSharp.RayTracing.Setup;
-using RenderSharp.RayTracing.Shaders.Debugging;
-using RenderSharp.RayTracing.Shaders.Debugging.Enums;
 using RenderSharp.RayTracing.Shaders.Pipeline;
 using RenderSharp.RayTracing.Shaders.Pipeline.CameraCasting;
 using RenderSharp.RayTracing.Shaders.Pipeline.Collision;
@@ -18,6 +16,7 @@ using RenderSharp.RayTracing.Shaders.Pipeline.Collision.Enums;
 using RenderSharp.RayTracing.Shaders.Shading;
 using RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
 using RenderSharp.RayTracing.Shaders.Shading.Stock.SkyShaders;
+using RenderSharp.RayTracing.Utils;
 using RenderSharp.Rendering.Enums;
 using RenderSharp.Rendering.Interfaces;
 using RenderSharp.Utilities.Tiles;
@@ -44,13 +43,12 @@ public class RayTracingRenderer : IRenderer
     /// <summary>
     /// Initializes a new instance of the <see cref="RayTracingRenderer"/> class.
     /// </summary>
-    public RayTracingRenderer(GraphicsDevice device)
+    public RayTracingRenderer()
     {
-        Device = device;
     }
     
     /// <inheritdoc/>
-    public GraphicsDevice Device { get; }
+    public GraphicsDevice? Device { get; set; }
     
     /// <inheritdoc/>
     public IReadWriteNormalizedTexture2D<float4>? RenderBuffer { get; set; }
@@ -61,6 +59,9 @@ public class RayTracingRenderer : IRenderer
     /// <inheritdoc/>
     public void SetupScene(CommonScene scene)
     {
+        if (Device is null)
+            return;
+
         RenderAnalyzer?.LogProcess("Load Objects", ProcessCategory.Setup);
         _camera = scene.ActiveActiveCamera;
 
@@ -119,8 +120,8 @@ public class RayTracingRenderer : IRenderer
         var cameraCastShader = new CameraCastShader(tile, imageSize, camera, bc.PathRayBuffer);
         var shadowCastShader = new ShadowCastShader(bc.LightBuffer, bc.ShadowRayBuffer, bc.PathCastBuffer);
         // Collision Shaders
-        //var collisionShader = new GeometryCollisionShader(bc.VertexBuffer, bc.GeometryBuffer, bc.PathRayBuffer, bc.PathCastBuffer, (int)CollisionMode.Nearest);
-        var collisionShader = new GeometryCollisionBVHTreeShader(bc.VertexBuffer, bc.GeometryBuffer, bc.BVHTreeBuffer, bc.PathRayBuffer, bc.PathCastBuffer, bc.BVHStackBuffer, _bvhDepth, (int)CollisionMode.Nearest);
+        var collisionShader = new GeometryCollisionShader(bc.VertexBuffer, bc.GeometryBuffer, bc.PathRayBuffer, bc.PathCastBuffer, (int)CollisionMode.Nearest);
+        //var collisionShader = new GeometryCollisionBVHTreeShader(bc.VertexBuffer, bc.GeometryBuffer, bc.BVHTreeBuffer, bc.PathRayBuffer, bc.PathCastBuffer, bc.BVHStackBuffer, _bvhDepth, (int)CollisionMode.Nearest);
         var shadowIntersectShader = new GeometryCollisionShader(bc.VertexBuffer, bc.GeometryBuffer, bc.ShadowRayBuffer, bc.ShadowCastBuffer, (int)CollisionMode.Any);
 
         var skyShader = new SolidSkyShader(new float4(0.25f, 0.35f, 0.5f, 1f), bc.PathRayBuffer, bc.PathCastBuffer, bc.AttenuationBuffer, bc.LuminanceBuffer);
@@ -150,13 +151,13 @@ public class RayTracingRenderer : IRenderer
 ;
         var materialShadersRunners = new MaterialShaderRunner[]
         {
-            new MaterialShaderRunner<PrincipledShader>(new PrincipledShader(1, material4), bc),
+            //new MaterialShaderRunner<PrincipledShader>(new PrincipledShader(1, material4), bc),
             //new MaterialShaderRunner<PrincipledShader>(new PrincipledShader(1, material5), bc),
-            new MaterialShaderRunner<PrincipledShader>(new PrincipledShader(2, material6), bc),
+            //new MaterialShaderRunner<PrincipledShader>(new PrincipledShader(0, material6), bc),
             //new MaterialShaderRunner<GlossyShader>(new GlossyShader(2), bc),
             //new MaterialShaderRunner<PhongShader>(new PhongShader(2, material0), bc),
             //new MaterialShaderRunner<PhongShader>(new PhongShader(1, material1), bc),
-            new MaterialShaderRunner<CheckeredPhongShader>(new CheckeredPhongShader(0, material2), bc),
+            //new MaterialShaderRunner<CheckeredPhongShader>(new CheckeredPhongShader(0, material2), bc),
             //new MaterialShaderRunner<RadialGradientPhongShader>(new RadialGradientPhongShader(0, material3), bc),
         };
 
@@ -184,9 +185,9 @@ public class RayTracingRenderer : IRenderer
                 context.For(tile.Width * tile.Height, collisionShader);
                 context.Barrier(bc.PathCastBuffer);
 
-                // DEBUG: print object collisions
-                context.For(tile.Width, tile.Height, new GeometryCollisionBufferDumpShader(tile, bc.PathCastBuffer, bc.GeometryBuffer, bc.ObjectBuffer, RenderBuffer, (int)GeometryCollisionDumpValueType.Object));
-                return;
+                //// DEBUG: print object collisions
+                //context.For(tile.Width, tile.Height, new GeometryCollisionBufferDumpShader(tile, bc.PathCastBuffer, bc.GeometryBuffer, bc.ObjectBuffer, RenderBuffer, (int)GeometryCollisionDumpValueType.Object));
+                //return;
 
                 // Create shadow ray casts
                 context.For(tile.Width, tile.Height, _lightBuffer.Length, shadowCastShader);
@@ -215,6 +216,7 @@ public class RayTracingRenderer : IRenderer
     }
 
     [MemberNotNull(
+        nameof(Device),
         nameof(RenderBuffer),
         nameof(_objectBuffer),
         nameof(_vertexBuffer),

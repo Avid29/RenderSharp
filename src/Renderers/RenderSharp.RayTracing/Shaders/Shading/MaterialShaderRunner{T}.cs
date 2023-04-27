@@ -2,6 +2,7 @@
 
 using ComputeSharp;
 using RenderSharp.RayTracing.Shaders.Shading.Interfaces;
+using RenderSharp.RayTracing.Utils;
 using RenderSharp.Utilities.Tiles;
 
 namespace RenderSharp.RayTracing.Shaders.Shading;

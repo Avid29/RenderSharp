@@ -8,14 +8,14 @@ using RenderSharp.RayTracing.Models.Lighting;
 using RenderSharp.RayTracing.RayCasts;
 using RenderSharp.Utilities.Tiles;
 
-namespace RenderSharp.RayTracing.Shaders.Shading;
+namespace RenderSharp.RayTracing.Utils;
 
 /// <summary>
 /// A struct containing the buffers required to render a tile.
 /// </summary>
 public struct TileBufferCollection
 {
-    /// <inheritdoc cref="TileBufferCollection.TileBufferCollection(GraphicsDevice, Tile, ReadOnlyBuffer{ObjectSpace}, ReadOnlyBuffer{Vertex}, ReadOnlyBuffer{Triangle}, ReadOnlyBuffer{BVHNode}, ReadOnlyBuffer{Light}, int)"/>
+    /// <inheritdoc cref="TileBufferCollection(GraphicsDevice, Tile, ReadOnlyBuffer{ObjectSpace}, ReadOnlyBuffer{Vertex}, ReadOnlyBuffer{Triangle}, ReadOnlyBuffer{BVHNode}, ReadOnlyBuffer{Light}, int)"/>
     public TileBufferCollection(
         GraphicsDevice device, Tile tile,
         ReadOnlyBuffer<ObjectSpace> objectBuffer,
@@ -53,7 +53,7 @@ public struct TileBufferCollection
         VertexBuffer = vertexBuffer;
         GeometryBuffer = geometryBuffer;
         LightBuffer = lightBuffer;
-        
+
         var tilePixelCount = tile.Width * tile.Height;
 
         PathRayBuffer = Device.AllocateReadWriteBuffer<Ray>(tilePixelCount);
@@ -95,17 +95,17 @@ public struct TileBufferCollection
     /// Gets the scene object buffer.
     /// </summary>
     public ReadOnlyBuffer<ObjectSpace> ObjectBuffer { get; }
-    
+
     /// <summary>
     /// Gets the scene vertex buffer.
     /// </summary>
     public ReadOnlyBuffer<Vertex> VertexBuffer { get; }
-    
+
     /// <summary>
     /// Gets the scene geometry buffer.
     /// </summary>
     public ReadOnlyBuffer<Triangle> GeometryBuffer { get; }
-    
+
     /// <summary>
     /// Gets the scene BVH tree buffer.
     /// </summary>

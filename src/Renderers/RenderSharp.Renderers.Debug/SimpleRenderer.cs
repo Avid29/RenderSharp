@@ -24,7 +24,7 @@ public class SimpleRenderer : IRenderer
     }
 
     /// <inheritdoc/>
-    public GraphicsDevice Device { get;  }
+    public GraphicsDevice? Device { get; set; }
     
     /// <inheritdoc/>
     public IReadWriteNormalizedTexture2D<float4>? RenderBuffer { get; set; }
@@ -41,6 +41,7 @@ public class SimpleRenderer : IRenderer
     /// <inheritdoc/>
     public void Render()
     {
+        Guard.IsNotNull(Device);
         Guard.IsNotNull(RenderBuffer);
 
         Device.For(RenderBuffer.Width, RenderBuffer.Height, new Shader(RenderBuffer));

@@ -33,10 +33,10 @@ public class RenderViewer : IShaderRunner
     /// <summary>
     /// Sets up the <see cref="RenderManager"/>.
     /// </summary>
-    public void Setup<TManager>(IRenderer renderer)
+    public void Setup<TManager>(IRenderer renderer, IPostProcessor? postProcessor = null)
         where TManager : RenderManager, new()
     {
-        var import = WaveFrontImporter.Parse(@"C:\Users\avid2\source\repos\Personal\RenderSharp\samples\RenderSharp.Samples.WinUI\Assets\Cube.obj");
+        var import = WaveFrontImporter.Parse(@"C:\Users\avid2\source\repos\Personal\RenderSharp\samples\RenderSharp.Samples.WinUI\Assets\Bunny.obj");
 
         //var camera = Camera.CreateFromLookAt(new Vector3(0f, 5f, 0f), new Vector3(0, 0f, 0f), 75);
         var camera = Camera.CreateFromEuler(new Vector3(0f, 1f, 0f), new Vector3(0f, 180f, 0f), 75);
@@ -64,6 +64,7 @@ public class RenderViewer : IShaderRunner
 
         _renderManager = new TManager();
         _renderManager.Renderer = renderer;
+        _renderManager.PostProcessor = postProcessor;
         _renderManager.LoadScene(scene);
     }
 

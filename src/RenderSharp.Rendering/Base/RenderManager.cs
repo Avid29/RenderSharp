@@ -17,15 +17,18 @@ public class RenderManager
 {
     private readonly CancellationTokenSource _cancelTokenSource;
     private IRenderer? _renderer;
+    private IPostProcessor? _postProcessor;
+    private GraphicsDevice _device;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RenderManager"/> class.
     /// </summary>
-    public RenderManager()
+    public RenderManager(GraphicsDevice? device = null)
     {
         State = RenderState.NotReady;
         _cancelTokenSource = new CancellationTokenSource();
         RenderAnalyzer = new RenderAnalyzer();
+        _device = device ?? GraphicsDevice.GetDefault();
     }
 
     /// <summary>
@@ -61,10 +64,23 @@ public class RenderManager
     /// <summary>
     /// Gets the <see cref="GraphicsDevice"/> being used by the renderer.
     /// </summary>
-    public GraphicsDevice? Device => Renderer?.Device;
+    public GraphicsDevice Device
+    {
+        get => _device;
+        set
+        {
+            _device = value;
+
+            if (Renderer is not null)
+                Renderer.Device = value;
+
+            if (PostProcessor is not null)
+                PostProcessor.Device = value;
+        }
+    }
 
     /// <summary>
-    /// Gets the underlying renderer.
+    /// Gets or sets the underlying renderer.
     /// </summary>
     public IRenderer? Renderer
     {
@@ -74,10 +90,30 @@ public class RenderManager
             Guard.IsTrue(State is RenderState.NotReady);
 
             _renderer = value;
-            if (_renderer is not null)
-            {
-                _renderer.RenderAnalyzer = RenderAnalyzer;
-            }
+            if (_renderer is null)
+                return;
+
+            _renderer.Device = Device;
+            _renderer.RenderAnalyzer = RenderAnalyzer;
+        }
+    }
+    
+    /// <summary>
+    /// Gets or sets the post processor.
+    /// </summary>
+    public IPostProcessor? PostProcessor
+    {
+        get => _postProcessor;
+        set
+        {
+            Guard.IsTrue(State is RenderState.NotReady);
+
+            _postProcessor = value;
+            if (_postProcessor is null)
+                return;
+
+            _postProcessor.Device = Device;
+            _postProcessor.RenderAnalyzer = RenderAnalyzer;
         }
     }
 
@@ -175,13 +211,18 @@ public class RenderManager
         Guard.IsNotNull(OutputBuffer);
         Guard.IsNotNull(Renderer);
 
+        // Render
         Renderer.Render();
 
+        // Handle Cancellation
         if (token.IsCancellationRequested)
         {
             State = RenderState.Cancelled;
             return;
         }
+
+        // Post process
+        PostProcessor?.Process(OutputBuffer);
 
         RenderAnalyzer.Finish();
         State = RenderState.Done;
