@@ -4,7 +4,9 @@ using ComputeSharp;
 using Microsoft.UI.Xaml;
 using RenderSharp.RayTracing;
 using RenderSharp.Rendering;
+using RenderSharp.ToneReproduction;
 using RenderSharp.UI.Shared.Rendering;
+using TerraFX.Interop.Windows;
 
 namespace RenderSharp.Samples.WinUI;
 
@@ -30,8 +32,9 @@ public sealed partial class MainWindow : Window
 
     private void AnimatedComputeShaderPanel_Loaded(object sender, RoutedEventArgs e)
     {
-        var renderer = new RayTracingRenderer(GraphicsDevice.GetDefault());
-        RenderViewer.Setup<TiledRenderManager>(renderer);
+        var renderer = new RayTracingRenderer();
+        var postProcessor = new ToneReproducer();
+        RenderViewer.Setup<TiledRenderManager>(renderer, postProcessor);
     }
 
     private void AnimatedComputeShaderPanel_SizeChanged(object sender, SizeChangedEventArgs e)

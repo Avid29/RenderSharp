@@ -39,6 +39,7 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\src\PostProcessing\RenderSharp.ToneReproduction\RenderSharp.ToneReproduction.csproj" />
     <ProjectReference Include="..\..\src\Renderers\RenderSharp.Renderers.Debug\RenderSharp.Renderers.Debug.csproj" />
     <ProjectReference Include="..\..\src\Renderers\RenderSharp.RayTracing\RenderSharp.RayTracing.csproj" />
     <ProjectReference Include="..\..\src\RenderSharp.ImportExport\RenderSharp.ImportExport.csproj" />

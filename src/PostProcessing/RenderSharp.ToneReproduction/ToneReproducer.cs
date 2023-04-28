@@ -2,8 +2,10 @@
 
 using CommunityToolkit.Diagnostics;
 using ComputeSharp;
+using System.Linq;
 using RenderSharp.Rendering.Interfaces;
 using RenderSharp.ToneReproduction.Shaders;
+using System.Net.NetworkInformation;
 
 namespace RenderSharp.ToneReproduction;
 
@@ -26,9 +28,28 @@ public class ToneReproducer : IPostProcessor
         var height = buffer.Height;
         var width = buffer.Width;
         var luminosityBuffer = Device.AllocateReadWriteTexture2D<float>(width, height);
+        Device.For(width, height, new CalculateLuminosityShader(buffer, luminosityBuffer, 100f));
 
-        using var context = Device.CreateComputeContext();
-        context.For(width, height, new CalculateLuminosityShader(buffer, luminosityBuffer));
-        context.For(width, height, new ToneAdjustmentShader(buffer, luminosityBuffer, 500f));
+        // TODO: Calculate log of each pixel on GPU
+        float[,] pixelLumins = new float[height, width];
+        luminosityBuffer.CopyTo(pixelLumins);
+
+        var logAvg = LogAverage(pixelLumins);
+        var scale = WardScaleFactor(10f, logAvg);
+
+        Device.For(width, height, new ScaleLuminosityShader(buffer, scale));
+    }
+
+    private static float WardScaleFactor(float lDMax, float logAvg)
+    {
+        float numerator = 1.219f + MathF.Pow(lDMax / 2, 0.4f);
+        float denominator = 1.219f + MathF.Pow(logAvg, 0.4f);
+        return MathF.Pow(numerator / denominator, 2.5f);
+    }
+
+    private static float LogAverage(float[,] pixels, float delta = 0.0001f)
+    {
+        float sum = pixels.Cast<float>().Sum(pixel => MathF.Log(delta + pixel));
+        return MathF.Exp(sum / pixels.Length);
     }
 }

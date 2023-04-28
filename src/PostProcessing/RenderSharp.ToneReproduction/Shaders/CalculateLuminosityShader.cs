@@ -13,6 +13,7 @@ public partial struct CalculateLuminosityShader : IComputeShader
 {
     private readonly IReadWriteNormalizedTexture2D<float4> imageBuffer;
     private readonly ReadWriteTexture2D<float> luminosityBuffer;
+    private readonly float lMax;
 
     /// <inheritdoc/>
     public void Execute()
@@ -22,6 +23,6 @@ public partial struct CalculateLuminosityShader : IComputeShader
         var index2D = ThreadIds.XY;
         var pixel4 = imageBuffer[index2D];
         var pixel = new float1x3(pixel4.X, pixel4.Y, pixel4.Z);
-        luminosityBuffer[index2D] = (pixel * lCo).M11;
+        luminosityBuffer[index2D] = (pixel * lCo).M11 * lMax;
     }
 }
