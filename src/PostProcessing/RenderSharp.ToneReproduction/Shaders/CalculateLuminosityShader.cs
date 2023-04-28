@@ -23,6 +23,7 @@ public partial struct CalculateLuminosityShader : IComputeShader
         var index2D = ThreadIds.XY;
         var pixel4 = imageBuffer[index2D];
         var pixel = new float1x3(pixel4.X, pixel4.Y, pixel4.Z);
-        luminosityBuffer[index2D] = (pixel * lCo).M11 * lMax;
+        //luminosityBuffer[index2D] = Hlsl.Log(((pixel * lCo).M11 * lMax) + 0.0001f);
+        luminosityBuffer[index2D] = (pixel * lMax * lCo).M11;
     }
 }
