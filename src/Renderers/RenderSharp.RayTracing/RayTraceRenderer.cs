@@ -227,7 +227,7 @@ public class RayTracingRenderer : IRenderer
             context.Barrier(bc.PathRayBuffer);
 
             // Bounces
-            for (int b = 0; b < 8; b++)
+            for (int b = 0; b < Config.MaxBounceDepth; b++)
             {
                 // Find object collision and cache the resulting ray cast
                 collisionShaderRunner.Enqueue(context, tile.Width * tile.Height);

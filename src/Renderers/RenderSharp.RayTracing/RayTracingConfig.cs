@@ -15,7 +15,7 @@ public struct RayTracingConfig
         // Default config
         Samples = 1;
         UseBVH = false;
-        BounceDepthMax = 8;
+        MaxBounceDepth = 8;
     }
 
     /// <summary>
@@ -31,5 +31,5 @@ public struct RayTracingConfig
     /// <summary>
     /// Gets or sets the max number of times rays should bounce .
     /// </summary>
-    public int BounceDepthMax { get; set; }
+    public int MaxBounceDepth { get; set; }
 }
