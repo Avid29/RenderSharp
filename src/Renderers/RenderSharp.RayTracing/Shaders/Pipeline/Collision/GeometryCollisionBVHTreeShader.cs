@@ -4,15 +4,16 @@ using ComputeSharp;
 using RenderSharp.RayTracing.Models.BVH;
 using RenderSharp.RayTracing.Models.Geometry;
 using RenderSharp.RayTracing.RayCasts;
+using RenderSharp.RayTracing.Shaders.Pipeline.Collision.Interfaces;
 
 namespace RenderSharp.RayTracing.Shaders.Pipeline.Collision;
 
 /// <summary>
-/// An <see cref="IComputeShader"/> that creates detects geometry collisions.
+/// An <see cref="ICollisionShader"/> that uses BVH Tree optimizations.
 /// </summary>
 [AutoConstructor]
 [EmbeddedBytecode(DispatchAxis.X)]
-public readonly partial struct GeometryCollisionBVHTreeShader : IComputeShader
+public readonly partial struct GeometryCollisionBVHTreeShader : ICollisionShader
 {
     private readonly ReadOnlyBuffer<Vertex> vertexBuffer;
     private readonly ReadOnlyBuffer<Triangle> geometryBuffer;

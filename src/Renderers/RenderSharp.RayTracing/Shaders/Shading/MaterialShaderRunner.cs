@@ -2,11 +2,12 @@
 
 using ComputeSharp;
 using RenderSharp.Utilities.Tiles;
+using RenderSharp.RayTracing.Shaders.Shading.Interfaces;
 
 namespace RenderSharp.RayTracing.Shaders.Shading;
 
 /// <summary>
-/// A base class for initializing and running material shaders.
+/// A base class for initializing and running <see cref="IMaterialShader"/>s.
 /// </summary>
 public abstract class MaterialShaderRunner
 {

@@ -8,9 +8,9 @@ using RenderSharp.Utilities.Tiles;
 namespace RenderSharp.RayTracing.Shaders.Shading;
 
 /// <summary>
-/// A class for initializing and running material shaders.
+/// A class for initializing and running <see cref="IMaterialShader"/>s.
 /// </summary>
-/// <typeparam name="T">The material shader type.</typeparam>
+/// <typeparam name="T">The <see cref="IMaterialShader"/> type.</typeparam>
 public class MaterialShaderRunner<T> : MaterialShaderRunner
     where T : struct, IMaterialShader
 {

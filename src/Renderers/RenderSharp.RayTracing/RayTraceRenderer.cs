@@ -45,6 +45,7 @@ public class RayTracingRenderer : IRenderer
     /// </summary>
     public RayTracingRenderer()
     {
+        Config = new RayTracingConfig();
     }
     
     /// <inheritdoc/>
@@ -104,8 +105,6 @@ public class RayTracingRenderer : IRenderer
         int imageHeight = RenderBuffer.Height;
         float imageRatio = (float)imageWidth / imageHeight;
         var imageSize = new int2(imageWidth, imageHeight);
-        int samplesSqrt = 1;
-        int samples = samplesSqrt * samplesSqrt;
 
         // Prepare camera with aspect ratio
         var camera = new PinholeCamera(_camera.Transformation, _camera.Fov, imageRatio);
@@ -115,20 +114,65 @@ public class RayTracingRenderer : IRenderer
 
         var bc = new TileBufferCollection(Device, tile, _objectBuffer, _vertexBuffer, _geometryBuffer, _bvhTreeBuffer, _lightBuffer, _bvhDepth);
 
-        // Create shaders
-        // Cast shaders
+        // Create Cast shaders
         var cameraCastShader = new CameraCastShader(tile, imageSize, camera, bc.PathRayBuffer);
         var shadowCastShader = new ShadowCastShader(bc.LightBuffer, bc.ShadowRayBuffer, bc.PathCastBuffer);
-        // Collision Shaders
-        var collisionShader = new GeometryCollisionShader(bc.VertexBuffer, bc.GeometryBuffer, bc.PathRayBuffer, bc.PathCastBuffer, (int)CollisionMode.Nearest);
-        //var collisionShader = new GeometryCollisionBVHTreeShader(bc.VertexBuffer, bc.GeometryBuffer, bc.BVHTreeBuffer, bc.PathRayBuffer, bc.PathCastBuffer, bc.BVHStackBuffer, _bvhDepth, (int)CollisionMode.Nearest);
-        var shadowIntersectShader = new GeometryCollisionShader(bc.VertexBuffer, bc.GeometryBuffer, bc.ShadowRayBuffer, bc.ShadowCastBuffer, (int)CollisionMode.Any);
+        
+        var sampleCopyShader = new SampleCopyShader(tile, bc.LuminanceBuffer, RenderBuffer, Config.Samples);
+        
+        CollisionShaderRunner collisionShaderRunner;
+        CollisionShaderRunner shadowIntersectRunner;
 
-        var skyShader = new SolidSkyShader(new float4(0.25f, 0.35f, 0.5f, 1f), bc.PathRayBuffer, bc.PathCastBuffer, bc.AttenuationBuffer, bc.LuminanceBuffer);
-        var sampleCopyShader = new SampleCopyShader(tile, bc.LuminanceBuffer, RenderBuffer, samples);
+        // Collision Shaders
+        if (Config.UseBVH)
+        {
+            collisionShaderRunner =
+                new CollisionShaderRunner<GeometryCollisionBVHTreeShader>(
+                    new GeometryCollisionBVHTreeShader(
+                        bc.VertexBuffer,
+                        bc.GeometryBuffer,
+                        bc.BVHTreeBuffer,
+                        bc.PathRayBuffer,
+                        bc.PathCastBuffer,
+                        bc.BVHStackBuffer,
+                        _bvhDepth,
+                        (int)CollisionMode.Nearest));
+            
+            shadowIntersectRunner =
+                new CollisionShaderRunner<GeometryCollisionBVHTreeShader>(
+                    new GeometryCollisionBVHTreeShader(
+                        bc.VertexBuffer,
+                        bc.GeometryBuffer,
+                        bc.BVHTreeBuffer,
+                        bc.ShadowRayBuffer,
+                        bc.ShadowCastBuffer,
+                        bc.BVHStackBuffer,
+                        _bvhDepth,
+                        (int)CollisionMode.Any));
+        }
+        else
+        {
+            collisionShaderRunner =
+                new CollisionShaderRunner<GeometryCollisionShader>(
+                    new GeometryCollisionShader(
+                        bc.VertexBuffer, 
+                        bc.GeometryBuffer,
+                        bc.PathRayBuffer,
+                        bc.PathCastBuffer,
+                        (int)CollisionMode.Nearest));
+            
+            shadowIntersectRunner =
+                new CollisionShaderRunner<GeometryCollisionShader>(
+                    new GeometryCollisionShader(
+                        bc.VertexBuffer,
+                        bc.GeometryBuffer,
+                        bc.ShadowRayBuffer,
+                        bc.ShadowCastBuffer,
+                        (int)CollisionMode.Any));
+        }
 
         // Create materials
-        // TODO: Load dynamically
+        // TODO: Load externally
         var color0 = new Vector3(0.9f, 0.2f, 0.1f);
         var material0 = new PhongMaterial(color0, Vector3.One, color0, 80f,
             cDiffuse: 0.8f, cSpecular: 0.9f, cAmbient: 0.2f);
@@ -161,12 +205,16 @@ public class RayTracingRenderer : IRenderer
             //new MaterialShaderRunner<RadialGradientPhongShader>(new RadialGradientPhongShader(0, material3), bc),
         };
 
+        // Create sky shader
+        // TODO: Load externally
+        var skyShader = new SolidSkyShader(new float4(0.25f, 0.35f, 0.5f, 1f), bc.PathRayBuffer, bc.PathCastBuffer, bc.AttenuationBuffer, bc.LuminanceBuffer);
+
         RenderAnalyzer?.LogProcess("Render Loop", ProcessCategory.Rendering);
         using var context = Device.CreateComputeContext();
 
         #pragma warning disable
 
-        for (int s = 0; s < samples; s++)
+        for (int s = 0; s < Config.Samples; s++)
         {
             var initShader = new SampleInitializeShader(bc.AttenuationBuffer, bc.LuminanceBuffer, bc.RandStateBuffer, s);
             //var cameraShader = new ScatteredCameraCastShader(tile, imageSize, camera, rayBuffer, randBuffer, s, samplesSqrt);
@@ -181,20 +229,16 @@ public class RayTracingRenderer : IRenderer
             // Bounces
             for (int b = 0; b < 8; b++)
             {
-                // Find object collision and cache the resulting ray cast 
-                context.For(tile.Width * tile.Height, collisionShader);
+                // Find object collision and cache the resulting ray cast
+                collisionShaderRunner.Enqueue(context, tile.Width * tile.Height);
                 context.Barrier(bc.PathCastBuffer);
-
-                //// DEBUG: print object collisions
-                //context.For(tile.Width, tile.Height, new GeometryCollisionBufferDumpShader(tile, bc.PathCastBuffer, bc.GeometryBuffer, bc.ObjectBuffer, RenderBuffer, (int)GeometryCollisionDumpValueType.Object));
-                //return;
 
                 // Create shadow ray casts
                 context.For(tile.Width, tile.Height, _lightBuffer.Length, shadowCastShader);
                 context.Barrier(bc.ShadowRayBuffer);
 
                 // Detect shadow ray collisions
-                context.For(tile.Width * tile.Height * _lightBuffer.Length, shadowIntersectShader);
+                shadowIntersectRunner.Enqueue(context, tile.Width * tile.Height * _lightBuffer.Length);
                 context.Barrier(bc.ShadowRayBuffer);
 
                 // Apply material shaders
@@ -234,4 +278,7 @@ public class RayTracingRenderer : IRenderer
         Guard.IsNotNull(_lightBuffer);
         Guard.IsNotNull(_camera);
     }
+
+    /// <inheritdoc/>
+    public RayTracingConfig Config { get; set; }
 }
