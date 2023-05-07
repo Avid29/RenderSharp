@@ -65,10 +65,12 @@ public sealed partial class MainWindow : Window
 
     private static Scene CreateScene()
     {
-        var import = WaveFrontImporter.Parse(@"C:\Users\avid2\source\repos\Personal\RenderSharp\samples\RenderSharp.Samples.WinUI\Assets\Bunny.obj");
+        string pathRoot = @"C:\Users\avid2\source\repos\Personal\RenderSharp\samples\RenderSharp.Samples.WinUI\";
+        var import = WaveFrontImporter.Parse($"{pathRoot}Assets\\Scene-FullSphere.obj");
 
         //var camera = Camera.CreateFromLookAt(new Vector3(0f, 5f, 0f), new Vector3(0, 0f, 0f), 75);
         var camera = Camera.CreateFromEuler(new Vector3(0f, 1f, 0f), new Vector3(0f, 180f, 0f), 75);
+        //var camera = Camera.CreateFromEuler(new Vector3(0f, 2f, -2f), new Vector3(-20f, 180f, 0f), 75);
         var scene = new Scene(camera);
 
         scene.Geometry.AddRange(import.Objects.OfType<GeometryObject>());
@@ -113,9 +115,9 @@ public sealed partial class MainWindow : Window
         var material6 = new PrincipledMaterial(Vector3.One * 0.5f, Vector3.One, Vector3.Zero, 20f, 0f, 0.9f, 0.95f);
 
         // Register materials
-        renderer.RegisterMaterials<PhongShader, PhongMaterial>(material1);
-        //renderer.RegisterMaterials<CheckeredPhongShader, CheckeredPhongMaterial>(material2);
-        //renderer.RegisterMaterials<PrincipledShader, PrincipledMaterial>(material4);
-        //renderer.RegisterMaterials<PrincipledShader, PrincipledMaterial>(material6);
+        //renderer.RegisterMaterials<PhongShader, PhongMaterial>(material1);
+        renderer.RegisterMaterials<CheckeredPhongShader, CheckeredPhongMaterial>(material2);
+        renderer.RegisterMaterials<PrincipledShader, PrincipledMaterial>(material4);
+        renderer.RegisterMaterials<PrincipledShader, PrincipledMaterial>(material6);
     }
 }
