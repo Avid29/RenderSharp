@@ -13,7 +13,7 @@ public struct RayTracingConfig
     public RayTracingConfig()
     {
         // Default config
-        Samples = 1;
+        SampleCount = 1;
         UseBVH = false;
         MaxBounceDepth = 8;
     }
@@ -21,7 +21,7 @@ public struct RayTracingConfig
     /// <summary>
     /// Gets or sets the number of samples to take per pixel.
     /// </summary>
-    public int Samples { get; set; }
+    public int SampleCount { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether or not to use BVH optimization for collision detection optimization.

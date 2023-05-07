@@ -53,12 +53,22 @@ public sealed partial class MainWindow : Window
         var material5 = new PrincipledMaterial(new Vector3(0.25f, 0.35f, 0.35f), Vector3.One * 0.5f, Vector3.Zero, 20f, 0.025f, 0, 1);
         var material6 = new PrincipledMaterial(Vector3.One * 0.5f, Vector3.One, Vector3.Zero, 20f, 0f, 0.9f, 0.95f);
 
-        var renderer = new RayTracingRenderer();
+        var renderer = new RayTracingRenderer
+        {
+            Config = new RayTracingConfig
+            {
+                UseBVH = true
+            }
+        };
+
+        var postProcessor = new ToneReproducer();
+
+        // Register materials
         renderer.RegisterMaterials<CheckeredPhongShader, CheckeredPhongMaterial>(material2);
         renderer.RegisterMaterials<PrincipledShader, PrincipledMaterial>(material4);
         renderer.RegisterMaterials<PrincipledShader, PrincipledMaterial>(material6);
 
-        var postProcessor = new ToneReproducer();
+
         RenderViewer.Setup<TiledRenderManager>(renderer, postProcessor);
     }
 
