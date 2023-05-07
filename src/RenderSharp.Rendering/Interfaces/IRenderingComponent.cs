@@ -1,6 +1,7 @@
 ﻿// Adam Dernis 2023
 
 using ComputeSharp;
+using RenderSharp.Rendering.Analyzer.Interfaces;
 
 namespace RenderSharp.Rendering.Interfaces;
 

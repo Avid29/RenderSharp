@@ -11,6 +11,11 @@
     <UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Controls\Host\WindowHost.xaml" />
+    <None Remove="Controls\Shell\Shell.xaml" />
+    <None Remove="SubPages\RenderAnalysisPage.xaml" />
+  </ItemGroup>
 
   <ItemGroup>
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -43,6 +48,21 @@
     <ProjectReference Include="..\..\src\Renderers\RenderSharp.Renderers.Debug\RenderSharp.Renderers.Debug.csproj" />
     <ProjectReference Include="..\..\src\Renderers\RenderSharp.RayTracing\RenderSharp.RayTracing.csproj" />
     <ProjectReference Include="..\..\src\RenderSharp.ImportExport\RenderSharp.ImportExport.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Controls\Shell\Shell.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Controls\Host\WindowHost.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="SubPages\RenderAnalysisPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 
   <!-- 

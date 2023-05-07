@@ -6,6 +6,7 @@ using System.Linq;
 using RenderSharp.Rendering.Interfaces;
 using RenderSharp.ToneReproduction.Shaders;
 using System.Net.NetworkInformation;
+using RenderSharp.Rendering.Analyzer.Interfaces;
 
 namespace RenderSharp.ToneReproduction;
 

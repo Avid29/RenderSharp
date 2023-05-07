@@ -3,25 +3,19 @@
 using CommunityToolkit.Diagnostics;
 using ComputeSharp;
 using ComputeSharp.WinUI;
-using RenderSharp.ImportExport.WaveFront;
-using RenderSharp.Rendering.Base;
 using RenderSharp.Rendering.Interfaces;
+using RenderSharp.Rendering.Manager.Base;
 using RenderSharp.Scenes;
-using RenderSharp.Scenes.Cameras;
-using RenderSharp.Scenes.Geometry;
-using RenderSharp.Scenes.Lights;
 using System;
-using System.Linq;
-using System.Numerics;
 
 namespace RenderSharp.UI.Shared.Rendering;
 
 /// <summary>
-/// A class for running an <see cref="IRenderer"/> through a <see cref="RenderManager"/>.
+/// A class for running an <see cref="IRenderer"/> through a <see cref="RenderManagerBase"/>.
 /// </summary>
 public class RenderViewer : IShaderRunner
 {
-    private RenderManager? _renderManager;
+    private RenderManagerBase? _renderManager;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RenderViewer"/> class.
@@ -31,37 +25,11 @@ public class RenderViewer : IShaderRunner
     }
 
     /// <summary>
-    /// Sets up the <see cref="RenderManager"/>.
+    /// Sets up given a <typeparamref name="TManager"/> type, renderer, scene and optional post processor.
     /// </summary>
-    public void Setup<TManager>(IRenderer renderer, IPostProcessor? postProcessor = null)
-        where TManager : RenderManager, new()
+    public void Setup<TManager>(IRenderer renderer, Scene scene, IPostProcessor? postProcessor = null)
+        where TManager : RenderManagerBase, new()
     {
-        var import = WaveFrontImporter.Parse(@"C:\Users\avid2\source\repos\Personal\RenderSharp\samples\RenderSharp.Samples.WinUI\Assets\Scene-FullSphere.obj");
-
-        //var camera = Camera.CreateFromLookAt(new Vector3(0f, 5f, 0f), new Vector3(0, 0f, 0f), 75);
-        var camera = Camera.CreateFromEuler(new Vector3(0f, 1f, 0f), new Vector3(0f, 180f, 0f), 75);
-        var scene = new Scene(camera);
-
-        scene.Geometry.AddRange(import.Objects.OfType<GeometryObject>());
-
-        scene.Lights.AddRange(new LightSource[]
-        {
-            new PointLight
-            {
-                Color = Vector3.One,
-                Power = 0.5f,
-                Radius = 0.25f,
-                Transformation = Transformation.CreateFromTranslation(new Vector3(0.5f, 3.5f, 0.5f)),
-            },
-            //new PointLight
-            //{
-            //    Color = Vector3.One,
-            //    Power = 0.2f,
-            //    Radius = 0.25f,
-            //    Transformation = Transformation.CreateFromTranslation(new Vector3(-1.5f, 3.5f, 1f)),
-            //},
-        });
-
         _renderManager = new TManager();
         _renderManager.Renderer = renderer;
         _renderManager.PostProcessor = postProcessor;
@@ -69,7 +37,16 @@ public class RenderViewer : IShaderRunner
     }
 
     /// <summary>
-    /// Resets the <see cref="RenderManager"/>.
+    /// Attaches a <see cref="RenderManagerBase"/> to the <see cref="RenderViewer"/>.
+    /// </summary>
+    /// <param name="renderManager"></param>
+    public void Setup(RenderManagerBase renderManager)
+    {
+        _renderManager = renderManager;
+    }
+
+    /// <summary>
+    /// Resets the <see cref="RenderManagerBase"/>.
     /// </summary>
     public void Refresh()
     {

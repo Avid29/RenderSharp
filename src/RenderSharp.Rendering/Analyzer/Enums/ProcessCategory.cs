@@ -1,6 +1,6 @@
 ﻿// Adam Dernis 2023
 
-namespace RenderSharp.Rendering.Enums;
+namespace RenderSharp.Rendering.Analyzer.Enums;
 
 /// <summary>
 /// An enum for rendering process categories.

@@ -2,18 +2,19 @@
 
 using CommunityToolkit.Diagnostics;
 using ComputeSharp;
-using RenderSharp.Rendering.Enums;
+using RenderSharp.Rendering.Analyzer;
 using RenderSharp.Rendering.Interfaces;
+using RenderSharp.Rendering.Manager.Enums;
 using RenderSharp.Scenes;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace RenderSharp.Rendering.Base;
+namespace RenderSharp.Rendering.Manager.Base;
 
 /// <summary>
 /// A class for managing a rendering.
 /// </summary>
-public class RenderManager
+public abstract class RenderManagerBase
 {
     private readonly CancellationTokenSource _cancelTokenSource;
     private IRenderer? _renderer;
@@ -21,9 +22,9 @@ public class RenderManager
     private GraphicsDevice _device;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="RenderManager"/> class.
+    /// Initializes a new instance of the <see cref="RenderManagerBase"/> class.
     /// </summary>
-    public RenderManager(GraphicsDevice? device = null)
+    protected RenderManagerBase(GraphicsDevice? device = null)
     {
         State = RenderState.NotReady;
         _cancelTokenSource = new CancellationTokenSource();
@@ -37,7 +38,7 @@ public class RenderManager
     public RenderState State { get; protected set; }
 
     /// <summary>
-    /// Gets the <see cref="RenderManager"/>'s associated <see cref="Rendering.RenderAnalyzer"/>.
+    /// Gets the <see cref="RenderManagerBase"/>'s associated <see cref="Analyzer.RenderAnalyzer"/>.
     /// </summary>
     protected RenderAnalyzer RenderAnalyzer { get; }
 
@@ -97,7 +98,7 @@ public class RenderManager
             _renderer.RenderAnalyzer = RenderAnalyzer;
         }
     }
-    
+
     /// <summary>
     /// Gets or sets the post processor.
     /// </summary>

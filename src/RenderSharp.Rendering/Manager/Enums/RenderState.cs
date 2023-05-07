@@ -1,6 +1,6 @@
 ﻿// Adam Dernis 2023
 
-namespace RenderSharp.Rendering.Enums;
+namespace RenderSharp.Rendering.Manager.Enums;
 
 /// <summary>
 /// An enum indicating the state of a renderer.

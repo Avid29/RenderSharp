@@ -1,17 +1,20 @@
 // Adam Dernis 2023
 
-using ComputeSharp;
 using Microsoft.UI.Xaml;
+using RenderSharp.ImportExport.WaveFront;
 using RenderSharp.RayTracing;
-using RenderSharp.RayTracing.Models.Materials.Enums;
 using RenderSharp.RayTracing.Models.Materials;
+using RenderSharp.RayTracing.Models.Materials.Enums;
 using RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
-using RenderSharp.RayTracing.Shaders.Shading;
-using RenderSharp.Rendering;
+using RenderSharp.Rendering.Manager;
+using RenderSharp.Scenes;
+using RenderSharp.Scenes.Cameras;
+using RenderSharp.Scenes.Geometry;
+using RenderSharp.Scenes.Lights;
 using RenderSharp.ToneReproduction;
 using RenderSharp.UI.Shared.Rendering;
+using System.Linq;
 using System.Numerics;
-using TerraFX.Interop.Windows;
 
 namespace RenderSharp.Samples.WinUI;
 
@@ -37,6 +40,61 @@ public sealed partial class MainWindow : Window
 
     private void AnimatedComputeShaderPanel_Loaded(object sender, RoutedEventArgs e)
     {
+        var renderer = new RayTracingRenderer
+        {
+            Config = new RayTracingConfig
+            {
+                UseBVH = false
+            }
+        };
+        RegisterMaterials(renderer);
+        var scene = CreateScene();
+        var postProcessor = new ToneReproducer();
+        RenderViewer.Setup<TiledRenderManager>(renderer, scene, postProcessor);
+    }
+
+    private void AnimatedComputeShaderPanel_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        // Skip refresh if initial size change
+        if (e.PreviousSize.Width == 0)
+            return;
+
+        RenderViewer.Refresh();
+    }
+
+    private static Scene CreateScene()
+    {
+        var import = WaveFrontImporter.Parse(@"C:\Users\avid2\source\repos\Personal\RenderSharp\samples\RenderSharp.Samples.WinUI\Assets\Scene-FullSphere.obj");
+
+        //var camera = Camera.CreateFromLookAt(new Vector3(0f, 5f, 0f), new Vector3(0, 0f, 0f), 75);
+        var camera = Camera.CreateFromEuler(new Vector3(0f, 1f, 0f), new Vector3(0f, 180f, 0f), 75);
+        var scene = new Scene(camera);
+
+        scene.Geometry.AddRange(import.Objects.OfType<GeometryObject>());
+
+        scene.Lights.AddRange(new LightSource[]
+        {
+            new PointLight
+            {
+                Color = Vector3.One,
+                Power = 0.5f,
+                Radius = 0.25f,
+                Transformation = Transformation.CreateFromTranslation(new Vector3(0.5f, 3.5f, 0.5f)),
+            },
+            //new PointLight
+            //{
+            //    Color = Vector3.One,
+            //    Power = 0.2f,
+            //    Radius = 0.25f,
+            //    Transformation = Transformation.CreateFromTranslation(new Vector3(-1.5f, 3.5f, 1f)),
+            //},
+        });
+
+        return scene;
+    }
+
+    private static void RegisterMaterials(RayTracingRenderer renderer)
+    {
         // Create materials
         var color0 = new Vector3(0.9f, 0.2f, 0.1f);
         var material0 = new PhongMaterial(color0, Vector3.One, color0, 80f,
@@ -52,32 +110,10 @@ public sealed partial class MainWindow : Window
         var material4 = new PrincipledMaterial(Vector3.One * 0.5f, Vector3.One * 0.5f, Vector3.Zero, 10f, 0.8f, 0, 1);
         var material5 = new PrincipledMaterial(new Vector3(0.25f, 0.35f, 0.35f), Vector3.One * 0.5f, Vector3.Zero, 20f, 0.025f, 0, 1);
         var material6 = new PrincipledMaterial(Vector3.One * 0.5f, Vector3.One, Vector3.Zero, 20f, 0f, 0.9f, 0.95f);
-
-        var renderer = new RayTracingRenderer
-        {
-            Config = new RayTracingConfig
-            {
-                UseBVH = true
-            }
-        };
-
-        var postProcessor = new ToneReproducer();
-
+        
         // Register materials
         renderer.RegisterMaterials<CheckeredPhongShader, CheckeredPhongMaterial>(material2);
         renderer.RegisterMaterials<PrincipledShader, PrincipledMaterial>(material4);
         renderer.RegisterMaterials<PrincipledShader, PrincipledMaterial>(material6);
-
-
-        RenderViewer.Setup<TiledRenderManager>(renderer, postProcessor);
-    }
-
-    private void AnimatedComputeShaderPanel_SizeChanged(object sender, SizeChangedEventArgs e)
-    {
-        // Skip refresh if initial size change
-        if (e.PreviousSize.Width == 0)
-            return;
-
-        RenderViewer.Refresh();
     }
 }

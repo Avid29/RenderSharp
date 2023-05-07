@@ -1,17 +1,17 @@
 ﻿// Adam Dernis 2023
 
 using CommunityToolkit.Diagnostics;
-using RenderSharp.Rendering.Base;
-using RenderSharp.Rendering.Enums;
+using RenderSharp.Rendering.Manager.Base;
+using RenderSharp.Rendering.Manager.Enums;
 using RenderSharp.Utilities.Tiles;
 using System.Threading;
 
-namespace RenderSharp.Rendering;
+namespace RenderSharp.Rendering.Manager;
 
 /// <summary>
-/// A <see cref="RenderManager"/> for rendering an image in tiles.
+/// A <see cref="RenderManagerBase"/> for rendering an image in tiles.
 /// </summary>
-public class TiledRenderManager : RenderManager
+public class TiledRenderManager : RenderManagerBase
 {
     private TileManager? _tileManager;
 
@@ -20,17 +20,22 @@ public class TiledRenderManager : RenderManager
     /// </summary>
     public TiledRenderManager()
     {
+        TileConfig = new TileConfig(new int2(64, 64));
     }
+
+    /// <summary>
+    /// Gets or sets the tile configurations.
+    /// </summary>
+    public TileConfig TileConfig { get; set; }
 
     /// <inheritdoc/>
     protected override void AllocateBuffer(int width, int height)
     {
         base.AllocateBuffer(width, height);
 
-        var config = new TileConfig(new int2(64, 64));
-        _tileManager = new TileManager(config, new int2(width, height));
+        _tileManager = new TileManager(TileConfig, new int2(width, height));
     }
-    
+
     /// <inheritdoc/>
     protected override void Render(CancellationToken token)
     {

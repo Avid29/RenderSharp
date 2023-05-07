@@ -2,15 +2,15 @@
 
 using CommunityToolkit.Diagnostics;
 using ComputeSharp;
-using RenderSharp.Rendering.Base;
+using RenderSharp.Rendering.Manager.Base;
 using System.Threading;
 
-namespace RenderSharp.Rendering;
+namespace RenderSharp.Rendering.Manager;
 
 /// <summary>
-/// A <see cref="RenderManager"/> for images that render in realtime.
+/// A <see cref="RenderManagerBase"/> for images that render in realtime.
 /// </summary>
-public class RealtimeRenderManager : RenderManager
+public class RealtimeRenderManager : RenderManagerBase
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="RealtimeRenderManager"/> class.
@@ -24,13 +24,13 @@ public class RealtimeRenderManager : RenderManager
     {
         // No additional buffer needed for realtime rendering.
     }
-    
+
     /// <inheritdoc/>
     protected override void Render(CancellationToken token)
     {
         // All rendering is done in RenderFrame for realtime rendering
     }
-    
+
     /// <inheritdoc/>
     public override bool FrameUpdate(IReadWriteNormalizedTexture2D<float4> buffer)
     {

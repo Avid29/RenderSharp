@@ -1,9 +1,9 @@
 ﻿// Adam Dernis 2023
 
-using RenderSharp.Rendering.Enums;
+using RenderSharp.Rendering.Analyzer.Enums;
 using System;
 
-namespace RenderSharp.Rendering;
+namespace RenderSharp.Rendering.Analyzer;
 
 /// <summary>
 /// A class for render analysis process render time tracking.

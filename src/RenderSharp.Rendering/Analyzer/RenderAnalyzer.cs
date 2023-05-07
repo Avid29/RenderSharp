@@ -1,13 +1,13 @@
 ﻿// Adam Dernis 2023
 
 using CommunityToolkit.Diagnostics;
-using RenderSharp.Rendering.Enums;
-using RenderSharp.Rendering.Interfaces;
+using RenderSharp.Rendering.Analyzer.Enums;
+using RenderSharp.Rendering.Analyzer.Interfaces;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
-namespace RenderSharp.Rendering;
+namespace RenderSharp.Rendering.Analyzer;
 
 /// <summary>
 /// A class for analyzing a render.

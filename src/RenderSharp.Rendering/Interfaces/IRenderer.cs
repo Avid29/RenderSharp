@@ -2,13 +2,13 @@
 
 using ComputeSharp;
 using RenderSharp.Scenes;
-using RenderSharp.Rendering.Base;
 using RenderSharp.Utilities.Tiles;
+using RenderSharp.Rendering.Manager.Base;
 
 namespace RenderSharp.Rendering.Interfaces;
 
 /// <summary>
-/// An interface for rendering with the <see cref="RenderManager"/>.
+/// An interface for rendering with the <see cref="RenderManagerBase"/>.
 /// </summary>
 public interface IRenderer : IRenderingComponent
 {

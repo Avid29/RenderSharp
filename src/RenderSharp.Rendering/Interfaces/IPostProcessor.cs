@@ -1,12 +1,12 @@
 ﻿// Adam Dernis 2023
 
 using ComputeSharp;
-using RenderSharp.Rendering.Base;
+using RenderSharp.Rendering.Manager.Base;
 
 namespace RenderSharp.Rendering.Interfaces;
 
 /// <summary>
-/// An interface for post processing with the <see cref="RenderManager"/>
+/// An interface for post processing with the <see cref="RenderManagerBase"/>
 /// </summary>
 public interface IPostProcessor : IRenderingComponent
 {

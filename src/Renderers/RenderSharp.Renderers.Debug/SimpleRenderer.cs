@@ -3,6 +3,7 @@
 using CommunityToolkit.Diagnostics;
 using ComputeSharp;
 using RenderSharp.Renderers.Debug.Shaders;
+using RenderSharp.Rendering.Analyzer.Interfaces;
 using RenderSharp.Rendering.Interfaces;
 using RenderSharp.Scenes;
 using RenderSharp.Utilities.Tiles;

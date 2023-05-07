@@ -1,8 +1,10 @@
 ﻿// Adam Dernis 2023
 
-using RenderSharp.Rendering.Enums;
+using RenderSharp.Rendering.Analyzer;
+using RenderSharp.Rendering.Analyzer.Enums;
+using RenderSharp.Rendering.Interfaces;
 
-namespace RenderSharp.Rendering.Interfaces;
+namespace RenderSharp.Rendering.Analyzer.Interfaces;
 
 /// <summary>
 /// An interface for a exposing the <see cref="RenderAnalyzer"/> to an <see cref="IRenderer"/>.
