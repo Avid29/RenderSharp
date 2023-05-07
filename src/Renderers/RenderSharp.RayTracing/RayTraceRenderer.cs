@@ -110,7 +110,7 @@ public class RayTracingRenderer : IRenderer
 
             // Store BVH heap and the heap depth
             _bvhTreeBuffer = bvhBuilder.BVHBuffer;
-            _bvhDepth = bvhBuilder.Depth;
+            _bvhDepth = bvhBuilder.Depth + 1;
         }
     }
 

@@ -93,7 +93,7 @@ public class BVHBuilder
     
     private void AllocateBuffers()
     {
-        BVHBuffer = Device.AllocateReadOnlyBuffer(_bvhHeap.ToArray());
+        BVHBuffer = Device.AllocateReadOnlyBuffer(_bvhHeap);
     }
 
     private AABB GetTriangleAABB(Triangle tri)
@@ -107,8 +107,8 @@ public class BVHBuilder
 
         for (int axis = 0; axis < 3; axis++)
         {
-            high[axis] = MathF.Max(MathF.Max(((Vector3)a.position)[axis], ((Vector3)b.position)[axis]), ((Vector3)c.position)[axis]);
-            low[axis] = MathF.Min(MathF.Min(((Vector3)a.position)[axis], ((Vector3)b.position)[axis]), ((Vector3)c.position)[axis]);
+            high[axis] = MathF.Max(MathF.Max(a.position[axis], b.position[axis]), c.position[axis]);
+            low[axis] = MathF.Min(MathF.Min(a.position[axis], b.position[axis]), c.position[axis]);
         }
 
         return AABB.Create(high, low);

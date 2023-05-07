@@ -24,7 +24,11 @@ public readonly partial struct GeometryCollisionBVHTreeShader : ICollisionShader
     private readonly int bvhDepth;
     private readonly int collisionMode;
 
-    private bool IsHit(Triangle tri, Ray ray, float maxClip, out GeometryCollision cast)
+    /// <remark>
+    /// Duplicate from <see cref="GeometryCollisionShader.IsClosestHit(Triangle, Ray, float, out GeometryCollision)"/>.
+    /// Must have in both places due to ComputeSharp restrictions.
+    /// </remark>
+    private bool IsClosestHit(Triangle tri, Ray ray, float maxClip, out GeometryCollision cast)
     {
         var a = vertexBuffer[tri.a];
         var b = vertexBuffer[tri.b];
@@ -76,7 +80,7 @@ public readonly partial struct GeometryCollisionBVHTreeShader : ICollisionShader
         // Get the index of the ray in the ray and ray-cast buffers
         // and the index of the partition start for the bvh stack
         int index = ThreadIds.X;
-        int partStart = index * bvhDepth;
+        int partitionStart = index * bvhDepth;
 
         Ray ray = rayBuffer[index];
         if (Hlsl.Length(ray.direction) == 0)
@@ -89,50 +93,52 @@ public readonly partial struct GeometryCollisionBVHTreeShader : ICollisionShader
         
         // Add the root BVH node to the stack
         int stackIndex = 0;
-        bvhStackBuffer[partStart] = 0;
+        bvhStackBuffer[partitionStart] = 0;
         
         // Traverse the BVH Tree
         do
         {
             // Pop stack
-            int nodeIndex = bvhStackBuffer[partStart + stackIndex];
+            int nodeIndex = bvhStackBuffer[partitionStart + stackIndex];
             BVHNode node = bvhTreeBuffer[nodeIndex];
             stackIndex--;
 
             // Check for a closer collision, and log its ray cast when any exist.
-            if (BVHNode.IsHit(node, ray, distance))
-            //if (true)
+            if (!BVHNode.IsHit(node, ray, distance))
+                continue;
+
+            if (node.geoIndex != -1)
             {
-                if (node.geoIndex != -1)
-                {
-                    var tri = geometryBuffer[node.geoIndex];
+                // Leaf node found
+                var tri = geometryBuffer[node.geoIndex];
 
-                    if (!IsHit(tri, ray, distance, out var cast))
-                        continue;
+                // Check for geometry collision
+                if (!IsClosestHit(tri, ray, distance, out var cast))
+                    continue;
 
-                    distance = cast.distance;
-                    cast.geoId = node.geoIndex;
-                    cast.matId = tri.matId;
-                    cast.objId = tri.objId;
-                    rayCast = cast;
+                distance = cast.distance;
+                cast.geoId = node.geoIndex;
+                cast.matId = tri.matId;
+                cast.objId = tri.objId;
+                rayCast = cast;
 
-                    // Return first collision when in CollisionMode.Any
-                    if (collisionMode == 1)
-                        break;
-                }
-                else
-                {
-                    // Push stack
-                    stackIndex++;
-                    bvhStackBuffer[partStart + stackIndex] = node.leftIndex;
-                    stackIndex++;
-                    bvhStackBuffer[partStart + stackIndex] = node.rightIndex;
-                }
+                // Return first collision when in CollisionMode.Any
+                // TODO: Check if collision is behind light source
+                if (collisionMode == 1)
+                    break;
             }
+            else
+            {
+                // Push stack
+                stackIndex++;
+                bvhStackBuffer[partitionStart + stackIndex] = node.rightIndex;
+                stackIndex++;
+                bvhStackBuffer[partitionStart + stackIndex] = node.leftIndex;
+            }
+
         } while (stackIndex != -1);
 
         // Store the ray cast in the ray cast buffer
         rayCastBuffer[index] = rayCast;
     }
 }
-

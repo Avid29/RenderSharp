@@ -21,7 +21,7 @@ internal class BufferCollection
         ReadOnlyBuffer<Vertex> vertexBuffer,
         ReadOnlyBuffer<Triangle> geometryBuffer,
         ReadOnlyBuffer<Light> lightBuffer) :
-        this(device, tile, objectBuffer, vertexBuffer, geometryBuffer, null!, lightBuffer, 0)
+        this(device, tile, objectBuffer, vertexBuffer, geometryBuffer, null, lightBuffer, 0)
     {
         // Suppressed nullability convention. Behavior handled below.
     }
@@ -67,11 +67,10 @@ internal class BufferCollection
         BVHTreeBuffer = null;
         BVHStackBuffer = null;
 
-        // Handle nullability behavior because internal call knowingly breaks convention
         if (bvhDepth != 0 && bvhTreeBuffer is not null)
         {
             BVHTreeBuffer = bvhTreeBuffer;
-            BVHStackBuffer = Device.AllocateReadWriteBuffer<int>(tilePixelCount * LightBuffer.Length * (bvhDepth + 1));
+            BVHStackBuffer = Device.AllocateReadWriteBuffer<int>(tilePixelCount * LightBuffer.Length * bvhDepth);
         }
     }
 

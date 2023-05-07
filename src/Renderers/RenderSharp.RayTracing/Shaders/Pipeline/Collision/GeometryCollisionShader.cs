@@ -20,7 +20,7 @@ public readonly partial struct GeometryCollisionShader : ICollisionShader
     private readonly ReadWriteBuffer<GeometryCollision> rayCastBuffer;
     private readonly int collisionMode;
 
-    private bool IsHit(Triangle tri, Ray ray, float maxClip, out GeometryCollision cast)
+    private bool IsClosestHit(Triangle tri, Ray ray, float maxClip, out GeometryCollision cast)
     {
         var a = vertexBuffer[tri.a];
         var b = vertexBuffer[tri.b];
@@ -85,7 +85,7 @@ public readonly partial struct GeometryCollisionShader : ICollisionShader
         {
             var tri = geometryBuffer[i];
 
-            if (!IsHit(tri, ray, distance, out var cast))
+            if (!IsClosestHit(tri, ray, distance, out var cast))
                 continue;
 
             distance = cast.distance;
@@ -95,6 +95,7 @@ public readonly partial struct GeometryCollisionShader : ICollisionShader
             rayCast = cast;
 
             // Return first collision when in CollisionMode.Any
+            // TODO: Check if collision is behind light source
             if (collisionMode == 1)
                 break;
         }

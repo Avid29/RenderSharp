@@ -44,6 +44,23 @@ public class AABBCollisionTests
         TestCollision(ray, box, false);
     }
 
+    [TestMethod("AABB Collision 3 - Hit")]
+    public void AABBCollisionTest3()
+    {
+        var ray = new Ray
+        {
+            origin = new Vector3(0,1,0),
+            direction = Vector3.Normalize(new Vector3(0, -1, -1)),
+        };
+        var box = new AABB
+        {
+            highCorner = Vector3.One,
+            lowCorner = Vector3.Zero,
+        };
+
+        TestCollision(ray, box, false);
+    }
+
     private static void TestCollision(Ray ray, AABB box, bool expected)
     {
         var result = AABB.IsHit(box, ray, float.MaxValue, float.Epsilon);

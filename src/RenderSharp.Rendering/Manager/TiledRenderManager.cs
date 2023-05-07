@@ -20,7 +20,7 @@ public class TiledRenderManager : RenderManagerBase
     /// </summary>
     public TiledRenderManager()
     {
-        TileConfig = new TileConfig(new int2(64, 64));
+        TileConfig = new TileConfig(new int2(128, 128));
     }
 
     /// <summary>
