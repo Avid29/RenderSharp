@@ -5,7 +5,7 @@ using System.Numerics;
 namespace RenderSharp.RayTracing.Models.Materials;
 
 /// <summary>
-/// A struct containing the properties for phong material with a radial checkered texture.
+/// A struct containing the properties for phong materials with a radial checkered texture.
 /// </summary>
 public struct CheckeredPhongMaterial
 {

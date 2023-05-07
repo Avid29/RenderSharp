@@ -10,8 +10,19 @@ namespace RenderSharp.RayTracing.Shaders.Shading.Interfaces;
 /// <summary>
 /// An interface for material shaders.
 /// </summary>
-public interface IMaterialShader : IComputeShader
+public interface IMaterialShader<in TMat> : IComputeShader
+    where TMat : struct
 {
+    /// <summary>
+    /// Sets the shader's material id.
+    /// </summary>
+    int MaterialId { set; }
+
+    /// <summary>
+    /// Sets the shader's material.
+    /// </summary>
+    TMat Material { set; }
+
     /// <summary>
     /// Sets the scene object buffer on the shader.
     /// </summary>

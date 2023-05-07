@@ -3,6 +3,7 @@
 using ComputeSharp;
 using RenderSharp.RayTracing.Models.Geometry;
 using RenderSharp.RayTracing.Models.Lighting;
+using RenderSharp.RayTracing.Models.Materials;
 using RenderSharp.RayTracing.RayCasts;
 using RenderSharp.RayTracing.Shaders.Shading.Interfaces;
 
@@ -12,11 +13,11 @@ namespace RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
 /// A shader for a phong material with a voronoi texture pattern.
 /// </summary>
 [EmbeddedBytecode(DispatchAxis.XY)]
-public partial struct VoronoiPhongShader : IMaterialShader
+public partial struct VoronoiPhongShader : IMaterialShader<VoronoiPhongMaterial>
 {
-    private readonly int matId;
-    
 #nullable disable
+    private int matId;
+    private VoronoiPhongMaterial material;
     private ReadOnlyBuffer<ObjectSpace> objectBuffer;
     private ReadOnlyBuffer<Light> lightBuffer;
     private ReadWriteBuffer<Ray> pathRayBuffer;
@@ -107,20 +108,24 @@ public partial struct VoronoiPhongShader : IMaterialShader
         luminanceBuffer[index2D] += diffuse * diffuseIntensity;
         luminanceBuffer[index2D] += specular * specularIntensity;
     }
+    
+    int IMaterialShader<VoronoiPhongMaterial>.MaterialId { set => matId = value; }
 
-    ReadOnlyBuffer<ObjectSpace> IMaterialShader.ObjectBuffer  { set => objectBuffer = value; }
+    VoronoiPhongMaterial IMaterialShader<VoronoiPhongMaterial>.Material { set => material = value; }
 
-    ReadOnlyBuffer<Light> IMaterialShader.LightBuffer  { set => lightBuffer = value; }
+    ReadOnlyBuffer<ObjectSpace> IMaterialShader<VoronoiPhongMaterial>.ObjectBuffer  { set => objectBuffer = value; }
 
-    ReadWriteBuffer<Ray> IMaterialShader.PathRayBuffer { set => pathRayBuffer = value; }
+    ReadOnlyBuffer<Light> IMaterialShader<VoronoiPhongMaterial>.LightBuffer  { set => lightBuffer = value; }
 
-    ReadWriteBuffer<GeometryCollision> IMaterialShader.PathCastBuffer {  set => pathRayCastBuffer = value; }
+    ReadWriteBuffer<Ray> IMaterialShader<VoronoiPhongMaterial>.PathRayBuffer { set => pathRayBuffer = value; }
 
-    ReadWriteBuffer<Ray> IMaterialShader.ShadowRayBuffer { set => shadowRayBuffer = value; }
+    ReadWriteBuffer<GeometryCollision> IMaterialShader<VoronoiPhongMaterial>.PathCastBuffer {  set => pathRayCastBuffer = value; }
 
-    ReadWriteBuffer<GeometryCollision> IMaterialShader.ShadowCastBuffer { set => shadowCastBuffer = value; }
+    ReadWriteBuffer<Ray> IMaterialShader<VoronoiPhongMaterial>.ShadowRayBuffer { set => shadowRayBuffer = value; }
 
-    IReadWriteNormalizedTexture2D<float4> IMaterialShader.AttenuationBuffer { set => _ = value; }
+    ReadWriteBuffer<GeometryCollision> IMaterialShader<VoronoiPhongMaterial>.ShadowCastBuffer { set => shadowCastBuffer = value; }
 
-    IReadWriteNormalizedTexture2D<float4> IMaterialShader.LuminanceBuffer { set => luminanceBuffer = value; }
+    IReadWriteNormalizedTexture2D<float4> IMaterialShader<VoronoiPhongMaterial>.AttenuationBuffer { set => _ = value; }
+
+    IReadWriteNormalizedTexture2D<float4> IMaterialShader<VoronoiPhongMaterial>.LuminanceBuffer { set => luminanceBuffer = value; }
 }

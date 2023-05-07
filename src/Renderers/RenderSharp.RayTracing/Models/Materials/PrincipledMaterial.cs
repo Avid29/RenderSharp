@@ -5,7 +5,7 @@ using System.Numerics;
 namespace RenderSharp.RayTracing.Models.Materials;
 
 /// <summary>
-/// A struct containing the properties for principled material.
+/// A struct containing the properties for principled materials.
 /// </summary>
 public struct PrincipledMaterial
 {

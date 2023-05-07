@@ -8,22 +8,31 @@ using RenderSharp.Utilities.Tiles;
 namespace RenderSharp.RayTracing.Shaders.Shading;
 
 /// <summary>
-/// A class for initializing and running <see cref="IMaterialShader"/>s.
+/// A class for initializing and running <see cref="IMaterialShader{TMat}"/>s.
 /// </summary>
-/// <typeparam name="T">The <see cref="IMaterialShader"/> type.</typeparam>
-public class MaterialShaderRunner<T> : MaterialShaderRunner
-    where T : struct, IMaterialShader
+/// <typeparam name="T">The <see cref="IMaterialShader{TMat}"/> type.</typeparam>
+/// <typeparam name="TMat">The <see cref="IMaterialShader{TMat}"/> config.</typeparam>
+internal class MaterialShaderRunner<T, TMat> : MaterialShaderRunner
+    where T : struct, IMaterialShader<TMat>
+    where TMat : struct
 {
-    private readonly T _shader;
+    private T _shader;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MaterialShaderRunner{T}"/> class.
+    /// Initializes a new instance of the <see cref="MaterialShaderRunner{T, TMat}"/> class.
     /// </summary>
-    /// <param name="shader">The shader to run.</param>
-    /// <param name="buffers">The buffer collection to initialize the shader with.</param>
-    public MaterialShaderRunner(T shader, TileBufferCollection buffers)
+    internal MaterialShaderRunner(int id, TMat mat)
     {
-        _shader = shader;
+        _shader = new()
+        {
+            MaterialId = id,
+            Material = mat
+        };
+    }
+    
+    /// <inheritdoc/>
+    internal override void SetShaderBuffers(BufferCollection buffers)
+    {
         _shader.ObjectBuffer = buffers.ObjectBuffer;
         _shader.LightBuffer = buffers.LightBuffer;
         _shader.PathRayBuffer = buffers.PathRayBuffer;
@@ -35,7 +44,7 @@ public class MaterialShaderRunner<T> : MaterialShaderRunner
     }
 
     /// <inheritdoc/>
-    public override void Enqueue(in ComputeContext context, Tile tile)
+    internal override void Enqueue(in ComputeContext context, Tile tile)
     {
         context.For(tile.Width, tile.Height, _shader);
     }

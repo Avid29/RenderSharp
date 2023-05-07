@@ -11,12 +11,11 @@ using RenderSharp.Utilities.Tiles;
 namespace RenderSharp.RayTracing.Utils;
 
 /// <summary>
-/// A struct containing the buffers required to render a tile.
+/// A class containing the buffers required to render a tile.
 /// </summary>
-public struct TileBufferCollection
+internal class BufferCollection
 {
-    /// <inheritdoc cref="TileBufferCollection(GraphicsDevice, Tile, ReadOnlyBuffer{ObjectSpace}, ReadOnlyBuffer{Vertex}, ReadOnlyBuffer{Triangle}, ReadOnlyBuffer{BVHNode}, ReadOnlyBuffer{Light}, int)"/>
-    public TileBufferCollection(
+    public BufferCollection(
         GraphicsDevice device, Tile tile,
         ReadOnlyBuffer<ObjectSpace> objectBuffer,
         ReadOnlyBuffer<Vertex> vertexBuffer,
@@ -28,7 +27,7 @@ public struct TileBufferCollection
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="TileBufferCollection"/> struct.
+    /// Initializes a new instance of the <see cref="BufferCollection"/> class.
     /// </summary>
     /// <param name="device">The <see cref="GraphicsDevice"/> to allocate the buffer to.</param>
     /// <param name="tile">The tile being rendered.</param>
@@ -38,7 +37,7 @@ public struct TileBufferCollection
     /// <param name="bvhTreeBuffer">The scene bvh tree buffer.</param>
     /// <param name="lightBuffer">The scene light buffer.</param>
     /// <param name="bvhDepth">The max depth of the BVH Tree.</param>
-    public TileBufferCollection(
+    public BufferCollection(
         GraphicsDevice device, Tile tile,
         ReadOnlyBuffer<ObjectSpace> objectBuffer,
         ReadOnlyBuffer<Vertex> vertexBuffer,
