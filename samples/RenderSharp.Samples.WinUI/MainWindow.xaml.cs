@@ -44,7 +44,7 @@ public sealed partial class MainWindow : Window
         {
             Config = new RayTracingConfig
             {
-                UseBVH = true,
+                UseBVH = false,
                 MaxBounceDepth = 8,
             }
         };
@@ -65,7 +65,7 @@ public sealed partial class MainWindow : Window
 
     private static Scene CreateScene()
     {
-        var import = WaveFrontImporter.Parse(@"C:\Users\avid2\source\repos\Personal\RenderSharp\samples\RenderSharp.Samples.WinUI\Assets\test.obj");
+        var import = WaveFrontImporter.Parse(@"C:\Users\avid2\source\repos\Personal\RenderSharp\samples\RenderSharp.Samples.WinUI\Assets\Bunny.obj");
 
         //var camera = Camera.CreateFromLookAt(new Vector3(0f, 5f, 0f), new Vector3(0, 0f, 0f), 75);
         var camera = Camera.CreateFromEuler(new Vector3(0f, 1f, 0f), new Vector3(0f, 180f, 0f), 75);
@@ -111,7 +111,7 @@ public sealed partial class MainWindow : Window
         var material4 = new PrincipledMaterial(Vector3.One * 0.5f, Vector3.One * 0.5f, Vector3.Zero, 10f, 0.8f, 0, 1);
         var material5 = new PrincipledMaterial(new Vector3(0.25f, 0.35f, 0.35f), Vector3.One * 0.5f, Vector3.Zero, 20f, 0.025f, 0, 1);
         var material6 = new PrincipledMaterial(Vector3.One * 0.5f, Vector3.One, Vector3.Zero, 20f, 0f, 0.9f, 0.95f);
-        
+
         // Register materials
         renderer.RegisterMaterials<PhongShader, PhongMaterial>(material1);
         //renderer.RegisterMaterials<CheckeredPhongShader, CheckeredPhongMaterial>(material2);

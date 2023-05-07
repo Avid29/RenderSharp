@@ -79,7 +79,7 @@ public partial class WaveFrontImporter
         while (!stream.EndOfStream)
         {
             var line = stream.ReadLine();
-            if (line is null)
+            if (string.IsNullOrEmpty(line))
                 return;
 
             var trim = line.TrimStart();

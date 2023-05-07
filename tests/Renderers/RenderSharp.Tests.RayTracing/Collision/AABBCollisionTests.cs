@@ -54,11 +54,11 @@ public class AABBCollisionTests
         };
         var box = new AABB
         {
-            highCorner = Vector3.One,
-            lowCorner = Vector3.Zero,
+            highCorner = new Vector3(1, 0, 1),
+            lowCorner = new Vector3(-1, 0, -1),
         };
 
-        TestCollision(ray, box, false);
+        TestCollision(ray, box, true);
     }
 
     private static void TestCollision(Ray ray, AABB box, bool expected)

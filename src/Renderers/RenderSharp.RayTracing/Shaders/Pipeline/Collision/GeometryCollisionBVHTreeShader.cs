@@ -48,7 +48,7 @@ public readonly partial struct GeometryCollisionBVHTreeShader : ICollisionShader
         bool isBackFace = dn > 0;   
 
         // Ensure the collision is in the positive direction, and not outside the clipped range
-        if (t < 0.0001f || t > maxClip)
+        if (t < float.Epsilon || t > maxClip)
             return false;
 
         // Find the collision point on the plane
