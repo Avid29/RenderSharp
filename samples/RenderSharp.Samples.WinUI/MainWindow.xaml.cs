@@ -23,6 +23,8 @@ namespace RenderSharp.Samples.WinUI;
 /// </summary>
 public sealed partial class MainWindow : Window
 {
+    const string projectPath = @"C:\Users\avid2\source\repos\Personal\RenderSharp\samples\RenderSharp.Samples.WinUI\";
+
     /// <summary>
     /// Initializes a new instance of the <see cref="MainWindow"/> class.
     /// </summary>
@@ -65,8 +67,7 @@ public sealed partial class MainWindow : Window
 
     private static Scene CreateScene()
     {
-        string pathRoot = @"C:\Users\avid2\source\repos\Personal\RenderSharp\samples\RenderSharp.Samples.WinUI\";
-        var import = WaveFrontImporter.Parse($"{pathRoot}Assets\\Scene-FullSphere.obj");
+        var import = WaveFrontImporter.Parse($"{projectPath}Assets\\Scene-FullSphere.obj");
 
         //var camera = Camera.CreateFromLookAt(new Vector3(0f, 5f, 0f), new Vector3(0, 0f, 0f), 75);
         var camera = Camera.CreateFromEuler(new Vector3(0f, 1f, 0f), new Vector3(0f, 180f, 0f), 75);
