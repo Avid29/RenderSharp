@@ -2,6 +2,7 @@
 
 using ComputeSharp;
 using RenderSharp.RayTracing.RayCasts;
+using System.Numerics;
 
 namespace RenderSharp.RayTracing.Shaders.Shading.Stock.SkyShaders;
 
@@ -34,8 +35,8 @@ public partial struct SolidSkyShader : IComputeShader
         luminanceBuffer[index2D] += color * attenuationBuffer[index2D];
 
         // Clear the ray in the ray buffer
-        rayBuffer[fIndex].origin = 0;
-        rayBuffer[fIndex].direction = 0;
+        rayBuffer[fIndex].origin = Vector3.Zero;
+        rayBuffer[fIndex].direction = Vector3.Zero;
         rayCastBuffer[fIndex].matId = -2;
         rayCastBuffer[fIndex].geoId = -2;
     }

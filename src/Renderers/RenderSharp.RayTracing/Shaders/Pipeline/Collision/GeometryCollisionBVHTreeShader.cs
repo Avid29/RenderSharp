@@ -98,10 +98,10 @@ public readonly partial struct GeometryCollisionBVHTreeShader : ICollisionShader
             int nodeIndex = bvhStackBuffer[partStart + stackIndex];
             BVHNode node = bvhTreeBuffer[nodeIndex];
             stackIndex--;
-            
+
             // Check for a closer collision, and log its ray cast when any exist.
-            //if (BVHNode.IsHit(node, ray, distance))
-            if (true)
+            if (BVHNode.IsHit(node, ray, distance))
+            //if (true)
             {
                 if (node.geoIndex != -1)
                 {

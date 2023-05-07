@@ -24,6 +24,23 @@ using CommonScene = RenderSharp.Scenes.Scene;
 
 namespace RenderSharp.RayTracing;
 
+/// Rendering Pipeline
+///
+///  Rendering Tile
+///  |   Sample Loop
+///  |   |
+///  |   |  Init Sample
+///  |   |  Cast Path Rays
+///  |   |
+///  |   |   Bounce Loop
+///  |   |   |   Path Rays Collision
+///  |   |   |   Cast Shadow Rays
+///  |   |   |   Shadow Ray Collisions
+///  |   |   |   Material Shaders
+///  |   |   |   Sky Shader
+///  |   |   Cache Sample Luminance
+///  |   Write back
+
 /// <summary>
 /// An <see cref="IRenderer"/> implementation that uses ray tracing to render the scene.
 /// </summary>
@@ -193,6 +210,7 @@ public class RayTracingRenderer : IRenderer
 
         #pragma warning disable
 
+        // Sample loop
         for (int s = 0; s < Config.SampleCount; s++)
         {
             var initShader = new SampleInitializeShader(_buffers.AttenuationBuffer, _buffers.LuminanceBuffer, _buffers.RandStateBuffer, s);
@@ -205,7 +223,7 @@ public class RayTracingRenderer : IRenderer
             context.For(tile.Width, tile.Height, cameraCastShader);
             context.Barrier(_buffers.PathRayBuffer);
 
-            // Bounces
+            // Bounce Loop
             for (int b = 0; b < Config.MaxBounceDepth; b++)
             {
                 // Find object collision and cache the resulting ray cast
@@ -247,7 +265,6 @@ public class RayTracingRenderer : IRenderer
         nameof(_objectBuffer),
         nameof(_vertexBuffer),
         nameof(_geometryBuffer),
-        nameof(_bvhTreeBuffer),
         nameof(_lightBuffer),
         nameof(_camera))]
     private void GuardReady()
@@ -256,7 +273,6 @@ public class RayTracingRenderer : IRenderer
         Guard.IsNotNull(_objectBuffer);
         Guard.IsNotNull(_vertexBuffer);
         Guard.IsNotNull(_geometryBuffer);
-        Guard.IsNotNull(_bvhTreeBuffer);
         Guard.IsNotNull(_lightBuffer);
         Guard.IsNotNull(_camera);
     }

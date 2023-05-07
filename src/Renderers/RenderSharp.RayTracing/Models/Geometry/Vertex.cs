@@ -1,5 +1,7 @@
 ﻿// Adam Dernis 2023
 
+using System.Numerics;
+
 namespace RenderSharp.RayTracing.Models.Geometry;
 
 /// <summary>
@@ -10,12 +12,12 @@ public struct Vertex
     /// <summary>
     /// The vertex position.
     /// </summary>
-    public float3 position;
+    public Vector3 position;
 
     /// <summary>
     /// The vertex normal.
     /// </summary>
-    public float3 normal;
+    public Vector3 normal;
     
     ///// <summary>
     ///// The vertex texture coordinates
@@ -27,7 +29,7 @@ public struct Vertex
     /// </summary>
     /// <param name="position">The vertex position.</param>
     /// <param name="normal">The vertex normal.</param>
-    public Vertex(float3 position, float3 normal)
+    public Vertex(Vector3 position, Vector3 normal)
     {
         this.position = position;
         this.normal = normal;

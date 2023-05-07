@@ -42,7 +42,7 @@ internal class BufferCollection
         ReadOnlyBuffer<ObjectSpace> objectBuffer,
         ReadOnlyBuffer<Vertex> vertexBuffer,
         ReadOnlyBuffer<Triangle> geometryBuffer,
-        ReadOnlyBuffer<BVHNode> bvhTreeBuffer,
+        ReadOnlyBuffer<BVHNode>? bvhTreeBuffer,
         ReadOnlyBuffer<Light> lightBuffer,
         int bvhDepth)
     {
