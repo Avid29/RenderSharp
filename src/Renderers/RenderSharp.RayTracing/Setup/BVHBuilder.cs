@@ -28,7 +28,9 @@ public class BVHBuilder
         Device = device;
         _vertices = vertices;
         _triangles = geometries;
-        _bvhHeap = new BVHNode[(geometries.Count * 2) - 1];
+
+        var maxSize = BitOperations.RoundUpToPowerOf2((uint)(geometries.Count * 2) - 1);
+        _bvhHeap = new BVHNode[maxSize];
     }
 
     /// <summary>
