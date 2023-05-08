@@ -4,7 +4,6 @@ using Microsoft.UI.Xaml;
 using RenderSharp.ImportExport.WaveFront;
 using RenderSharp.RayTracing;
 using RenderSharp.RayTracing.Models.Materials;
-using RenderSharp.RayTracing.Models.Materials.Enums;
 using RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
 using RenderSharp.Rendering.Manager;
 using RenderSharp.Scenes;
@@ -46,8 +45,8 @@ public sealed partial class MainWindow : Window
         {
             Config = new RayTracingConfig
             {
-                UseBVH = true,
-                MaxBounceDepth = 8,
+                UseBVH = false,
+                MaxBounceDepth = 1,
             }
         };
         RegisterMaterials(renderer);
@@ -67,13 +66,28 @@ public sealed partial class MainWindow : Window
 
     private static Scene CreateScene()
     {
-        //var import = WaveFrontImporter.Parse($"{projectPath}Assets\\test3.obj");
-        var import = WaveFrontImporter.Parse($"{projectPath}Assets\\Bunny.obj");
-        //var import = WaveFrontImporter.Parse($"{projectPath}Assets\\Scene-FullSphere.obj");
 
-        //var camera = Camera.CreateFromLookAt(new Vector3(0f, 5f, 0f), new Vector3(0, 0f, 0f), 75);
+        #region Standard Scene
+#if false
+        var import = WaveFrontImporter.Parse($"{projectPath}Assets\\Scene-FullSphere.obj");
         var camera = Camera.CreateFromEuler(new Vector3(0f, 1f, 0f), new Vector3(0f, 180f, 0f), 75);
-        //var camera = Camera.CreateFromEuler(new Vector3(0f, 2f, -2f), new Vector3(-20f, 180f, 0f), 75);
+#endif
+        #endregion
+
+        #region Bunny
+#if true
+        var import = WaveFrontImporter.Parse($"{projectPath}Assets\\Bunny.obj");
+        var camera = Camera.CreateFromEuler(new Vector3(0f, 1f, 0f), new Vector3(0f, 180f, 0f), 75);
+#endif
+        #endregion
+
+        #region Chess Set
+#if false
+        var import = WaveFrontImporter.Parse($"{projectPath}Assets\\ChessSet.obj");
+        var camera = Camera.CreateFromEuler(new Vector3(5f, 3f, -2f), new Vector3(-40f, 110f, 0f), 75);
+#endif
+        #endregion
+
         var scene = new Scene(camera);
 
         scene.Geometry.AddRange(import.Objects.OfType<GeometryObject>());
@@ -102,25 +116,49 @@ public sealed partial class MainWindow : Window
     private static void RegisterMaterials(RayTracingRenderer renderer)
     {
         // Create materials
-        var color0 = new Vector3(0.9f, 0.2f, 0.1f);
-        var material0 = new PhongMaterial(color0, Vector3.One, color0, 80f,
-            cDiffuse: 0.8f, cSpecular: 0.9f, cAmbient: 0.2f);
-        var color1 = new Vector3(0.25f, 0.35f, 0.35f);
-        var material1 = new PhongMaterial(color1, Vector3.One, color1, 10f,
-            cDiffuse: 0.8f, cSpecular: 0.9f, cAmbient: 0.2f);
         var yellow = Vector3.UnitX + Vector3.UnitY;
-        var material2 = new CheckeredPhongMaterial(yellow, Vector3.UnitX, Vector3.One, 50f, 10f,
+        var checkers = new CheckeredPhongMaterial(yellow, Vector3.UnitX, Vector3.One, 50f, 10f,
             cDiffuse0: 0.8f, cDiffuse1: 0.8f, cSpecular: 0.9f, cAmbient: 0.2f);
-        var material3 = new RadialGradientPhongMaterial(Vector3.UnitX, Vector3.UnitY, Vector3.One, 50f, 4f, (int)TextureSpace.Object,
-            cDiffuse0: 0.8f, cDiffuse1: 0.8f, cSpecular: 0.9f, cAmbient: 0.2f);
-        var material4 = new PrincipledMaterial(Vector3.One * 0.5f, Vector3.One * 0.5f, Vector3.Zero, 10f, 0.8f, 0, 1);
-        var material5 = new PrincipledMaterial(new Vector3(0.25f, 0.35f, 0.35f), Vector3.One * 0.5f, Vector3.Zero, 20f, 0.025f, 0, 1);
-        var material6 = new PrincipledMaterial(Vector3.One * 0.5f, Vector3.One, Vector3.Zero, 20f, 0f, 0.9f, 0.95f);
+        var glossy = new PrincipledMaterial(Vector3.One * 0.5f, Vector3.One * 0.5f, Vector3.Zero, 10f, 0.8f, 0, 1);
+        var transmissive = new PrincipledMaterial(Vector3.One * 0.5f, Vector3.One, Vector3.Zero, 20f, 0f, 0.9f, 0.95f);
+
+        var white = new PhongMaterial(Vector3.One, Vector3.One, Vector3.One, 50f, 0.95f, 0.95f, 0.1f);
+        var black = new PhongMaterial(Vector3.One, Vector3.One, Vector3.One, 20f, 0.1f, 0.95f, 0.01f);
+        var glossyBlack = new PrincipledMaterial(0.1f * Vector3.One, 0.95f * Vector3.One, Vector3.Zero, 50f, 0.3f, 0, 1);
 
         // Register materials
-        //renderer.RegisterMaterials<PhongShader, PhongMaterial>(material1);
-        renderer.RegisterMaterials<CheckeredPhongShader, CheckeredPhongMaterial>(material2);
-        renderer.RegisterMaterials<PrincipledShader, PrincipledMaterial>(material4);
-        renderer.RegisterMaterials<PrincipledShader, PrincipledMaterial>(material6);
+        #region Standard Scene
+#if false
+        renderer.RegisterMaterials<CheckeredPhongShader, CheckeredPhongMaterial>(checkers);
+        renderer.RegisterMaterials<PrincipledShader, PrincipledMaterial>(glossy);
+        renderer.RegisterMaterials<PrincipledShader, PrincipledMaterial>(transmissive);
+#endif
+        #endregion
+
+        #region Bunny
+#if true
+        renderer.RegisterMaterials<PhongShader, PhongMaterial>(white);
+#endif
+        #endregion
+
+        #region ChessSet
+#if false
+        // Black pieces
+        for (int i = 0; i < 16; i++)
+            renderer.RegisterMaterials<PhongShader, PhongMaterial>(black);
+
+        // White pieces
+        for (int i = 0; i < 16; i++)
+            renderer.RegisterMaterials<PhongShader, PhongMaterial>(white);
+
+        // Black Tiles
+        for (int i = 0; i < 32; i++)
+            renderer.RegisterMaterials<PrincipledShader, PrincipledMaterial>(glossyBlack);
+
+        // White Tiles
+        for (int i = 0; i < 32; i++)
+            renderer.RegisterMaterials<PhongShader, PhongMaterial>(white);
+#endif
+        #endregion
     }
 }
