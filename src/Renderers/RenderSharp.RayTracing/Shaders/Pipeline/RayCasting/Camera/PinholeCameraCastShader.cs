@@ -1,28 +1,25 @@
 ﻿// Adam Dernis 2023
 
 using ComputeSharp;
-using RenderSharp.RayTracing.Models;
 using RenderSharp.RayTracing.Models.Camera;
 using RenderSharp.RayTracing.RayCasts;
+using RenderSharp.RayTracing.Shaders.Pipeline.RayCasting.Camera.Interfaces;
 using RenderSharp.Utilities.Tiles;
 
-namespace RenderSharp.RayTracing.Shaders.Pipeline;
+namespace RenderSharp.RayTracing.Shaders.Pipeline.RayCasting.Camera;
 
 /// <summary>
-/// A shader that casts rays from a camera in a scattered pattern.
+/// A shader that casts rays from a camera.
 /// </summary>
 [AutoConstructor]
 [EmbeddedBytecode(DispatchAxis.XY)]
-public readonly partial struct ScatteredCameraCastShader : IComputeShader
+public readonly partial struct PinholeCameraCastShader : ICameraCastShader
 {
     private readonly Tile tile;
     private readonly int2 imageSize;
     private readonly PinholeCamera camera;
     private readonly ReadWriteBuffer<Ray> rayBuffer;
-    private readonly ReadWriteBuffer<Rand> randBuffer;
-    private readonly int sample;
-    private readonly int samplesSqrt;
-    
+
     /// <inheritdoc/>
     public void Execute()
     {
@@ -32,25 +29,12 @@ public readonly partial struct ScatteredCameraCastShader : IComputeShader
         int fIndex = (index2D.Y * DispatchSize.X) + index2D.X;
         int2 imageIndex = index2D + tile.offset;
 
-        Rand rand = randBuffer[fIndex];
-
-        //int row = sample % samplesSqrt;
-        //int col = sample / samplesSqrt;
-
-        //int sSqrt1 = samplesSqrt + 1;
-        //float uOffset = (float)row / sSqrt1;
-        //float vOffset = (float)col / sSqrt1;
-
-        float uOffset = rand.NextFloat();
-        float vOffset = rand.NextFloat();
-
         // Calculate the camera u and v normalized pixel coordinates.
-        float u = (imageIndex.X + uOffset) / imageSize.X;
-        float v = 1 - (imageIndex.Y + vOffset) / imageSize.Y;
+        float u = (imageIndex.X + 0.5f) / imageSize.X;
+        float v = 1 - (imageIndex.Y + 0.5f) / imageSize.Y;
 
         // Create a ray from the camera and store it in the ray buffer.
         var ray = PinholeCamera.CreateRay(camera, u, v);
-        randBuffer[fIndex] = rand;
         rayBuffer[fIndex] = ray;
     }
 }

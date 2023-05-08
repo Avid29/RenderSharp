@@ -4,7 +4,7 @@ using ComputeSharp;
 using RenderSharp.RayTracing.Models.Lighting;
 using RenderSharp.RayTracing.RayCasts;
 
-namespace RenderSharp.RayTracing.Shaders.Pipeline;
+namespace RenderSharp.RayTracing.Shaders.Pipeline.RayCasting;
 
 /// <summary>
 /// A shader that casts shadow rays from path ray collisions.

@@ -45,8 +45,9 @@ public sealed partial class MainWindow : Window
         {
             Config = new RayTracingConfig
             {
-                UseBVH = false,
-                MaxBounceDepth = 1,
+                UseBVH = true,
+                SampleCount = 1,
+                MaxBounceDepth = 6,
             }
         };
         RegisterMaterials(renderer);
@@ -68,14 +69,14 @@ public sealed partial class MainWindow : Window
     {
 
         #region Standard Scene
-#if false
+#if true
         var import = WaveFrontImporter.Parse($"{projectPath}Assets\\Scene-FullSphere.obj");
         var camera = Camera.CreateFromEuler(new Vector3(0f, 1f, 0f), new Vector3(0f, 180f, 0f), 75);
 #endif
         #endregion
 
         #region Bunny
-#if true
+#if false
         var import = WaveFrontImporter.Parse($"{projectPath}Assets\\Bunny.obj");
         var camera = Camera.CreateFromEuler(new Vector3(0f, 1f, 0f), new Vector3(0f, 180f, 0f), 75);
 #endif
@@ -128,7 +129,7 @@ public sealed partial class MainWindow : Window
 
         // Register materials
         #region Standard Scene
-#if false
+#if true
         renderer.RegisterMaterials<CheckeredPhongShader, CheckeredPhongMaterial>(checkers);
         renderer.RegisterMaterials<PrincipledShader, PrincipledMaterial>(glossy);
         renderer.RegisterMaterials<PrincipledShader, PrincipledMaterial>(transmissive);
@@ -136,7 +137,7 @@ public sealed partial class MainWindow : Window
         #endregion
 
         #region Bunny
-#if true
+#if false
         renderer.RegisterMaterials<PhongShader, PhongMaterial>(white);
 #endif
         #endregion
