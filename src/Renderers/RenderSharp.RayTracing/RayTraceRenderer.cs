@@ -223,7 +223,8 @@ public class RayTracingRenderer : IRenderer
         RenderAnalyzer?.LogProcess("Render Loop", ProcessCategory.Rendering);
         using var context = Device.CreateComputeContext();
 
-        #pragma warning disable
+        // Allow unreachable code (for debug inserts)
+        #pragma warning disable CS0162
 
         // Sample loop
         for (int s = 0; s < Config.SampleCount; s++)
@@ -283,6 +284,7 @@ public class RayTracingRenderer : IRenderer
         nameof(_camera))]
     private void GuardReady()
     {
+        Guard.IsNotNull(Device);
         Guard.IsNotNull(RenderBuffer);
         Guard.IsNotNull(_objectBuffer);
         Guard.IsNotNull(_vertexBuffer);

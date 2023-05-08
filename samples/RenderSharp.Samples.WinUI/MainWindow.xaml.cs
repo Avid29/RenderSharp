@@ -5,6 +5,7 @@ using RenderSharp.ImportExport.WaveFront;
 using RenderSharp.RayTracing;
 using RenderSharp.RayTracing.Models.Materials;
 using RenderSharp.RayTracing.Shaders.Shading.Stock.MaterialShaders;
+using RenderSharp.Rendering.Interfaces;
 using RenderSharp.Rendering.Manager;
 using RenderSharp.Scenes;
 using RenderSharp.Scenes.Cameras;
@@ -53,6 +54,7 @@ public sealed partial class MainWindow : Window
         RegisterMaterials(renderer);
         var scene = CreateScene();
         var postProcessor = new ToneReproducer();
+        //IPostProcessor? postProcessor = null;
         RenderViewer.Setup<TiledRenderManager>(renderer, scene, postProcessor);
     }
 
@@ -67,7 +69,6 @@ public sealed partial class MainWindow : Window
 
     private static Scene CreateScene()
     {
-
         #region Standard Scene
 #if true
         var import = WaveFrontImporter.Parse($"{projectPath}Assets\\Scene-FullSphere.obj");
@@ -92,7 +93,6 @@ public sealed partial class MainWindow : Window
         var scene = new Scene(camera);
 
         scene.Geometry.AddRange(import.Objects.OfType<GeometryObject>());
-
         scene.Lights.AddRange(new LightSource[]
         {
             new PointLight

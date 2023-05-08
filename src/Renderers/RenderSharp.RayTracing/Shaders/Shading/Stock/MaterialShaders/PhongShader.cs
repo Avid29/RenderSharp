@@ -81,6 +81,7 @@ public partial struct PhongShader : IMaterialShader<PhongMaterial>
         luminanceBuffer[index2D] += material.diffuse * diffuseIntensity;
         luminanceBuffer[index2D] += material.specular * specularIntensity;
         attenuationBuffer[index2D] = 0;
+        pathRayBuffer[fIndex] = default;
     }
     
     int IMaterialShader<PhongMaterial>.MaterialId { set => matId = value; }
