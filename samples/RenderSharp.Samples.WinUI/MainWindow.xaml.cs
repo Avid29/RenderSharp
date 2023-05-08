@@ -46,7 +46,7 @@ public sealed partial class MainWindow : Window
         {
             Config = new RayTracingConfig
             {
-                UseBVH = false,
+                UseBVH = true,
                 MaxBounceDepth = 8,
             }
         };
@@ -67,7 +67,9 @@ public sealed partial class MainWindow : Window
 
     private static Scene CreateScene()
     {
-        var import = WaveFrontImporter.Parse($"{projectPath}Assets\\Scene-FullSphere.obj");
+        //var import = WaveFrontImporter.Parse($"{projectPath}Assets\\test3.obj");
+        var import = WaveFrontImporter.Parse($"{projectPath}Assets\\Bunny.obj");
+        //var import = WaveFrontImporter.Parse($"{projectPath}Assets\\Scene-FullSphere.obj");
 
         //var camera = Camera.CreateFromLookAt(new Vector3(0f, 5f, 0f), new Vector3(0, 0f, 0f), 75);
         var camera = Camera.CreateFromEuler(new Vector3(0f, 1f, 0f), new Vector3(0f, 180f, 0f), 75);

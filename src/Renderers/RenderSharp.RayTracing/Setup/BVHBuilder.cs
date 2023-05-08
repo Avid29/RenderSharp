@@ -16,7 +16,6 @@ public class BVHBuilder
     private readonly List<Vertex> _vertices;
     private readonly List<Triangle> _triangles;
     private readonly BVHNode[] _bvhHeap;
-    private int _pos;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BVHBuilder"/> class.
@@ -53,13 +52,12 @@ public class BVHBuilder
     public void BuildBVHTree()
     {
         Depth = 0;
-        _pos = _bvhHeap.Length - 1;
         var geometries = CollectionsMarshal.AsSpan(_triangles);
-        BuildBVH(geometries, 0, 0);
+        BuildBVH(geometries, 0, 0, 1);
         AllocateBuffers();
     }
 
-    private int BuildBVH(Span<Triangle> geometries, int index, int depth)
+    private void BuildBVH(Span<Triangle> geometries, int treeIndex, int triIndex, int depth)
     {
         Depth = int.Max(Depth, depth);
 
@@ -68,7 +66,7 @@ public class BVHBuilder
         if (geometries.Length == 1)
         {
             AABB box = GetTriangleAABB(geometries[0]);
-            node = BVHNode.Create(box, index);
+            node = BVHNode.Create(box, triIndex);
         }
         else
         {
@@ -76,9 +74,12 @@ public class BVHBuilder
             int axis = depth % 3;
             geometries.Sort((a, b) => GetTriangleAABB(a).highCorner[axis].CompareTo(GetTriangleAABB(b).highCorner[axis]));
 
-            int mid = geometries.Length / 2;
-            int rightI = BuildBVH(geometries[mid..], index + mid, depth + 1);
-            int leftI = BuildBVH(geometries[..mid], index, depth + 1);
+            // +1 for Ceiling instead of floor
+            int mid = (geometries.Length + 1) / 2;
+            int leftI = treeIndex * 2 + 1;
+            int rightI = leftI + 1;
+            BuildBVH(geometries[..mid], leftI, triIndex, depth + 1);
+            BuildBVH(geometries[mid..], rightI, triIndex + mid, depth + 1);
 
             AABB leftBB = _bvhHeap[leftI].box;
             AABB rightBB = _bvhHeap[rightI].box;
@@ -87,8 +88,7 @@ public class BVHBuilder
             node = BVHNode.Create(box, leftI, rightI);
         }
 
-        _bvhHeap[_pos] = node;
-        return _pos--;
+        _bvhHeap[treeIndex] = node;
     }
     
     private void AllocateBuffers()
