@@ -46,7 +46,7 @@ public sealed partial class MainWindow : Window
         {
             Config = new RayTracingConfig
             {
-                UseBVH = true,
+                UseBVH = false,
                 SampleCount = 1,
                 MaxBounceDepth = 6,
             }
